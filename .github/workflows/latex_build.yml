@@ -1,6 +1,10 @@
 name: latex_build
 
-on: [push]
+on: 
+  push:
+    branches:
+      - master
+      - dissertation
 
 jobs:  
   build_latex:

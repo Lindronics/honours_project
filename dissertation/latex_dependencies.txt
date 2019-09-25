@@ -1,14 +1,15 @@
-texlive/bionic,now 2017.20180305-1 all [installed]
-texlive-base/bionic,now 2017.20180305-1 all [installed,automatic]
-texlive-binaries/bionic-updates,bionic-security,now 2017.20170613.44572-8ubuntu0.1 amd64 [installed,automatic]
-texlive-fonts-extra/bionic,now 2017.20180305-2 all [installed]
-texlive-fonts-extra-links/bionic,now 2017.20180305-2 all [installed,automatic]
-texlive-fonts-recommended/bionic,now 2017.20180305-1 all [installed,automatic]
-texlive-generic-extra/bionic,now 2017.20180305-1 all [installed]
-texlive-lang-greek/bionic,now 2017.20180305-1 all [installed,automatic]
-texlive-latex-base/bionic,now 2017.20180305-1 all [installed,automatic]
-texlive-latex-extra/bionic,now 2017.20180305-2 all [installed]
-texlive-latex-recommended/bionic,now 2017.20180305-1 all [installed,automatic]
-texlive-pictures/bionic,now 2017.20180305-1 all [installed,automatic]
-texlive-plain-generic/bionic,now 2017.20180305-2 all [installed,automatic]
-texlive-science/bionic,now 2017.20180305-2 all [installed]
+texlive
+texlive-base
+texlive-binaries
+texlive-fonts-extra
+texlive-fonts-extra-links
+texlive-fonts-recommended
+texlive-generic-extra
+texlive-lang-greek
+texlive-latex-base
+texlive-latex-extra
+texlive-latex-recommended
+texlive-pictures
+texlive-plain-generic
+texlive-science
+pdflatex

@@ -11,6 +11,11 @@
 *.cb
 *.cb2
 .*.lb
+l4proj*.pdf
+
+test/
+
+bad_l4proj*.*
 
 ## Intermediate documents:
 *.dvi

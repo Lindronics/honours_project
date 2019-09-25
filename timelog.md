@@ -1,6 +1,6 @@
 # Timelog
 
-* PROJECT NAME
+* Deep neural networks for classification of hyperspectral images
 * Niklas Lindorfer
 * 2265846l
 * SUPERVISOR NAME

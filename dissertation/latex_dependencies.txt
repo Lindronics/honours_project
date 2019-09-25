@@ -12,4 +12,3 @@ texlive-latex-recommended
 texlive-pictures
 texlive-plain-generic
 texlive-science
-pdflatex

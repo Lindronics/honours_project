@@ -1,0 +1,18 @@
+name: latex_build
+
+on: [push]
+
+jobs:  
+  build_latex:
+  
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Switch to dissertation directory
+      run: cd dissertation
+    - name: Install LaTeX dependencies
+      run: |
+        cat latex_dependencies.txt | xargs sudo apt-get install
+    - name: Compile dissertation LaTeX file
+      run: |
+        pdflatex l4proj.tex

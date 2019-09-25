@@ -8,11 +8,14 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - name: Switch to dissertation directory
-      run: cd dissertation
+    - name: Pull changes
+      uses: actions/checkout@v1
     - name: Install LaTeX dependencies
       run: |
+        cd dissertation
         cat latex_dependencies.txt | xargs sudo apt-get install
+        which pdflatex
     - name: Compile dissertation LaTeX file
       run: |
+        cd dissertation
         pdflatex l4proj.tex

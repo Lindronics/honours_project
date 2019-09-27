@@ -19,3 +19,4 @@
 * *0.5 hour* Set up project repository on GitHub
 * *1.5 hour* Downloaded LaTeX template and set up CD script on GitHub
 * *1.0 hour* Set up timelog, plan, milestones, etc.
+* *3.0 hour* Reading and research (100 page ML book)

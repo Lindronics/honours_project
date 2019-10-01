@@ -17,6 +17,15 @@
 ### 25 Sept 2019
 
 * *0.5 hour* Set up project repository on GitHub
-* *1.5 hour* Downloaded LaTeX template and set up CD script on GitHub
+* *1.5 hours* Downloaded LaTeX template and set up CD script on GitHub
 * *1.0 hour* Set up timelog, plan, milestones, etc.
-* *3.0 hour* Reading and research (100 page ML book)
+
+## 26 Sept 2019
+* *3.0 hours* Reading and research (100 page ML book)
+
+
+# Week 2
+
+## 01 Oct 2019
+* *0.5 hours* Updated project plan
+* *1.0 hour* Reading

@@ -20,12 +20,23 @@
 * *1.5 hours* Downloaded LaTeX template and set up CD script on GitHub
 * *1.0 hour* Set up timelog, plan, milestones, etc.
 
-## 26 Sept 2019
+### 26 Sept 2019
 * *3.0 hours* Reading and research (100 page ML book)
 
 
-# Week 2
+## Week 2
 
-## 01 Oct 2019
+### 01 Oct 2019
 * *0.5 hours* Updated project plan
 * *1.0 hour* Reading
+
+### 04 Oct 2019
+* *0.5 hours* 1st supervisor meeting
+
+
+## Week 3
+
+### 08 Oct 2019
+* *3.5 hours* Reading
+* *0.5 hours* 2nd supervisor meeting
+

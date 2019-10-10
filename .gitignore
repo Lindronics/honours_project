@@ -1,3 +1,6 @@
+## Project structure
+data/*
+
 ## Core latex/pdflatex auxiliary files:
 *.aux
 *.lof

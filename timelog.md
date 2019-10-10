@@ -40,3 +40,9 @@
 * *3.5 hours* Reading
 * *0.5 hours* 2nd supervisor meeting
 
+### 09 Oct 2019
+* *1 hour* Reading
+* *1 hour* Keras tests
+
+### 10 Oct 2019
+* *2 hours* Keras tests (image colorization)

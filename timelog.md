@@ -55,3 +55,16 @@
 
 ### 16 Oct 2019
 * *1.5 hours* Keras tests (image colorization)
+
+## Week 4
+
+### 24 Oct 2019
+* *2 hours* Reading
+
+### 25 Oct 2019
+* *0.5 hours* 3rd supervisor meeting
+
+### 26 Oct 2019
+* *1.0 hour* Requirement analysis
+
+## Week 5

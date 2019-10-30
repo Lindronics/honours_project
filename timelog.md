@@ -68,3 +68,7 @@
 * *1.0 hour* Requirement analysis
 
 ## Week 5
+
+### 29 Oct 2019
+* *4.0 hours* Reproduced results of a similar previous project
+

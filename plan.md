@@ -15,17 +15,20 @@ Week-by-week plan for the whole project.
 * **Week 2**
   * continue research
 * **Week 3**
+  * continue research
 * **Week 4**
   * acquire some dataset for testing
   * explore some traditional classification methods (Logistic Regression, SVM)
 * **Week 5**
 * **Week 6**
+  * reproduce previous project for testing and training purposes
 * **Week 7**
+  * find off-the-shelf dataset for initial development
 * **Week 8**
-  * first deep learning model
 * **Week 9**
 * **Week 10**
 * **Week 11 [PROJECT WEEK]**
+  * first deep learning model
 * **Week 12 [PROJECT WEEK]** 
   * Status report submitted.
 

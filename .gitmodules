@@ -1,0 +1,4 @@
+[submodule "flir_app"]
+	path = flir_app
+	url = https://github.com/Lindronics/flir_app
+	branch = master

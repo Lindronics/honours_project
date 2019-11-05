@@ -72,3 +72,16 @@
 ### 29 Oct 2019
 * *4.0 hours* Reproduced results of a similar previous project
 
+### 30 Oct 2019
+* *3.5 hours* Investigation into object detection strategies
+
+### 31 Oct 2019
+* *0.5 hours* 4th supervisor meeting
+
+### 02 Nov 2019
+* *3.0 hours* Exploration of YOLO object detection model
+
+## Week 6
+
+### 05 Nov 2019
+* *2.0 hours* Prepared extraction of thermal and RGB from FLIR sensor export

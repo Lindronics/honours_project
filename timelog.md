@@ -85,3 +85,19 @@
 
 ### 05 Nov 2019
 * *2.0 hours* Prepared extraction of thermal and RGB from FLIR sensor export
+* *2.0 hours* Initialized mobile app and set up repository
+
+### 06 Nov 2019
+* *1.0 hours* Got FLIR support to activate my developer account
+* *2.0 hours* Further work on YOLO model test
+
+### 07 Nov 2019
+* *5.0 hours* Familiarization with Flir One SDK
+
+### 08 Nov 2019
+* *0.5 hours* 5th supervisor meeting
+* *3.0 hours* Work on YOLO activation function
+
+
+
+

@@ -24,8 +24,9 @@ if __name__ == "__main__":
     parser.add_argument("-v", "--verbose", dest="verbose", help="Verbose output", action="store_true")
     args = vars(parser.parse_args())
 
-    # Setup output dir  
-    shutil.rmtree(args["out_path"], ignore_errors=False, onerror=None)
+    # Setup output dir 
+    if os.path.isdir(args["out_path"]):
+        shutil.rmtree(args["out_path"], ignore_errors=False, onerror=None)
     os.makedirs(os.path.join(args["out_path"], "thermal"))
     os.makedirs(os.path.join(args["out_path"], "visible"))
 
@@ -33,6 +34,9 @@ if __name__ == "__main__":
 
     images = filter(lambda f: f.endswith(".jpg"), os.listdir(args["in_path"]))
     for image in images:
-        thermal, visible = extract_image(flir, os.path.join(args["in_path"], image), args["verbose"])
-        imsave(os.path.join(args["out_path"], "thermal", image), thermal)
-        imsave(os.path.join(args["out_path"], "visible", image), visible)
+        try:
+            thermal, visible = extract_image(flir, os.path.join(args["in_path"], image), args["verbose"])
+            imsave(os.path.join(args["out_path"], "thermal", image), thermal)
+            imsave(os.path.join(args["out_path"], "visible", image), visible)
+        except:
+            print("Could not process image!")

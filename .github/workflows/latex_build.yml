@@ -23,3 +23,9 @@ jobs:
       run: |
         cd dissertation
         pdflatex l4proj.tex
+    - name: Upload dissertation artifact
+      uses: actions/upload-artifact@master
+      with:
+        name: latest dissertation pdf
+        path: dissertation/l4proj.pdf
+

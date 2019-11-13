@@ -98,6 +98,15 @@
 * *0.5 hours* 5th supervisor meeting
 * *3.0 hours* Work on YOLO activation function
 
+## Week 7
+
+### 12 Nov 2019
+* *3.0 hours* Classification task with Pytorch
+* *3.0 hours* Started investigating FLIR One calibration 
+
+### 13 Nov 2019
+* *1.0 hour* Investiaged FLIR One calibration
+* *1.0 hour* Dissertation download link
 
 
 

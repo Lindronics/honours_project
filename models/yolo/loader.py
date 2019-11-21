@@ -1,7 +1,7 @@
 """
 Functionality for creating a YOLO v3 network.
 Includes loading and creating the modules.
-Inspired by https://blog.paperspace.com/how-to-implement-a-yolo-v3-object-detector-from-scratch-in-pytorch-part-2/
+Based on https://blog.paperspace.com/how-to-implement-a-yolo-v3-object-detector-from-scratch-in-pytorch-part-2/
 """
 
 from typing import Dict, Tuple
@@ -177,8 +177,7 @@ class NetCreator:
                                 
     def create_modules(self) -> Tuple[Dict, nn.ModuleList]:
         """ Creates all modules """
-
-        net_info = self.blocks[0]      
+   
         module_list = nn.ModuleList()
         self.prev_filters = 3
         self.output_filters = []
@@ -192,4 +191,4 @@ class NetCreator:
             self.prev_filters = self.filters
             self.output_filters.append(self.filters)
 
-        return net_info, module_list
+        return self.blocks, module_list

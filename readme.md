@@ -10,3 +10,7 @@
 The goal of this project will be to develop a CNN-based model for classification of multispectral data consisting of visible light and thermal images.
 
 The desired application is pedestrian detection at day- and nighttime. An Android mobile application for real-time application of the developed model is an optional step for the second half of the project.
+
+### Latest work
+
+* *14/11/2019* [Aligning the FLIR One sensor output (data hygiene)](https://github.com/Lindronics/honours_project/blob/master/notebooks/flir_one/flir_one_calibration.ipynb) 

@@ -148,3 +148,8 @@
 * *2.5 hours* Detection research
 * *1.5 hour* Investigated FLIR One calibration depending on rotation
 * *1.5 hours* Hands classification
+
+### 22 Nov 2019
+
+* *0.5 hours* 7th supervisor meeting
+* *4.0 hours* Worked on Android app

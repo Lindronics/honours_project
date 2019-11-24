@@ -13,8 +13,13 @@ class YOLO:
         self.conv1 = self.conv_layer(1, self.x, filters=32, kernel_size=1, stride=1, pad=True)
         self.conv2 = self.conv_layer(2, self.conv1, filters=64, kernel_size=3, stride=2, pad=True)
         self.ups1 = self.upsample_layer(3, self.conv2, stride=2)
+        self.short1 = self.shortcut(4, self.ups1, )
 
     def conv_layer(self, idx, x, filters, kernel_size, stride, pad=False, batch_normalize=False, train=False):
+        """ Convolutional layer
+
+        Performs a standard 2D convolution on input x.
+        """
 
         # Randomly initialize filter weights
         channels = x.get_shape()[3]
@@ -40,8 +45,23 @@ class YOLO:
         return x
 
     def upsample_layer(self, idx, x, stride):
+        """ Upsampling layer
+
+        Upsamples the input x by factor of stride
+        """
         new_size = tf.constant(x.get_shape()[1:3], dtype="int32") // stride
-        x = tf.image.resize(x, size=new_size, method="nearest", name=f"{idx}_upsample")
+        x = tf.image.resize(x, size=new_size, method="bilinear", name=f"{idx}_upsample")
+        return x
+
+    def route(self, idx, start, end):
+        pass
+
+    def shortcut(self, idx, x, previous):
+        """ Shortcut layer
+
+        Adds the feature maps of x and previous
+        """
+        x = tf.add(x, previous)
         return x
 
 t = YOLO()

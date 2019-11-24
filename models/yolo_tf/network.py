@@ -33,22 +33,22 @@ class YOLO:
         return blocks
 
 
-    # def network(self, debug=False):
-    #     self.x = tf.compat.v1.placeholder('float32', [None, 448, 448, 3])
-    #     layers = [self.x]
-    #     layers.append(self.conv_layer(1, layers[0], filters=32, kernel_size=1, stride=1, pad=True))
-    #     layers.append(self.conv_layer(2, layers[1], filters=32, kernel_size=1, stride=1, pad=True))
-    #     layers.append(self.shortcut(3, layers[2], layers[1]))
-    #     layers.append(self.conv_layer(4, layers[3], filters=32, kernel_size=1, stride=1, pad=True))
-    #     layers.append(self.conv_layer(5, layers[4], filters=32, kernel_size=1, stride=1, pad=True))
-    #     layers.append(self.route(6, layers[4], layers[5]))
-    #     layers.append(self.conv_layer(7, layers[6], filters=32, kernel_size=1, stride=1, pad=True))
-    #     layers.append(self.conv_layer(8, layers[7], filters=32, kernel_size=1, stride=1, pad=True))
-    #     layers.append(self.conv_layer(9, layers[8], filters=32, kernel_size=1, stride=1, pad=True))
-    #     layers.append(self.conv_layer(10, layers[9], filters=32, kernel_size=1, stride=1, pad=True))
-    #     layers.append(self.conv_layer(11, layers[10], filters=32, kernel_size=1, stride=1, pad=True))
-    #     self.layers = layers
-    #     return self.layers
+    def network2(self, debug=False):
+        self.x = tf.compat.v1.placeholder('float32', [None, 448, 448, 3])
+        layers = [self.x]
+        layers.append(self.conv_layer(1, layers[0], filters=32, kernel_size=1, stride=1, pad=True))
+        layers.append(self.conv_layer(2, layers[1], filters=32, kernel_size=1, stride=1, pad=True))
+        layers.append(self.shortcut(3, layers[2], layers[1]))
+        layers.append(self.conv_layer(4, layers[3], filters=32, kernel_size=1, stride=1, pad=True))
+        layers.append(self.conv_layer(5, layers[4], filters=32, kernel_size=1, stride=1, pad=True))
+        layers.append(self.route(6, layers[4], layers[5]))
+        layers.append(self.conv_layer(7, layers[6], filters=32, kernel_size=1, stride=1, pad=True))
+        layers.append(self.conv_layer(8, layers[7], filters=32, kernel_size=1, stride=1, pad=True))
+        layers.append(self.conv_layer(9, layers[8], filters=32, kernel_size=1, stride=1, pad=True))
+        layers.append(self.conv_layer(10, layers[9], filters=32, kernel_size=1, stride=1, pad=True))
+        layers.append(self.conv_layer(11, layers[10], filters=32, kernel_size=1, stride=1, pad=True))
+        self.layers = layers
+        return self.layers
 
 
     def network(self, debug=False):
@@ -56,7 +56,10 @@ class YOLO:
         layers = [self.x]
         blocks = self.read_cfg("cfg/yolov3.cfg")
 
-        for idx, block in enumerate(blocks[1:7], 1):
+        # Start off with no detections
+        detections = []
+
+        for idx, block in enumerate(blocks[1:], 1):
             if block["type"] == "convolutional":
                 config = {
                     "batch_normalize": False, # TODO fix this
@@ -95,9 +98,12 @@ class YOLO:
             elif block["type"] == "yolo":
                 if debug:
                     print(f"Adding yolo layer at {idx}")
-                layers.append([])
+                yolo_layer = self.yolo_layer(idx, layers[idx-1])
+                layers.append(yolo_layer)
+                detections.append(yolo_layer)
         self.layers = layers
-        return self.layers
+        self.detections = tf.concat(detections, 0) # TODO review dimension
+        return self.detections
 
 
     def conv_layer(self, idx, x, filters, kernel_size, stride, pad=False, batch_normalize=False, train=False):
@@ -105,28 +111,30 @@ class YOLO:
 
         Performs a standard 2D convolution on input x.
         """
+        # Designate as one convolutional block for graph visualization
+        with tf.name_scope(f"{idx}_conv") as scope:
 
-        # Randomly initialize filter weights
-        channels = x.get_shape()[3]
-        filter_weights = tf.Variable(tf.random.truncated_normal([kernel_size, kernel_size, channels, filters], stddev=0.1), trainable=train, name=f"{idx}_conv_weights")
+            # Randomly initialize filter weights
+            channels = x.get_shape()[3]
+            filter_weights = tf.Variable(tf.random.truncated_normal([kernel_size, kernel_size, channels, filters], stddev=0.1), trainable=train, name=f"{idx}_conv_weights")
 
-        # Pad tensor if necessary
-        if pad:
-            padding_size = kernel_size // 2
-            padding = tf.constant([[0, 0], [padding_size, padding_size], [padding_size, padding_size], [0, 0]])
-            x = tf.pad(x, padding)
+            # Pad tensor if necessary
+            if pad:
+                padding_size = kernel_size // 2
+                padding = tf.constant([[0, 0], [padding_size, padding_size], [padding_size, padding_size], [0, 0]])
+                x = tf.pad(x, padding)
 
-        # Convolutional layer
-        x =  nn.conv2d(x, filter_weights, [1, stride, stride, 1], padding="VALID")
+            # Convolutional layer
+            x =  nn.conv2d(x, filter_weights, [1, stride, stride, 1], padding="VALID")
 
-        # Normalization or bias
-        if batch_normalize:
-            x = nn.batch_normalization(x, name=f"{idx}_conv_normalized")
-        else:
-            biases = tf.Variable(tf.constant(0.1, shape=[filters]), trainable=train, name=f"{idx}_conv_bias")
-            x = tf.add(x, biases, name=f"{idx}_conv_biased")
+            # Normalization or bias
+            if batch_normalize:
+                x = nn.batch_normalization(x, name=f"{idx}_conv_normalized")
+            else:
+                biases = tf.Variable(tf.constant(0.1, shape=[filters]), trainable=train, name=f"{idx}_conv_bias")
+                x = tf.add(x, biases, name=f"{idx}_conv_biased")
 
-        x = nn.leaky_relu(x)
+            x = nn.leaky_relu(x, name=scope)
         return x
 
 
@@ -160,6 +168,16 @@ class YOLO:
         Adds the feature maps of a and b
         """
         return tf.add(a, b, name=f"{idx}_shortcut")
+
+
+    def yolo_layer(self, idx, x, masks=None, anchors=None):
+        """ Creates the YOLO layer from given config """
+        # anchors = [anchors[i] for i in masks]
+
+        # detection = DetectionLayer(anchors)
+        # TODO implement detection transformation
+
+        return tf.keras.backend.flatten(x)
 
 
 tf.compat.v1.disable_eager_execution()

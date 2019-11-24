@@ -8,62 +8,20 @@ from tensorflow import nn
 
 class YOLO:
 
-    def read_cfg(self, fname: str):
-        """ Reads and parses yolo v3 config file """
+    def __init__(self, config_path, debug=False):
+        self.blocks = self.read_cfg(config_path)
 
-        with open(fname, "r") as f:
-            lines = f.readlines()
-            lines = [x.strip() for x in lines if x.strip() and x[0] != "#"]
-
-        
-        current_block = {}
-        blocks = []
-        
-        for line in lines:
-            if line[0] == "[":       
-                if len(current_block) != 0:
-                    blocks.append(current_block)
-                    current_block = {}
-                current_block["type"] = line[1:-1].strip()     
-            else:
-                key, value = line.split("=") 
-                current_block[key.strip()] = value.strip()
-
-        blocks.append(current_block)
-        return blocks
-
-
-    def network2(self, debug=False):
         self.x = tf.compat.v1.placeholder('float32', [None, 448, 448, 3])
         layers = [self.x]
-        layers.append(self.conv_layer(1, layers[0], filters=32, kernel_size=1, stride=1, pad=True))
-        layers.append(self.conv_layer(2, layers[1], filters=32, kernel_size=1, stride=1, pad=True))
-        layers.append(self.shortcut(3, layers[2], layers[1]))
-        layers.append(self.conv_layer(4, layers[3], filters=32, kernel_size=1, stride=1, pad=True))
-        layers.append(self.conv_layer(5, layers[4], filters=32, kernel_size=1, stride=1, pad=True))
-        layers.append(self.route(6, layers[4], layers[5]))
-        layers.append(self.conv_layer(7, layers[6], filters=32, kernel_size=1, stride=1, pad=True))
-        layers.append(self.conv_layer(8, layers[7], filters=32, kernel_size=1, stride=1, pad=True))
-        layers.append(self.conv_layer(9, layers[8], filters=32, kernel_size=1, stride=1, pad=True))
-        layers.append(self.conv_layer(10, layers[9], filters=32, kernel_size=1, stride=1, pad=True))
-        layers.append(self.conv_layer(11, layers[10], filters=32, kernel_size=1, stride=1, pad=True))
-        self.layers = layers
-        return self.layers
-
-
-    def network(self, debug=False):
-        self.x = tf.compat.v1.placeholder('float32', [None, 448, 448, 3])
-        layers = [self.x]
-        blocks = self.read_cfg("cfg/yolov3.cfg")
 
         # Net info
-        self.input_dimension = int(blocks[0]["height"])
-        self.channels = int(blocks[0]["channels"])
+        self.input_dimension = int(self.blocks[0]["height"])
+        self.channels = int(self.blocks[0]["channels"])
 
         # Start off with no detections
         detections = []
 
-        for idx, block in enumerate(blocks[1:], 1):
+        for idx, block in enumerate(self.blocks[1:], 1):
             if block["type"] == "convolutional":
                 config = {
                     "batch_normalize": False, # TODO fix this
@@ -112,7 +70,7 @@ class YOLO:
                 detections.append(yolo_layer)
         self.layers = layers
         self.detections = tf.concat(detections, 3) # TODO review dimension
-        return self.detections
+        # return self.detections
 
 
     def conv_layer(self, idx, x, filters, kernel_size, stride, pad=False, batch_normalize=False, train=False):
@@ -221,6 +179,29 @@ class YOLO:
             return tf.concat([pred_xywh, pred_conf, pred_prob], axis=-1, name=scope)
 
 
+    def read_cfg(self, fname: str):
+        """ Reads and parses yolo v3 config file """
+
+        with open(fname, "r") as f:
+            lines = f.readlines()
+            lines = [x.strip() for x in lines if x.strip() and x[0] != "#"]
+
+        
+        current_block = {}
+        blocks = []
+        
+        for line in lines:
+            if line[0] == "[":       
+                if len(current_block) != 0:
+                    blocks.append(current_block)
+                    current_block = {}
+                current_block["type"] = line[1:-1].strip()     
+            else:
+                key, value = line.split("=") 
+                current_block[key.strip()] = value.strip()
+
+        blocks.append(current_block)
+        return blocks
 
 
 tf.compat.v1.disable_eager_execution()
@@ -228,8 +209,8 @@ tf.compat.v1.disable_eager_execution()
 
 
 with tf.Session() as sess:
-    t = YOLO()
-    t.network(debug=True)
+    t = YOLO("cfg/yolov3.cfg")
+    # t.network(debug=True)
     writer = tf.summary.FileWriter("logs/func", sess.graph)
-    # print(sess.run(tf.random.uniform([None, 448, 448, 3])))
+    print(sess.run(tf.random.uniform([1, 448, 448, 3])))
     writer.close()

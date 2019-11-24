@@ -56,6 +56,10 @@ class YOLO:
         layers = [self.x]
         blocks = self.read_cfg("cfg/yolov3.cfg")
 
+        # Net info
+        self.input_dimension = int(blocks[0]["height"])
+        self.channels = int(blocks[0]["channels"])
+
         # Start off with no detections
         detections = []
 
@@ -96,13 +100,18 @@ class YOLO:
                 layers.append(self.shortcut(idx, layers[idx-1], layers[idx+int(block["from"])]))
 
             elif block["type"] == "yolo":
+                anchors = [x.split(",") for x in block["anchors"].split(",  ")]
+                config = {
+                    "num_classes": int(block["num"]),
+                    "anchors": [[int(x) for x in anchor] for anchor in anchors],
+                }
                 if debug:
                     print(f"Adding yolo layer at {idx}")
-                yolo_layer = self.yolo_layer(idx, layers[idx-1])
+                yolo_layer = self.yolo_layer(idx, layers[idx-1], **config)
                 layers.append(yolo_layer)
                 detections.append(yolo_layer)
         self.layers = layers
-        self.detections = tf.concat(detections, 0) # TODO review dimension
+        self.detections = tf.concat(detections, 3) # TODO review dimension
         return self.detections
 
 
@@ -170,14 +179,48 @@ class YOLO:
         return tf.add(a, b, name=f"{idx}_shortcut")
 
 
-    def yolo_layer(self, idx, x, masks=None, anchors=None):
-        """ Creates the YOLO layer from given config """
-        # anchors = [anchors[i] for i in masks]
+    def yolo_layer(self, idx, x, num_classes, anchors):
+        """ Creates a YOLO layer
 
-        # detection = DetectionLayer(anchors)
-        # TODO implement detection transformation
+        The YOLO layer decodes the convolutional output tensor
+        into a tensor containing a list of detections.
 
-        return tf.keras.backend.flatten(x)
+        Taken from https://github.com/YunYang1994/tensorflow-yolov3/blob/master/core/yolov3.py
+        TODO: rewrite this
+        """
+
+        with tf.name_scope(f"{idx}_yolo") as scope:
+
+            conv_shape       = tf.shape(x)
+            stride           = tf.cast(self.input_dimension // conv_shape[2], tf.float32)
+            batch_size       = conv_shape[0]
+            output_size      = conv_shape[1]
+            anchor_per_scale = len(anchors)
+
+            x = tf.reshape(x, (batch_size, output_size, output_size, anchor_per_scale, 5 + num_classes))
+
+            conv_raw_dxdy = x[:, :, :, :, 0:2]
+            conv_raw_dwdh = x[:, :, :, :, 2:4]
+            conv_raw_conf = x[:, :, :, :, 4:5]
+            conv_raw_prob = x[:, :, :, :, 5: ]
+
+            y = tf.tile(tf.range(output_size, dtype=tf.int32)[:, tf.newaxis], [1, output_size])
+            x = tf.tile(tf.range(output_size, dtype=tf.int32)[tf.newaxis, :], [output_size, 1])
+
+            xy_grid = tf.concat([x[:, :, tf.newaxis], y[:, :, tf.newaxis]], axis=-1)
+            xy_grid = tf.tile(xy_grid[tf.newaxis, :, :, tf.newaxis, :], [batch_size, 1, 1, anchor_per_scale, 1])
+            xy_grid = tf.cast(xy_grid, tf.float32)
+
+            pred_xy = (tf.sigmoid(conv_raw_dxdy) + xy_grid) * stride
+            pred_wh = (tf.exp(conv_raw_dwdh) * anchors) * stride
+            pred_xywh = tf.concat([pred_xy, pred_wh], axis=-1)
+
+            pred_conf = tf.sigmoid(conv_raw_conf)
+            pred_prob = tf.sigmoid(conv_raw_prob)
+
+            return tf.concat([pred_xywh, pred_conf, pred_prob], axis=-1, name=scope)
+
+
 
 
 tf.compat.v1.disable_eager_execution()

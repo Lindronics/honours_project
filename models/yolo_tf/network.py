@@ -3,7 +3,7 @@ import numpy as np
 import tensorflow as tf
 from tensorflow import nn
 
-from loader import read_cfg
+# from loader import read_cfg
 
 
 class YOLO:
@@ -12,6 +12,7 @@ class YOLO:
         self.x = tf.Variable(tf.zeros(shape=[1, 448, 448, 3]))
         self.conv1 = self.conv_layer(1, self.x, filters=32, kernel_size=1, stride=1, pad=True)
         self.conv2 = self.conv_layer(2, self.conv1, filters=64, kernel_size=3, stride=2, pad=True)
+        self.ups1 = self.upsample_layer(3, self.conv2, stride=2)
 
     def conv_layer(self, idx, x, filters, kernel_size, stride, pad=False, batch_normalize=False, train=False):
 
@@ -30,12 +31,17 @@ class YOLO:
 
         # Normalization or bias
         if batch_normalize:
-            x = nn.batch_normalization(x, name=str(idx) + '_conv')
+            x = nn.batch_normalization(x, name=f"{idx}_conv_normalized")
         else:
             biases = tf.Variable(tf.constant(0.1, shape=[filters]), trainable=train)
-            x = tf.add(x, biases, name=str(idx) + '_conv_biased')
+            x = tf.add(x, biases, name=f"{idx}_conv_biased")
 
         x = nn.leaky_relu(x)
+        return x
+
+    def upsample_layer(self, idx, x, stride):
+        new_size = tf.constant(x.get_shape()[1:3], dtype="int32") // stride
+        x = tf.image.resize(x, size=new_size, method="nearest", name=f"{idx}_upsample")
         return x
 
 t = YOLO()

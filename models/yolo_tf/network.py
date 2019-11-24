@@ -53,16 +53,25 @@ class YOLO:
         x = tf.image.resize(x, size=new_size, method="bilinear", name=f"{idx}_upsample")
         return x
 
-    def route(self, idx, start, end):
-        pass
+    def route(self, idx, a, b=None):
+        """ Route layer
 
-    def shortcut(self, idx, x, previous):
+        Concatenates feature maps of two layers a and b
+        """
+        
+        # If end is defined, return concatenated feature maps
+        if b:
+            return tf.concat([a, b], axis=3, name=f"{idx}_route") # TODO verify dimension (channel)
+
+        # Else, just return output of start
+        return a
+
+    def shortcut(self, idx, a, b):
         """ Shortcut layer
 
-        Adds the feature maps of x and previous
+        Adds the feature maps of a and b
         """
-        x = tf.add(x, previous)
-        return x
+        return tf.add(a, b, name=f"{idx}_shortcut")
 
 t = YOLO()
 t.network()

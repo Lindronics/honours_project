@@ -153,3 +153,13 @@
 
 * *0.5 hours* 7th supervisor meeting
 * *4.0 hours* Worked on Android app
+
+### 24 Nov 2019
+
+* *6.0 hours* NN in tensorflow
+
+## Week 9
+
+### 29 November 2019
+
+* *0.5 hours* 8th supervisor meeting

@@ -163,3 +163,11 @@
 ### 29 November 2019
 
 * *0.5 hours* 8th supervisor meeting
+
+## Week 10
+
+## Week 11
+
+### 13 December 2019
+
+* *6.0 hours* Refactored and improved Android app. Tensorflow integration should be possible now.

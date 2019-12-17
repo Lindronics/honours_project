@@ -1,0 +1,79 @@
+    
+\documentclass[11pt]{article}
+\usepackage{times}
+\usepackage{fullpage}
+    
+\title{
+    Deep Learning for Hyperspectral Image Classification \\
+    \large{Status report}
+}
+\author{Niklas Lindorfer - 2265846L}
+
+\begin{document}
+\maketitle
+
+
+\section{Status report}
+
+\subsection{Proposal}\label{proposal}
+
+\subsubsection{Motivation}\label{motivation}
+
+Recent technological advances have enabled the development of increasingly sophisticated deep learning models, including convolutional neural networks (CNNs). 
+CNNs are able to perform increasingly complex tasks such as classification and object detection on images.
+
+Hyperspectral/Multispectral images contain more than 3 (RGB) colour channels, and thus usually cover a larger range of wavelengths. As certain materials and objects have different properties under visible light and infrared, it is possible that the additional information gathered by a multispectral sensor can help improve performance of deep learning models.
+
+The far infrared (FIR) waveband captures thermal properties of objects. Possible applications include material classification, pedestrian detection and animal classification. Being able to deploy such a model on a mobile edge device could be beneficial for any situation in which portability is important and limited computational power is available. Examples are danger detection for self-driving cars or animal classification on mobile devices.
+
+\subsubsection{Aims}\label{aims}
+
+This project will have the following aims.
+
+\begin{enumerate}
+    \item Identify a possible application of multispectral imaging with a deep learning model. Ideally, the application should benefit from both technologies.
+    \item Collect a dataset using the provided FLIR One Pro camera. Verify data hygiene (see \ref{progress}) and create a CNN-based model for regression, classification or detection based on the chosen application.
+    \item Evaluate the performance of the model. Verify whether adding the FIR band to the RGB bands yields an increase in classification performance. Compare different feature fusion techniques (early fusion vs late fusion). Test computational performance and generalisability.
+    \item Deploy the model to a mobile device. Evaluate real-time performance.
+\end{enumerate}
+\subsection{Progress}\label{progress}
+
+\begin{itemize}
+    \item Reading was conducted to get insights into thermal imaging applications, deep learning strategies, and CNN architectures (particularly object detection architectures, such as R-CNN or YOLO).
+    \item Test models were created with off-the-shelf datasets to practice designing CNNs.
+    \item The design of an object detection network (YOLO architecture) was attempted. Whether it will be used depends on the final use case.
+    \item The FLIR One Pro camera can take parallel RGB and FIR images. These images seem to not be perfectly aligned. This is problematic as it can make it harder to train a CNN. After some investigation, a linear regression model was trained to determine the affine transformation needed to align the two images.
+    \item Further investigation might be necessary to determine how this affine transformation can be decomposed into translation, scaling, shearing and rotation.
+    \item An Android mobile application for the FLIR One camera has been built. While not finished, it already supports the following features.
+    \item The application has the ability to aquire video footage from the FLIR One camera and save the frames as PNG files to phone storage. This will be immensely helpful for data collection, as no script has to be run to extract RGB and FIR data from the images. This was necessary when using the stock FLIR One app.
+    \item The application uses the TensorFlow Lite Java API. It can perform binary or multi-class classification tasks in real-time, using a FLIR One camera.
+    \item A small test dataset of a person was gathered using the mobile app. This dataset was used to train a simple CNN (3 convolutional and 2 fully-connected layers) to classify person from not person. The model has been successfully deployed to the mobile app and can be used in real-time. The purpose of this model was testing the mobile application. Thus, it does not generalize well. Aligning the RGB and FIR images as outlined above has been neglected for now.
+\end{itemize}
+
+\subsection{Problems and risks}\label{problems-and-risks}
+
+\subsubsection{Problems}\label{problems}
+
+It was necessary to conduct a lot of reading and research about deep learning, as it has not been part of any of my previous modules. Familiarizing myself with deep learning libraries such as TensorFlow has been challenging.
+
+Furthermore, learning about the capabilities of thermal imaging has been difficult. Being able to work with the FLIR One camera directly has been very helpful so far.
+
+\subsubsection{Risks}\label{risks}
+
+Finding a suitable application that does fit the scope of the project is proving to be a difficult task. 
+Applications that rely on object detection will be much more challenging than classification, as data labelling will be more time-consuming and the corresponding network architectures are much more complex.
+
+A decision on a concrete problem to work on will have to be made soon. Despite all preparatory work, there should be enough time left to work on the concrete problem and evaluation.
+
+\subsection{Plan}\label{plan}
+
+\begin{itemize}
+    \item \textbf{January} Pick a concrete application/problem to work on and evaluate. Collect a suitable dataset and verify data integrity/hygiene. Design first deep learning model. 
+    \item \textbf{February} Compare performance of different models. Compare RGB-only model with multispectral model. Deploy model to mobile device.
+    \item \textbf{March} Finish evaluation and write dissertation.
+\end{itemize}
+
+
+    
+    
+    \end{document}

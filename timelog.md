@@ -171,3 +171,16 @@
 ### 13 December 2019
 
 * *6.0 hours* Refactored and improved Android app. Tensorflow integration should be possible now.
+
+### 14 December 2019
+
+* *1.5 hours* Took test dataset and created model to test on mobile
+* *7.5 hours* Started adding Tensorflow Lite to mobile app
+
+### 15 December 2019
+
+* *5.5 hours* Worked on Tensorflow Lite integration of mobile app- fixed bugs and refactored image pre-processing
+
+### 16 December 2019
+
+* *4.5 hours* Mobile app can now use test model to classify people

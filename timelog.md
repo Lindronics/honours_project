@@ -184,3 +184,12 @@
 ### 16 December 2019
 
 * *4.5 hours* Mobile app can now use test model to classify people
+
+### 17 December 2019
+
+* *2.5 hours* Some minor tweaking to app
+
+### 18 December 2019
+
+* *4.0 hours* Android app now supports affine transformation of input images
+* *1.0 hour* Test model now assumes previous affine transformation

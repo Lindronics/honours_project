@@ -14,7 +14,7 @@ from tensorflow.keras.losses import categorical_crossentropy, binary_crossentrop
 from model import get_model, get_simple_model
 
 
-def get_data(data_path="../../data/person"):
+def get_data(data_path="../../data/person", transformation=None):
 
     metadata_path = os.path.join(data_path, "metadata.json")
     with open(metadata_path, "r") as f:
@@ -32,6 +32,15 @@ def get_data(data_path="../../data/person"):
         fir = cv2.imread(os.path.join(fir_dir, "fir_" + path)) / 255
         rgb = cv2.imread(os.path.join(rgb_dir, "rgb_" + path)) / 255
 
+        if transformation:
+            with open(transformation, "r") as f:
+                lines = f.readlines()[1:]
+            lines = [l.split(",") for l in lines]
+            trans_matrix = np.array(lines, dtype=np.float32)
+            rgb = cv2.resize(rgb, (fir.shape[1], fir.shape[0]))
+            rgb = cv2.warpAffine(rgb, trans_matrix, (fir.shape[1], fir.shape[0]))
+
+
         fir = np.mean(fir, 2)
         fir = cv2.resize(fir, (240, 320))
         rgb = cv2.resize(rgb, (fir.shape[1], fir.shape[0]))
@@ -48,7 +57,9 @@ if __name__ == "__main__":
 
     classes = ["nothing", "human"]
     
-    images, labels = get_data()
+    images, labels = get_data(transformation="transformation.txt")
+    # images, labels = get_data()
+
     # enc = OneHotEncoder(sparse=False)
     # labels = enc.fit_transform(labels[:,None])
 

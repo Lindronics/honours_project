@@ -1,9 +1,9 @@
 import tensorflow as tf
 import layers
 
-def darknet(x):
+def darknet(inputs):
 
-    with tf.variable_scope("darknet"):
+    with tf.compat.v1.variable_scope("darknet"):
 
         inputs = layers.conv_layer(name="darknet_conv_0", inputs=inputs, filters=32, kernel_size=3)
         inputs = layers.conv_layer(name="darknet_conv_1", inputs=inputs, filters=64, kernel_size=3, downsample=True)
@@ -22,14 +22,16 @@ def darknet(x):
         
         
         for i in range(8):
-            inputs, darknet_route_1 = layers.residual_block(f"residual_{i + 3}", inputs, num_filters=128)
+            inputs = layers.residual_block(f"residual_{i + 3}", inputs, num_filters=128)
         
+        darknet_route_1 = inputs
         inputs = layers.conv_layer(name="darknet_conv_4", inputs=inputs, filters=512, kernel_size=3, downsample=True)
 
 
         for i in range(8):
-            inputs, darknet_route_2 = layers.residual_block(f"residual_{i + 11}", inputs, num_filters=256)
+            inputs = layers.residual_block(f"residual_{i + 11}", inputs, num_filters=256)
 
+        darknet_route_2 = inputs
         inputs = layers.conv_layer(name="darknet_conv_5", inputs=inputs, filters=1024, kernel_size=3, downsample=True)
 
 

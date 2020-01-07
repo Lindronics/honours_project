@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-def conv_layer(name, inputs, filters: int, kernel_size: int, downsample: bool, batch_normalize: bool, activation: bool=True):
+def conv_layer(name, inputs, filters: int, kernel_size: int, downsample: bool=False, batch_normalize: bool=True, activation: bool=True):
 
     with tf.variable_scope(name):
 

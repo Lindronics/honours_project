@@ -27,10 +27,8 @@ def conv_layer(name, inputs, filters: int, kernel_size: int, downsample: bool=Fa
         
         if activation:
             inputs = tf.nn.leaky_relu(features=inputs, alpha=0.1)
-        
-        shortcut = inputs
 
-        return inputs, shortcut
+        return inputs
 
 
 def shortcut_layer(name: str, shortcut, inputs):
@@ -47,11 +45,12 @@ def residual_block(name, inputs, num_filters: int):
 
     with tf.variable_scope(name):
 
-        inputs, _ = conv_layer(name=name+"_conv_1", inputs=inputs, filters=num_filters, kernel_size=1, downsample=False, batch_norm=True, activation='LEAKY')
-        inputs, _ = conv_layer(name=name+"_conv_2", inputs=inputs, filters=num_filters * 2, kernel_size=3, downsample=False, batch_norm=True, activation='LEAKY')
-        inputs, shortcut = shortcut_layer(name=name+"_shortcut", shortcut=shortcut, inputs=inputs)
+        conv = conv_layer(name=name+"_conv_1", inputs=inputs, filters=num_filters, kernel_size=1, downsample=False, batch_norm=True, activation='LEAKY')
+        conv = conv_layer(name=name+"_conv_2", inputs=inputs, filters=num_filters * 2, kernel_size=3, downsample=False, batch_norm=True, activation='LEAKY')
+        
+        inputs = inputs + conv
 
-    return inputs, shortcut
+    return inputs
 
 def route_layer(name, inputs, route):
 

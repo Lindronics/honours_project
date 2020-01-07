@@ -16,6 +16,7 @@ def get_anchors(anchors_path):
 NUM_CLASSES = 2
 ANCHORS = get_anchors("anchors.txt")
 STRIDES = [8, 16, 32]
+IOU_LOSS_THRESH = 0.5
 
 def yolo_v3(inputs):
 
@@ -153,7 +154,7 @@ def compute_loss(pred, conv, label, bboxes, i=0):
     batch_size  = conv_shape[0]
     output_size = conv_shape[1]
     input_size  = STRIDES[i] * output_size
-    conv = tf.reshape(conv, (batch_size, output_size, output_size, 3, 5 + NUM_CLASS))
+    conv = tf.reshape(conv, (batch_size, output_size, output_size, 3, 5 + NUM_CLASSES))
 
     conv_raw_conf = conv[:, :, :, :, 4:5]
     conv_raw_prob = conv[:, :, :, :, 5:]

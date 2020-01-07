@@ -3,6 +3,7 @@ import numpy as np
 import tensorflow as tf
 
 from yolov3 import *
+from data import Dataset
 
 # Load configuration
 with open("config.json", "r") as f:
@@ -10,14 +11,12 @@ with open("config.json", "r") as f:
 
 TRAIN_CFG = CONFIG["TRAINING"]
 
-WARMUP_STEPS = TRAIN_CFG["WARMUP_EPOCHS"] * STEPS_PER_EPOCH
-TOTAL_STEPS = TRAIN_CFG["EPOCHS"] * STEPS_PER_EPOCH
-
 # Load dataset
-data = Dataset()
+data = Dataset(CONFIG)
 
 STEPS_PER_EPOCH = len(data)
-
+WARMUP_STEPS = TRAIN_CFG["WARMUP_EPOCHS"] * STEPS_PER_EPOCH
+TOTAL_STEPS = TRAIN_CFG["EPOCHS"] * STEPS_PER_EPOCH
 
 # Prepare model
 input_shape = [
@@ -40,7 +39,7 @@ optimizer = tf.keras.optimizers.Adam()
 
 def train_step(X, y, step):
 
-    with tf.GradientTape as tape:
+    with tf.GradientTape() as tape:
 
         # Get predictions
         predictions = model(X, training=True)
@@ -72,8 +71,10 @@ def train_step(X, y, step):
                 * (1 + tf.cos((step - WARMUP_STEPS) / (TOTAL_STEPS - WARMUP_STEPS) * np.pi))
         optimizer.lr.assign(learning_rate.numpy())
 
-
+step = 0
 for epoch in range(TRAIN_CFG["EPOCHS"]):
     for X, y in data:
-        train_step(X, y)
+        train_step(X, y, step)
+        step += 1
     model.save_weights("./yolov3")
+    print(f"Finished training epoch {epoch}.")

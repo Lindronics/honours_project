@@ -2,7 +2,8 @@
     "NETWORK": {
         "STRIDES": [8, 16, 32],
         "ANCHORS_PER_SCALE": 3,
-        "IOU_LOSS_THRESHOLD": 0.5
+        "IOU_LOSS_THRESHOLD": 0.5,
+        "NUM_CLASSES": 80
     },
     "TRAINING": {
         "BATCH_SIZE": 4,

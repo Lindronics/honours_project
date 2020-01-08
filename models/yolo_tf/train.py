@@ -12,7 +12,7 @@ with open("config.json", "r") as f:
 TRAIN_CFG = CONFIG["TRAINING"]
 
 # Load dataset
-data = Dataset(CONFIG)
+data = Dataset(CONFIG, training=True)
 
 STEPS_PER_EPOCH = len(data)
 WARMUP_STEPS = TRAIN_CFG["WARMUP_EPOCHS"] * STEPS_PER_EPOCH
@@ -71,11 +71,12 @@ def train_step(X, y, step):
                 * (1 + tf.cos((step - WARMUP_STEPS) / (TOTAL_STEPS - WARMUP_STEPS) * np.pi))
         optimizer.lr.assign(learning_rate)
 
+        print(f"Step {step}, loss: {total_loss} ({giou_loss}, {confidence_loss}, {probability_loss})")
+
 step = 0
 for epoch in range(TRAIN_CFG["EPOCHS"]):
     for X, y in data:
         train_step(X, y, step)
-        print(f"Step {step}")
         step += 1
     model.save_weights("./yolov3")
     print(f"Finished training epoch {epoch}.")

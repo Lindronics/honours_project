@@ -98,6 +98,7 @@ def decode_predictions(raw_predictions, i):
     return tf.concat([pred_xywh, pred_conf, pred_prob], axis=-1)
 
 def bbox_iou(boxes1, boxes2):
+    """ From https://github.com/YunYang1994/TensorFlow2.0-Examples/tree/master/4-Object_Detection/YOLOV3 """
 
     boxes1_area = boxes1[..., 2] * boxes1[..., 3]
     boxes2_area = boxes2[..., 2] * boxes2[..., 3]
@@ -117,6 +118,7 @@ def bbox_iou(boxes1, boxes2):
     return 1.0 * inter_area / union_area
 
 def bbox_giou(boxes1, boxes2):
+    """ From https://github.com/YunYang1994/TensorFlow2.0-Examples/tree/master/4-Object_Detection/YOLOV3 """
 
     boxes1 = tf.concat([boxes1[..., :2] - boxes1[..., 2:] * 0.5,
                         boxes1[..., :2] + boxes1[..., 2:] * 0.5], axis=-1)
@@ -149,6 +151,7 @@ def bbox_giou(boxes1, boxes2):
 
 
 def compute_loss(pred, conv, label, bboxes, i=0):
+    """ From https://github.com/YunYang1994/TensorFlow2.0-Examples/tree/master/4-Object_Detection/YOLOV3 """
 
     conv_shape  = tf.shape(conv)
     batch_size  = conv_shape[0]

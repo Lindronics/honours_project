@@ -69,12 +69,13 @@ def train_step(X, y, step):
             learning_rate = TRAIN_CFG["LEARNING_RATE_END"] \
                 + 0.5 * (TRAIN_CFG["LEARNING_RATE_INIT"] - TRAIN_CFG["LEARNING_RATE_END"]) \
                 * (1 + tf.cos((step - WARMUP_STEPS) / (TOTAL_STEPS - WARMUP_STEPS) * np.pi))
-        optimizer.lr.assign(learning_rate.numpy())
+        optimizer.lr.assign(learning_rate)
 
 step = 0
 for epoch in range(TRAIN_CFG["EPOCHS"]):
     for X, y in data:
         train_step(X, y, step)
+        print(f"Step {step}")
         step += 1
     model.save_weights("./yolov3")
     print(f"Finished training epoch {epoch}.")

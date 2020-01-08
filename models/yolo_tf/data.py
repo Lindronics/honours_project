@@ -22,13 +22,16 @@ class Dataset():
         image = cv2.imread(image_path) / 255
         h, w, _ = image.shape
         image = cv2.resize(image, (416, 416))
+        image = np.stack([image]*4, axis=0)
 
         # TODO adjust annotations to new scale
 
-        asdf = np.zeros(shape=(1, 1, 52, 52, 3, 7), dtype=np.float32)
-        asdf2 = np.zeros(shape=(1, 1, 52, 52, 3, 3), dtype=np.float32)
+        asdfl = np.zeros(shape=(4, 52, 52, 3, 85), dtype=np.float32)
+        asdfm = np.zeros(shape=(4, 26, 26, 3, 85), dtype=np.float32)
+        asdfs = np.zeros(shape=(4, 13, 13, 3, 85), dtype=np.float32)
+        asdf2 = np.zeros(shape=(4, 150, 4), dtype=np.float32)
 
-        return image[None, ...], [[asdf, asdf2], [asdf, asdf2], [asdf, asdf2]]
+        return image, [[asdfl, asdf2], [asdfm, asdf2], [asdfs, asdf2]]
         
 
 with open("config.json", "r") as f:

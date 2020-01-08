@@ -13,7 +13,7 @@ def get_anchors(anchors_path):
     anchors = np.array(anchors.split(','), dtype=np.float32)
     return anchors.reshape(3, 3, 2)
 
-NUM_CLASSES = 2
+NUM_CLASSES = 80
 ANCHORS = get_anchors("anchors.txt")
 STRIDES = [8, 16, 32]
 IOU_LOSS_THRESH = 0.5

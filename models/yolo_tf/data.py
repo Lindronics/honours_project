@@ -47,10 +47,6 @@ class Dataset():
                     "bounding_boxes": bounding_boxes,
                 })
 
-        print(self.paths)
-        print(self.annotations)
-
-
     def __iter__(self):
         return self
 

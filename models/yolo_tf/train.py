@@ -71,7 +71,7 @@ def train_step(X, y, step):
                 * (1 + tf.cos((step - WARMUP_STEPS) / (TOTAL_STEPS - WARMUP_STEPS) * np.pi))
         optimizer.lr.assign(learning_rate)
 
-        print(f"Step {step}, loss: {total_loss} ({giou_loss}, {confidence_loss}, {probability_loss})")
+        print(f"Step {step}, loss: {total_loss} ({giou_loss}, {confidence_loss}, {probability_loss}), learning rate: {learning_rate}")
 
 step = 0
 for epoch in range(TRAIN_CFG["EPOCHS"]):

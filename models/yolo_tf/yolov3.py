@@ -7,16 +7,19 @@ import darknet
 import layers
 
 def get_anchors(anchors_path):
-    '''loads the anchors from a file'''
     with open(anchors_path) as f:
         anchors = f.readline()
     anchors = np.array(anchors.split(','), dtype=np.float32)
     return anchors.reshape(3, 3, 2)
 
-NUM_CLASSES = 80
+# Load configuration
+with open("config.json", "r") as f:
+    CONFIG = json.load(f)
+
 ANCHORS = get_anchors("anchors.txt")
-STRIDES = [8, 16, 32]
-IOU_LOSS_THRESH = 0.5
+NUM_CLASSES = CONFIG["NETWORK"]["NUM_CLASSES"]
+STRIDES = CONFIG["NETWORK"]["STRIDES"]
+IOU_LOSS_THRESH = CONFIG["TRAINING"]["IOU_LOSS_THRESHOLD"]
 
 def yolo_v3(inputs):
 
@@ -141,6 +144,8 @@ def bbox_giou(boxes1, boxes2):
     union_area = boxes1_area + boxes2_area - inter_area
     iou = inter_area / union_area
 
+    tf.print(tf.reduce_mean(tf.reduce_sum(tf.expand_dims(iou, axis=-1), axis=[1,2,3,4])))
+
     enclose_left_up = tf.minimum(boxes1[..., :2], boxes2[..., :2])
     enclose_right_down = tf.maximum(boxes1[..., 2:], boxes2[..., 2:])
     enclose = tf.maximum(enclose_right_down - enclose_left_up, 0.0)
@@ -173,7 +178,7 @@ def compute_loss(pred, conv, label, bboxes, i=0):
     input_size = tf.cast(input_size, tf.float32)
 
     bbox_loss_scale = 2.0 - 1.0 * label_xywh[:, :, :, :, 2:3] * label_xywh[:, :, :, :, 3:4] / (input_size ** 2)
-    giou_loss = respond_bbox * bbox_loss_scale * (1- giou)
+    giou_loss = respond_bbox * bbox_loss_scale * (1 - giou)
 
     iou = bbox_iou(pred_xywh[:, :, :, :, np.newaxis, :], bboxes[:, np.newaxis, np.newaxis, np.newaxis, :, :])
     max_iou = tf.expand_dims(tf.reduce_max(iou, axis=-1), axis=-1)

@@ -2,6 +2,7 @@
 
 import tensorflow as tf
 import numpy as np
+import json
 
 import darknet
 import layers
@@ -143,8 +144,6 @@ def bbox_giou(boxes1, boxes2):
     inter_area = inter_section[..., 0] * inter_section[..., 1]
     union_area = boxes1_area + boxes2_area - inter_area
     iou = inter_area / union_area
-
-    tf.print(tf.reduce_mean(tf.reduce_sum(tf.expand_dims(iou, axis=-1), axis=[1,2,3,4])))
 
     enclose_left_up = tf.minimum(boxes1[..., :2], boxes2[..., :2])
     enclose_right_down = tf.maximum(boxes1[..., 2:], boxes2[..., 2:])

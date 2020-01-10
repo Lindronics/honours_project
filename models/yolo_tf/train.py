@@ -1,9 +1,13 @@
 import json
 import numpy as np
 import tensorflow as tf
+import os
+import shutil
 
 from yolov3 import *
 from data import Dataset
+
+logdir = "./data/log"
 
 # Load configuration
 with open("config.json", "r") as f:
@@ -36,6 +40,9 @@ for i, tensor in enumerate(raw_prediction_tensors):
 model = tf.keras.Model(input_tensor, prediction_tensors)
 optimizer = tf.keras.optimizers.Adam()
 
+if os.path.exists(logdir):
+    shutil.rmtree(logdir)
+writer = tf.summary.create_file_writer(logdir)
 
 def train_step(X, y, step):
 
@@ -72,6 +79,15 @@ def train_step(X, y, step):
         optimizer.lr.assign(learning_rate)
 
         print(f"Step {step}, loss: {total_loss} ({giou_loss}, {confidence_loss}, {probability_loss}), learning rate: {learning_rate}")
+
+        # Write to tensorboard
+        with writer.as_default():
+            tf.summary.scalar("lr", optimizer.lr, step=step)
+            tf.summary.scalar("loss/total_loss", total_loss, step=step)
+            tf.summary.scalar("loss/giou_loss", giou_loss, step=step)
+            tf.summary.scalar("loss/confidence_loss", confidence_loss, step=step)
+            tf.summary.scalar("loss/probability_loss", probability_loss, step=step)
+        writer.flush()
 
 step = 0
 for epoch in range(TRAIN_CFG["EPOCHS"]):

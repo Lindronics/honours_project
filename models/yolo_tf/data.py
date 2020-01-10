@@ -18,7 +18,7 @@ class Dataset():
         self.max_bounding_box_per_scale = 150
         self.anchors = get_anchors("anchors.txt")
 
-        self.load_metadata("yymnist_train.txt")
+        self.load_metadata(config["TRAINING"]["ANNOTATIONS_DIR"])
 
         # For iterator
         self.current_batch = 0

@@ -122,29 +122,47 @@ def bbox_iou(boxes1, boxes2):
     return 1.0 * inter_area / union_area
 
 def bbox_giou(boxes1, boxes2):
-    """ From https://github.com/YunYang1994/TensorFlow2.0-Examples/tree/master/4-Object_Detection/YOLOV3 """
+    """ 
+    From https://github.com/YunYang1994/TensorFlow2.0-Examples/tree/master/4-Object_Detection/YOLOV3 
+    
+    Parameters
+    ----------
+    boxes1: tensor
+        Shape:
+        [batch_size, layer_height, layer_width, channels, 4]
+        4 stems from: x_center, y_center, width, height
+    boxes2: tensor
+        Shape:
+        [batch_size, layer_height, layer_width, channels, 4]
+        4 stems from: x_center, y_center, width, height
+    """
 
-    boxes1 = tf.concat([boxes1[..., :2] - boxes1[..., 2:] * 0.5,
-                        boxes1[..., :2] + boxes1[..., 2:] * 0.5], axis=-1)
-    boxes2 = tf.concat([boxes2[..., :2] - boxes2[..., 2:] * 0.5,
-                        boxes2[..., :2] + boxes2[..., 2:] * 0.5], axis=-1)
+    # Convert bboxes from [x_center, y_center, w, h] to [x_lu, y_lu, x_rd, y_rd]
+    boxes1 = [boxes1[..., :2] - boxes1[..., 2:] * 0.5, boxes1[..., :2] + boxes1[..., 2:] * 0.5]
+    boxes2 = [boxes2[..., :2] - boxes2[..., 2:] * 0.5, boxes2[..., :2] + boxes2[..., 2:] * 0.5]
+    boxes1 = tf.concat(boxes1, axis=-1)
+    boxes2 = tf.concat(boxes2, axis=-1)
 
     boxes1 = tf.concat([tf.minimum(boxes1[..., :2], boxes1[..., 2:]),
                         tf.maximum(boxes1[..., :2], boxes1[..., 2:])], axis=-1)
     boxes2 = tf.concat([tf.minimum(boxes2[..., :2], boxes2[..., 2:]),
                         tf.maximum(boxes2[..., :2], boxes2[..., 2:])], axis=-1)
 
+    # Compute area
     boxes1_area = (boxes1[..., 2] - boxes1[..., 0]) * (boxes1[..., 3] - boxes1[..., 1])
     boxes2_area = (boxes2[..., 2] - boxes2[..., 0]) * (boxes2[..., 3] - boxes2[..., 1])
 
+    # Find enclosing area of both bboxes
     left_up = tf.maximum(boxes1[..., :2], boxes2[..., :2])
     right_down = tf.minimum(boxes1[..., 2:], boxes2[..., 2:])
 
+    # Compute intersection, union, and IOU
     inter_section = tf.maximum(right_down - left_up, 0.0)
     inter_area = inter_section[..., 0] * inter_section[..., 1]
     union_area = boxes1_area + boxes2_area - inter_area
     iou = inter_area / union_area
 
+    # Compute GIOU
     enclose_left_up = tf.minimum(boxes1[..., :2], boxes2[..., :2])
     enclose_right_down = tf.maximum(boxes1[..., 2:], boxes2[..., 2:])
     enclose = tf.maximum(enclose_right_down - enclose_left_up, 0.0)
@@ -197,5 +215,8 @@ def compute_loss(pred, conv, label, bboxes, i=0):
     giou_loss = tf.reduce_mean(tf.reduce_sum(giou_loss, axis=[1,2,3,4]))
     conf_loss = tf.reduce_mean(tf.reduce_sum(conf_loss, axis=[1,2,3,4]))
     prob_loss = tf.reduce_mean(tf.reduce_sum(prob_loss, axis=[1,2,3,4]))
+
+    if tf.math.is_nan(giou_loss):
+        print()
 
     return giou_loss, conf_loss, prob_loss

@@ -193,3 +193,33 @@
 
 * *4.0 hours* Android app now supports affine transformation of input images
 * *1.0 hour* Test model now assumes previous affine transformation
+
+## Week 12
+
+### 06 Jan 2020
+
+* *4.5 hours* Worked on YOLO TF model
+
+### 07 Jan 2020
+
+* *4.0 hours* Worked on YOLO TF model
+
+### 08 Jan 2020
+
+* *5.0 hours* Worked on YOLO TF model- model architecture is complete, many bugs remain
+
+### 09 Jan 2020
+
+* *4.0 hours* Worked on YOLO TF model (data loading)
+
+### 10 Jan 2020
+
+* *5.0 hours* Debugged YOLO TF model
+
+### 11 Jan 2020
+
+* *3.0 hours* Debugged YOLO TF model
+
+## Week 13
+
+* *4.5 hours* Debugged YOLO TF model

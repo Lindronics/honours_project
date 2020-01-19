@@ -35,7 +35,7 @@ def parse_set_annotations(set_):
             if len(annots) == 0:
                 continue
 
-            rgb_path = os.path.join(in_path, "images", set_, subset, item[:-3] + "jpg")
+            rgb_path = os.path.join(in_path, "images", set_, subset, "visible", item[:-3] + "jpg")
             new_annot = [rgb_path]
 
             for line in annots:

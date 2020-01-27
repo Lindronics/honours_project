@@ -1,0 +1,19 @@
+{
+    "NETWORK": {
+        "STRIDES": [8, 16, 32],
+        "ANCHORS_PER_SCALE": 3,
+        "IOU_LOSS_THRESHOLD": 0.5,
+        "NUM_CLASSES": 80
+    },
+    "TRAINING": {
+        "BATCH_SIZE": 4,
+        "INPUT_SIZE": 416,
+        "CHANNELS": 3,
+        "WARMUP_EPOCHS": 2,
+        "EPOCHS": 30,
+        "LEARNING_RATE_INIT": 1e-02,
+        "LEARNING_RATE_END": 1e-06,
+        "IOU_LOSS_THRESHOLD": 0.5,
+        "ANNOTATIONS_DIR": "data/dataset/yymnist_train.txt"
+    }
+}

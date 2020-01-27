@@ -148,3 +148,102 @@
 * *2.5 hours* Detection research
 * *1.5 hour* Investigated FLIR One calibration depending on rotation
 * *1.5 hours* Hands classification
+
+### 22 Nov 2019
+
+* *0.5 hours* 7th supervisor meeting
+* *4.0 hours* Worked on Android app
+
+### 24 Nov 2019
+
+* *6.0 hours* NN in tensorflow
+
+## Week 9
+
+### 29 November 2019
+
+* *0.5 hours* 8th supervisor meeting
+
+## Week 10
+
+## Week 11
+
+### 13 December 2019
+
+* *6.0 hours* Refactored and improved Android app. Tensorflow integration should be possible now.
+
+### 14 December 2019
+
+* *1.5 hours* Took test dataset and created model to test on mobile
+* *7.5 hours* Started adding Tensorflow Lite to mobile app
+
+### 15 December 2019
+
+* *5.5 hours* Worked on Tensorflow Lite integration of mobile app- fixed bugs and refactored image pre-processing
+
+### 16 December 2019
+
+* *4.5 hours* Mobile app can now use test model to classify people
+
+### 17 December 2019
+
+* *2.5 hours* Some minor tweaking to app
+
+### 18 December 2019
+
+* *4.0 hours* Android app now supports affine transformation of input images
+* *1.0 hour* Test model now assumes previous affine transformation
+
+## Week 12
+
+### 06 Jan 2020
+
+* *4.5 hours* Worked on YOLO TF model
+
+### 07 Jan 2020
+
+* *4.0 hours* Worked on YOLO TF model
+
+### 08 Jan 2020
+
+* *5.0 hours* Worked on YOLO TF model- model architecture is complete, many bugs remain
+
+### 09 Jan 2020
+
+* *4.0 hours* Worked on YOLO TF model (data loading)
+
+### 10 Jan 2020
+
+* *5.0 hours* Debugged YOLO TF model
+
+### 11 Jan 2020
+
+* *3.0 hours* Debugged YOLO TF model
+
+## Week 13
+
+### 13 Jan 2020
+
+* *4.5 hours* Debugged YOLO TF model
+
+### 14 Jan 2020
+
+* *1.5 hours* Debugged YOLO TF model
+
+### 15 Jan 2020
+
+* *2.5 hours* Debugged YOLO TF model
+
+### 17 Jan 2020
+
+* *3.5 hours* Debugged YOLO TF model; model is working on MNIST dataset
+
+## Week 14
+
+### 23 Jan 2020
+
+* *2.0 hours* Tried applying YOLO TF model to KAIST dataset (unsatisfactory results)
+
+### 24 Jan 2020
+
+* *4.0 hours* Tried applying YOLO TF model to KAIST dataset.Work will have to be discontinued due to extended problems (unsatisfactory results, difficulty of debugging, lack of resources to train the model for a sufficient number of epochs, difficulty of deploying the model to TF Lite)

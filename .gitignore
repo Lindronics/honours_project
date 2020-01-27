@@ -3,6 +3,8 @@ data/*
 .ipynb_checkpoints
 .vscode
 
+.DS_Store
+
 ## Core latex/pdflatex auxiliary files:
 *.aux
 *.lof
@@ -250,6 +252,6 @@ TSWLatexianTemp*
 
 # generated if using elsarticle.cls
 *.spl
-
 .DS_Store
+models/yolo/__pycache__
 __pycache__

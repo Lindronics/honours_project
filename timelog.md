@@ -247,3 +247,11 @@
 ### 24 Jan 2020
 
 * *4.0 hours* Tried applying YOLO TF model to KAIST dataset.Work will have to be discontinued due to extended problems (unsatisfactory results, difficulty of debugging, lack of resources to train the model for a sufficient number of epochs, difficulty of deploying the model to TF Lite)
+
+### 27 Jan 2020
+
+* *2.0 hours* Worked on implementing the NTG (normalised total gradient) metric to quantify image alignment/registration
+
+### 28 Jan 2020
+
+* *4.0 hours* Attempted other metrics for image alignment. Neither NTG nor any other metrics attempted yield good results.

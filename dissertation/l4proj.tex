@@ -122,7 +122,7 @@ Subsequently, the coordinates of about a dozen reference points were manually de
 
 The effect of applying the resulting transformation to a set of coordinates are shown in Figure \ref{fig:transformation_arrows}.
 
-\begin{figure}[h!]
+\begin{figure}[h]
   \centering
   \begin{subfigure}[h!]{0.45\textwidth}
     \includegraphics[width=\textwidth]{images/registration/transformation_arrows.png}
@@ -133,7 +133,7 @@ The effect of applying the resulting transformation to a set of coordinates are 
   \caption{}
 \end{figure}
 
-\begin{figure}[h!]
+\begin{figure}[h]
   \centering
   \begin{subfigure}[h!]{0.9\textwidth}
     \includegraphics[width=\textwidth]{images/registration/linear_model_alignment.png}
@@ -154,15 +154,21 @@ where $f$ and $f_R$ are the channel images to be compared, $\nabla_l$ represents
 
 In other words, to obtain NTG one computes the sum of the $x$- and $y$-gradients of the difference of the two channels, and normalises the result by dividing over the sum of gradients of the individual channels.
 
-This is based on the assumption that the gradient of the channel difference image becomes sparser as the alignment improves.
+This is based on the assumption that the gradient of the channel difference image becomes sparser as the alignment improves. Figure \ref{fig:gradient_distribution} shows that this is only barely the case for images captured by the FIR camera. This might be due to the fact that the resolution of output FIR files is $640 \times 420$ px, although the actual resolution of the sensor is only $160 \times 120$. Thus, when downsampling the RGB image to $640 \times 420$ px, edges are still much sharper than for the corresponding FIR image. Downsampling both images to the native resolution of the FIR camera yielded much better results, as can be seen in Figure \ref{fig:gradient_distribution_downsampled}.
 
-\begin{figure}[h!]
+\begin{figure}[h]
   \centering
   \begin{subfigure}[h!]{0.45\textwidth}
     \includegraphics[width=\textwidth]{images/registration/gradient_distribution.png}
-    \caption{Distribution of gradients of channel image difference before and after alignment using affine transformation.}
+    \caption{At $640 \times 420$ px (standard resolution of FIR image output)}
     \label{fig:gradient_distribution}
   \end{subfigure}
+  \begin{subfigure}[h!]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{images/registration/gradient_distribution_downsampled.png}
+    \caption{Downsampled to $160 \times 120$ (native resolution of the FIR camera)}
+    \label{fig:gradient_distribution_downsampled}
+  \end{subfigure}
+  \caption{Distribution of gradients of the channel difference image before and after alignment using affine transformation.}
 \end{figure}
 
 

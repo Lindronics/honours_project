@@ -2,10 +2,11 @@
 
 \documentclass{l4proj}
 
-    
+
 %
 % put any additional packages here
 %
+\usepackage{bm}
 
 \begin{document}
 
@@ -104,6 +105,68 @@ How is this problem to be approached, without reference to specific implementati
 What did you do to implement this idea, and what technical achievements did you make?
 
 \section{Aligning the RGB and FIR images}
+
+The images captured by the visible light camera and thermal sensor of the FLIR One Pro are not properly aligned by default. This can have adverse consequences to the classification performance of a machine learning model (XXX citation needed). Thus, an algorithm for properly aligning the images captured by the conventional camera and FIR camera had to be developed. The process of transforming data from different sensors into one coordinate system is commonly referred to as image registration.
+
+On superficial inspection, it is apparent that the FIR sensor appears to have a larger focal length than the RGB camera, and therefore has a narrower field of view. Hence, an attempt was made to manually align the FIR and RGB images by cropping and rescaling the RGB image, effectively "zooming in". This approach yielded moderate results, as can be seen in (XXX).
+
+To obtain a more flexible and generalisable representation, we made use of affine transformations. An affine transformation or affine map can accurately represent a composition of a translation and a linear map (e.g. scaling, rotation and shearing). A transformation $f(\vec{x})$ can be expressed as follows:
+
+\begin{equation}
+  f(\vec{x}) = A \vec{x} + \vec{b},
+\end{equation}
+
+where $\vec{x}$ represents the coordinates of a point to be translated, $A$ is a $2 \times 2$ linear map, and $\vec{b}$ is the translation vector.
+
+Subsequently, the coordinates of about a dozen reference points were manually determined on the RGB and FIR versions of some test images. These coordinates were used as inputs and outputs to train a linear regression model representing the affine transformation required align the RGB image with the FIR image. 
+
+The effect of applying the resulting transformation to a set of coordinates are shown in Figure \ref{fig:transformation_arrows}.
+
+\begin{figure}[h!]
+  \centering
+  \begin{subfigure}[h!]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{images/registration/transformation_arrows.png}
+    \caption{Synthetic image, black on white.}
+    \label{fig:transformation_arrows}
+  \end{subfigure}
+  
+  \caption{}
+\end{figure}
+
+\begin{figure}[h!]
+  \centering
+  \begin{subfigure}[h!]{0.9\textwidth}
+    \includegraphics[width=\textwidth]{images/registration/linear_model_alignment.png}
+    \caption{Synthetic image, black on white.}
+    \label{fig:linear_trans_before_after}
+  \end{subfigure}
+\end{figure}
+
+As can be seen in Figure \ref{fig:linear_trans_before_after}, the the candles on the images now line up. To quantify the accuracy of the alignment, attempts were made to use various metrics for image similarity. This task is difficult, as the properties of objects are vastly different under visible light and far infrared. Therefore, a simple intensity-based metric is unlikely to be robust in this scenario, as local intensities will vary across different channels even if the registration is perfect \citep{myronenko_intensity-based_2010}.
+
+To mitigate this problem \citet{chen_normalized_2018} introduce the Normalized Total Gradient (NTG) metric for multispectral imaging systems, which is defined as follows:
+
+\begin{equation}
+  NTG(f, f_R) = \frac{\sum_l |\nabla_l \{f - f_R\}|}{\sum_l | \nabla_l f | + \sum_l | \nabla_l f_R|},
+\end{equation}
+
+where $f$ and $f_R$ are the channel images to be compared, $\nabla_l$ represents the gradient computation along the direction $l \in \{x, y\}$, and $| \cdot |$ denotes the L1-norm.
+
+In other words, to obtain NTG one computes the sum of the $x$- and $y$-gradients of the difference of the two channels, and normalises the result by dividing over the sum of gradients of the individual channels.
+
+This is based on the assumption that the gradient of the channel difference image becomes sparser as the alignment improves.
+
+\begin{figure}[h!]
+  \centering
+  \begin{subfigure}[h!]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{images/registration/gradient_distribution.png}
+    \caption{Distribution of gradients of channel image difference before and after alignment using affine transformation.}
+    \label{fig:gradient_distribution}
+  \end{subfigure}
+\end{figure}
+
+
+
 
 
 

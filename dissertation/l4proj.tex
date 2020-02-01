@@ -7,6 +7,7 @@
 % put any additional packages here
 %
 \usepackage{bm}
+\usepackage{booktabs}
 
 \begin{document}
 
@@ -104,7 +105,7 @@ How is this problem to be approached, without reference to specific implementati
 \chapter{Implementation}
 What did you do to implement this idea, and what technical achievements did you make?
 
-\section{Aligning the RGB and FIR images}
+\section{Image registration: aligning the RGB and FIR images}
 
 The images captured by the visible light camera and thermal sensor of the FLIR One Pro are not properly aligned by default. This can have adverse consequences to the classification performance of a machine learning model (XXX citation needed). Thus, an algorithm for properly aligning the images captured by the conventional camera and FIR camera had to be developed. The process of transforming data from different sensors into one coordinate system is commonly referred to as image registration.
 
@@ -142,6 +143,8 @@ The effect of applying the resulting transformation to a set of coordinates are 
   \end{subfigure}
 \end{figure}
 
+\subsection{Intensity-based registration metrics}
+
 As can be seen in Figure \ref{fig:linear_trans_before_after}, the the candles on the images now line up. To quantify the accuracy of the alignment, attempts were made to use various metrics for image similarity. This task is difficult, as the properties of objects are vastly different under visible light and far infrared. Therefore, a simple intensity-based metric is unlikely to be robust in this scenario, as local intensities will vary across different channels even if the registration is perfect \citep{myronenko_intensity-based_2010}.
 
 To mitigate this problem \citet{chen_normalized_2018} introduce the Normalized Total Gradient (NTG) metric for multispectral imaging systems, which is defined as follows:
@@ -154,24 +157,43 @@ where $f$ and $f_R$ are the channel images to be compared, $\nabla_l$ represents
 
 In other words, to obtain NTG one computes the sum of the $x$- and $y$-gradients of the difference of the two channels, and normalises the result by dividing over the sum of gradients of the individual channels.
 
-This is based on the assumption that the gradient of the channel difference image becomes sparser as the alignment improves. Figure \ref{fig:gradient_distribution} shows that this is only barely the case for images captured by the FIR camera. This might be due to the fact that the resolution of output FIR files is $640 \times 420$ px, although the actual resolution of the sensor is only $160 \times 120$. Thus, when downsampling the RGB image to $640 \times 420$ px, edges are still much sharper than for the corresponding FIR image. Downsampling both images to the native resolution of the FIR camera yielded much better results, as can be seen in Figure \ref{fig:gradient_distribution_downsampled}.
+The metric is based on the assumption that the gradient of the channel difference image becomes sparser as the alignment improves. Figure \ref{fig:gradient_distribution} shows that this is hardly the case for images captured by the FIR camera, as opposed to the baseline of comparing the red and green channels from the RGB camera.
+
+This might be due to the fact that the resolution of output FIR files is $640 \times 420$ px, although the actual resolution of the sensor is only $160 \times 120$. Thus, when downsampling the RGB image to $640 \times 420$ px, edges are still much sharper than for the corresponding FIR image. Downsampling both images to the native resolution of the FIR camera did not yield better results.
+
+Moreover, an attempt at smoothing both images before calculating the NTG was made by applying the Laplacian of Gaussian (LoG) with $\sigma=2$ to both images. As can be seen in Table \ref{table:registration_ntg}, this approach was not successful either. 
+
+Considering these results, it can be concluded that NTG is not a suitable metric for this particular problem. As the baseline seems to work, it is possible that the properties of the FIR and RGB channels are too different for an intensity-based approach.
 
 \begin{figure}[h]
   \centering
   \begin{subfigure}[h!]{0.45\textwidth}
     \includegraphics[width=\textwidth]{images/registration/gradient_distribution.png}
-    \caption{At $640 \times 420$ px (standard resolution of FIR image output)}
+    \caption{LAB intensity of visible light image vs thermal intensity at $640 \times 420$ px}
     \label{fig:gradient_distribution}
   \end{subfigure}
   \begin{subfigure}[h!]{0.45\textwidth}
-    \includegraphics[width=\textwidth]{images/registration/gradient_distribution_downsampled.png}
-    \caption{Downsampled to $160 \times 120$ (native resolution of the FIR camera)}
-    \label{fig:gradient_distribution_downsampled}
+    \includegraphics[width=\textwidth]{images/registration/gradient_distribution_red_green.png}
+    \caption{Red channel intensity vs green channel intensity at $640 \times 420$ px}
+    \label{fig:gradient_distribution_red_green}
   \end{subfigure}
   \caption{Distribution of gradients of the channel difference image before and after alignment using affine transformation.}
 \end{figure}
 
 
+\begin{table}[]
+  \centering
+  \begin{tabular}{@{}lll@{}}
+  \toprule
+  \textbf{Test configuration}                             & \textbf{Misaligned} & \textbf{Aligned} \\ \midrule
+  LAB intensity of RGB vs FIR (640x480)     & 0.9984              & 0.9987           \\
+  LAB intensity of RGB vs FIR (160x120)    & 0.9974              & 0.9986           \\
+  LAB intensity of RGB vs FIR (after LoG with $\sigma=2$) & 0.9970              & 0.9973           \\
+  (Baseline) Red vs green channels of RGB (160x120)                  & 0.6245              & 0.0303           \\ \bottomrule
+  \end{tabular}
+  \caption{Normalized Total Gradient before and after channel alignment}
+  \label{table:registration_ntg}
+\end{table}
 
 
 

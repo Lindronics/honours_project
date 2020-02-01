@@ -254,4 +254,13 @@
 
 ### 28 Jan 2020
 
-* *4.0 hours* Attempted other metrics for image alignment. Neither NTG nor any other metrics attempted yield good results.
+* *3.0 hours* Attempted other metrics for image alignment. Neither NTG nor any other metrics attempted yield good results.
+* *1.0 hour* Started writing dissertation chapter about image alignment
+
+### 31 Jan 2020
+
+* *0.5 hours* 9th supervisor meeting
+
+### 01 Feb 2020
+
+* *1.0 hours* Added evidence and conclusion to dissertation cahpter about image alignment

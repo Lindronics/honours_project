@@ -264,3 +264,7 @@
 ### 01 Feb 2020
 
 * *1.0 hours* Added evidence and conclusion to dissertation cahpter about image alignment
+
+### 02 Feb 2020
+
+* *6.0 hours* Created autoencoder to predict the FIR images of humans from the grayscale version of the RGB images. The model is working very well with a dataset consisting of 2 people.

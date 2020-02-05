@@ -268,3 +268,12 @@
 ### 02 Feb 2020
 
 * *6.0 hours* Created autoencoder to predict the FIR images of humans from the grayscale version of the RGB images. The model is working very well with a dataset consisting of 2 people.
+
+### 03 Feb 2020
+
+* *4.0 hours* Tried improving autoencoder by adding more convolutional layers. This was not successful.
+* *1.5 hours* Worked on visualization of autoencoder architecture
+
+### 04 Feb 2020
+
+* *5.0 hours* Implemented a texture-based image registration metric

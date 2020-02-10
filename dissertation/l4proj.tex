@@ -89,8 +89,30 @@ Why should the reader care about what are you doing and what are you actually do
 \chapter{Background}
 What did other people do, and how is it relevant to what you want to do?
 
-\section{Multispectral imaging}
+\section{Electromagnetic radiation}
 
+Visible light and infrared are forms of electromagnetic radiation. Visible light (VIS) has wavelengths roughly between $400$ and $700 nm$. The hue of visible light is determined by its wavelength. Colours as perceived by human vision are the result of a spectral distribution of wavelengths of the light than enters the eye. 
+
+Infrared light (IR), with wavelengths between $700 nm$ and $1 mm$, is generally invisible to humans. It is commonly subdivided into near infrared (NIR), short-wavelength infrared (SWIR), medium-wavelength infrared (MWIR), long-wavelength infrared (LWIR), and far infrared (FIR), as can be seen in Figure \ref{fig:em_spectrum}.
+
+\begin{figure}[h]
+  \centering
+  \begin{subfigure}[h!]{0.9\textwidth}
+    \includegraphics[width=\textwidth]{images/EM_spectrum.png}
+  \end{subfigure}
+  \caption{The electromagnetic spectrum with detailled view of visible light and infrared. IR subdivisions modelled after \citet[p. 28]{byrnes_unexploded_2008}.}
+  \label{fig:em_spectrum}
+\end{figure}
+
+
+\section{Spectral imaging}
+
+Spectral images combine spatial and spectral information in a 3-D data structure where the dimensions correspond to height, width and waveband. 
+A distinction is made between hyperspectral and multispectral imaging techniques. 
+
+If an image is acquired at many (tens or hundreds) regularly sampled wavebands, one speaks of a hyperspectral image, sometimes referred to as a hypercube. Hyperspectral images have many powerful applications, including agriculture and food quality \citep{dale_hyperspectral_2013} and medical applications \citep{lu_medical_2014}. However, capturing hyperspectral images requires advanced sensing equipment. Furthermore, hypercubes are difficult to process due to the high amount of information and therefore often require the application of computationally expensive preprocessing techniques, such as dimensionality-reduction \citep{qin_hyperspectral_2013}.
+
+Multispectral images comprise of a few discrete wavebands. As opposed to hyperspectral images, it is usually not possible to extract a full continuous spectrum of an individual pixel from multispectral images. \cite{abdul_multi-disnet_2019}
 
 
 %==================================================================================================================================
@@ -108,11 +130,11 @@ How is this problem to be approached, without reference to specific implementati
 \chapter{Implementation}
 What did you do to implement this idea, and what technical achievements did you make?
 
-\section{Image registration: aligning the RGB and FIR images}
+\section{Image registration: aligning the RGB and LWIR images}
 
-The images captured by the visible light camera and thermal sensor of the FLIR One Pro are not properly aligned by default. This can have adverse consequences to the classification performance of a machine learning model (XXX citation needed). Thus, an algorithm for properly aligning the images captured by the conventional camera and FIR camera had to be developed. The process of transforming data from different sensors into one coordinate system is commonly referred to as image registration.
+The images captured by the visible light camera and thermal sensor of the FLIR One Pro are not properly aligned by default. This can have adverse consequences to the classification performance of a machine learning model (XXX citation needed). Thus, an algorithm for properly aligning the images captured by the conventional camera and LWIR camera had to be developed. The process of transforming data from different sensors into one coordinate system is commonly referred to as image registration.
 
-On superficial inspection, it is apparent that the FIR sensor appears to have a larger focal length than the RGB camera, and therefore has a narrower field of view. Hence, an attempt was made to manually align the FIR and RGB images by cropping and rescaling the RGB image, effectively "zooming in". This approach yielded moderate results, as can be seen in (XXX).
+On superficial inspection, it is apparent that the LWIR sensor appears to have a larger focal length than the RGB camera, and therefore has a narrower field of view. Hence, an attempt was made to manually align the LWIR and RGB images by cropping and rescaling the RGB image, effectively "zooming in". This approach yielded moderate results, as can be seen in (XXX).
 
 To obtain a more flexible and generalisable representation, we made use of affine transformations. An affine transformation or affine map can accurately represent a composition of a translation and a linear map (e.g. scaling, rotation and shearing). A transformation $f(\vec{x})$ can be expressed as follows:
 
@@ -122,7 +144,7 @@ To obtain a more flexible and generalisable representation, we made use of affin
 
 where $\vec{x}$ represents the coordinates of a point to be translated, $A$ is a $2 \times 2$ linear map, and $\vec{b}$ is the translation vector.
 
-Subsequently, the coordinates of about a dozen reference points were manually determined on the RGB and FIR versions of some test images. These coordinates were used as inputs and outputs to train a linear regression model representing the affine transformation required align the RGB image with the FIR image. 
+Subsequently, the coordinates of about a dozen reference points were manually determined on the RGB and LWIR versions of some test images. These coordinates were used as inputs and outputs to train a linear regression model representing the affine transformation required align the RGB image with the LWIR image. 
 
 % The effect of applying the resulting transformation to a set of coordinates are shown in Figure \ref{fig:transformation_arrows}.
 
@@ -159,13 +181,13 @@ where $f$ and $f_R$ are the channel images to be compared, $\nabla_l$ represents
 
 In other words, to obtain NTG one computes the sum of the $x$- and $y$-gradients of the difference of the two channels, and normalises the result by dividing over the sum of gradients of the individual channels.
 
-The metric is based on the assumption that the gradient of the channel difference image becomes sparser as the alignment improves. Figure \ref{fig:gradient_distribution} shows that this is hardly the case for images captured by the FIR camera, as opposed to the baseline of comparing the red and green channels from the RGB camera.
+The metric is based on the assumption that the gradient of the channel difference image becomes sparser as the alignment improves. Figure \ref{fig:gradient_distribution} shows that this is hardly the case for images captured by the LWIR camera, as opposed to the baseline of comparing the red and green channels from the RGB camera.
 
-This might be due to the fact that the resolution of output FIR files is $640 \times 420$ px, although the actual resolution of the sensor is only $160 \times 120$. Thus, when downsampling the RGB image to $640 \times 420$ px, edges are still much sharper than for the corresponding FIR image. Downsampling both images to the native resolution of the FIR camera did not yield better results.
+This might be due to the fact that the resolution of output LWIR files is $640 \times 420$ px, although the actual resolution of the sensor is only $160 \times 120$. Thus, when downsampling the RGB image to $640 \times 420$ px, edges are still much sharper than for the corresponding LWIR image. Downsampling both images to the native resolution of the LWIR camera did not yield better results.
 
 Moreover, an attempt at smoothing both images before calculating the NTG was made by applying the Laplacian of Gaussian (LoG) with $\sigma=2$ to both images. As can be seen in Table \ref{table:registration_ntg}, this approach was not successful either. 
 
-Considering these results, it can be concluded that NTG is not a suitable metric for this particular problem. As the baseline seems to work, it is possible that the properties of the FIR and RGB channels are too different for an intensity-based approach.
+Considering these results, it can be concluded that NTG is not a suitable metric for this particular problem. As the baseline seems to work, it is possible that the properties of the LWIR and RGB channels are too different for an intensity-based approach.
 
 \begin{figure}[h]
   \centering
@@ -188,9 +210,9 @@ Considering these results, it can be concluded that NTG is not a suitable metric
   \begin{tabular}{@{}lll@{}}
   \toprule
   \textbf{Test configuration}                             & \textbf{Misaligned} & \textbf{Aligned} \\ \midrule
-  LAB intensity of RGB vs FIR (640x480)     & 0.9984              & 0.9987           \\
-  LAB intensity of RGB vs FIR (160x120)    & 0.9974              & 0.9986           \\
-  LAB intensity of RGB vs FIR (after LoG with $\sigma=2$) & 0.9970              & 0.9973           \\
+  LAB intensity of RGB vs LWIR (640x480)     & 0.9984              & 0.9987           \\
+  LAB intensity of RGB vs LWIR (160x120)    & 0.9974              & 0.9986           \\
+  LAB intensity of RGB vs LWIR (after LoG with $\sigma=2$) & 0.9970              & 0.9973           \\
   (Baseline) Red vs green channels of RGB (160x120)                  & 0.6245              & 0.0303           \\ \bottomrule
   \end{tabular}
   \caption{Normalized Total Gradient before and after channel alignment}
@@ -204,9 +226,9 @@ As it has been demonstrated that intensity-based metrics are inadequate in this 
 
 The method uses pairs of 1-D filter masks as introduced by \citet{laws_rapid_1980} to detect level, edge, spot and ripple features. These filters can be applied horizontally and vertically. In our implementation, all possible filter pairs were evaluated and the final scores were averaged.
 
-After convoluting both the FIR and RGB images with the filters, the results were turned into texture energy images by performing a convolutional sum-operation of absolute values using a $15 \times 15$ kernel and applying a threshold of $\pm 3 \sigma$. 
+After convoluting both the LWIR and RGB images with the filters, the results were turned into texture energy images by performing a convolutional sum-operation of absolute values using a $15 \times 15$ kernel and applying a threshold of $\pm 3 \sigma$. 
 
-Finally, the mutual information (MI) of the resulting FIR and RGB images was calculated as follows:
+Finally, the mutual information (MI) of the resulting LWIR and RGB images was calculated as follows:
 
 \begin{equation}
   MI(A,B) = H(A) + H(B) - H(A,B),
@@ -216,7 +238,7 @@ where $H(X) = - \sum_{x \in X} p(x) \cdot log_2 p(x)$ is the entropy of $X$ and 
 
 
 
-% \section{Predicting FIR images using an autoencoder}
+% \section{Predicting LWIR images using an autoencoder}
 
 % \begin{figure}[h]
 %   \centering
@@ -227,15 +249,15 @@ where $H(X) = - \sum_{x \in X} p(x) \cdot log_2 p(x)$ is the entropy of $X$ and 
 %   \end{subfigure}
 %   \begin{subfigure}[h!]{0.3\textwidth}
 %     \includegraphics[width=\textwidth]{images/autoencoder/mirror/pred_fir.png}
-%     \caption{Predicted FIR}
+%     \caption{Predicted LWIR}
 %     \label{fig:gradient_distribution_red_green}
 %   \end{subfigure}
 %   \begin{subfigure}[h!]{0.3\textwidth}
 %     \includegraphics[width=\textwidth]{images/autoencoder/mirror/actual_fir.png}
-%     \caption{Actual FIR}
+%     \caption{Actual LWIR}
 %     \label{fig:gradient_distribution_red_green}
 %   \end{subfigure}
-%   \caption{Autoencoder prediction of FIR image from grayscale.}
+%   \caption{Autoencoder prediction of LWIR image from grayscale.}
 % \end{figure}
 
 

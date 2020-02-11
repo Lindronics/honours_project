@@ -93,7 +93,7 @@ What did other people do, and how is it relevant to what you want to do?
 
 Visible light and infrared are forms of electromagnetic radiation. Visible light (VIS) has wavelengths roughly between $400$ and $700 nm$. The hue of visible light is determined by its wavelength. Colours as perceived by human vision are the result of a spectral distribution of wavelengths of the light than enters the eye. 
 
-Infrared light (IR), with wavelengths between $700 nm$ and $1 mm$, is generally invisible to humans. It is commonly subdivided into near infrared (NIR), short-wavelength infrared (SWIR), medium-wavelength infrared (MWIR), long-wavelength infrared (LWIR), and far infrared (FIR), as can be seen in Figure \ref{fig:em_spectrum}.
+Infrared light (IR), with wavelengths between $700 nm$ and $1 mm$, is generally invisible to humans. It is commonly subdivided into near infrared (NIR), short-wavelength infrared (SWIR), medium-wavelength infrared (MWIR), long-wavelength infrared (LWIR), and far infrared (FIR) \citep[p. 28]{byrnes_unexploded_2008}, as can be seen in Figure \ref{fig:em_spectrum}.
 
 \begin{figure}[h]
   \centering
@@ -104,6 +104,21 @@ Infrared light (IR), with wavelengths between $700 nm$ and $1 mm$, is generally 
   \label{fig:em_spectrum}
 \end{figure}
 
+\subsection{Thermal radiation}
+
+Black-body radiation is defined as thermal electromagnetic radiation emitted by an idealized opaque, non-reflective body \citep{young_sears_2012}. It has a continuous frequency spectrum that is dependent on the temperature of the body \citep{kogure_thermodynamic_2007}. The spectrum has a characteristic peak, which is antiproportional to the temperature $T [K]$ according to Wien's displacement law:
+
+\begin{equation}
+  \lambda_{peak} = \frac{2.898 \times 10^{-3}}{T} [m],
+\end{equation}
+
+Bodies at a room temperature of $300 K$ emit electromagnetic radiation with a peak at $9.7 \mu m$ \citep{jarc_graz_2007}, falling into the LWIR range. To account for different non-ideal surfaces, the material-specific emissivity constant $\epsilon \in [0..1]$ is introduced to describe the share of radiation that is emitted by a body compared to an ideal black body. The total energy radiated by a body per unit surface and time is expressed by the Stefan-Boltzmann law:
+
+\begin{equation}
+  W = \epsilon \sigma T^4,
+\end{equation}
+
+where $\sigma$ is a proportionality constant. Thus, if the emissivity of the body is known, this law can be applied to determine its temperature. This is the theoretical foundation for thermal imaging. In practice, the material and corresponding emissivity are often undetermined. Therefore, the received infrared radiation contains an unknown share of reflected radiation, adding noise to the measurement. This can be somewhat mitigated by estimating the value of $\epsilon$.
 
 \section{Spectral imaging}
 

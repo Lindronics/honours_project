@@ -89,7 +89,9 @@ Why should the reader care about what are you doing and what are you actually do
 \chapter{Background}
 What did other people do, and how is it relevant to what you want to do?
 
-\section{Electromagnetic radiation}
+\section{Imaging}
+
+\subsection{Electromagnetic radiation}
 
 Visible light and infrared are forms of electromagnetic radiation. Visible light (VIS) has wavelengths roughly between $400$ and $700 nm$. The hue of visible light is determined by its wavelength. Colours as perceived by human vision are the result of a spectral distribution of wavelengths of the light than enters the eye. 
 
@@ -104,7 +106,7 @@ Infrared light (IR), with wavelengths between $700 nm$ and $1 mm$, is generally 
   \label{fig:em_spectrum}
 \end{figure}
 
-\subsection{Thermal radiation}
+\subsection{Thermal infrared radiation}
 
 Black-body radiation is defined as thermal electromagnetic radiation emitted by an idealized opaque, non-reflective body \citep{young_sears_2012}. It has a continuous frequency spectrum that is dependent on the temperature of the body \citep{kogure_thermodynamic_2007}. The spectrum has a characteristic peak, which is antiproportional to the temperature $T [K]$ according to Wien's displacement law:
 
@@ -120,14 +122,18 @@ Bodies at a room temperature of $300 K$ emit electromagnetic radiation with a pe
 
 where $\sigma$ is a proportionality constant. Thus, if the emissivity of the body is known, this law can be applied to determine its temperature. This is the theoretical foundation for thermal imaging. In practice, the material and corresponding emissivity are often undetermined. Therefore, the received infrared radiation contains an unknown share of reflected radiation, adding noise to the measurement. This can be somewhat mitigated by estimating the value of $\epsilon$.
 
-\section{Spectral imaging}
+\subsection{Spectral imaging}
 
 Spectral images combine spatial and spectral information in a 3-D data structure where the dimensions correspond to height, width and waveband. 
 A distinction is made between hyperspectral and multispectral imaging techniques. 
 
 If an image is acquired at many (tens or hundreds) regularly sampled wavebands, one speaks of a hyperspectral image, sometimes referred to as a hypercube. Hyperspectral images have many powerful applications, including agriculture and food quality \citep{dale_hyperspectral_2013} and medical applications \citep{lu_medical_2014}. However, capturing hyperspectral images requires advanced sensing equipment. Furthermore, hypercubes are difficult to process due to the high amount of information and therefore often require the application of computationally expensive preprocessing techniques, such as dimensionality-reduction \citep{qin_hyperspectral_2013}.
 
-Multispectral images comprise of a few discrete wavebands. As opposed to hyperspectral images, it is usually not possible to extract a full continuous spectrum of an individual pixel from multispectral images. \cite{abdul_multi-disnet_2019}
+Multispectral images comprise of a few discrete wavebands. As opposed to hyperspectral images, it is usually not possible to extract a full continuous spectrum of an individual pixel from multispectral images \citep{abdul_multi-disnet_2019}.
+
+
+
+
 
 
 %==================================================================================================================================

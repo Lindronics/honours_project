@@ -201,11 +201,16 @@ Subsequently, the coordinates of about a dozen reference points were manually de
 
 \begin{figure}[ht]
   \centering
-  \begin{subfigure}[h!]{0.9\textwidth}
-    \includegraphics[width=\textwidth]{images/registration/linear_model_alignment.png}
-    \caption{Synthetic image, black on white.}
-    \label{fig:linear_trans_before_after}
+  \begin{subfigure}[h!]{0.4\textwidth}
+    \includegraphics[width=\textwidth]{images/registration/before_registration.png}
+    \caption{Before registration. The LWIR and VIS images are visibly misaligned.}
   \end{subfigure}
+  \begin{subfigure}[h!]{0.4\textwidth}
+    \includegraphics[width=\textwidth]{images/registration/after_registration.png}
+    \caption{After registration. The thermal signatures of the candles align with the VIS location.}
+  \end{subfigure}
+  \caption{Superimposed LWIR and VIS images before and after registration. Gradients inverted for better visibility.}
+  \label{fig:linear_trans_before_after}
 \end{figure}
 
 \subsection{Intensity-based registration metrics}
@@ -279,7 +284,15 @@ where $H(X) = - \sum_{x \in X} p(x) \cdot log_2 p(x)$ is the entropy of $X$ and 
 
 
 
-% \section{Predicting LWIR images using an autoencoder}
+\section{Predicting LWIR images using an autoencoder}
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.9\textwidth]{images/autoencoder/autoencoder}
+  \label{fig:autoencoder_architecture}
+  \caption{Neural network architecture of the autoencoder.}
+\end{figure}
+
 
 % \begin{figure}[ht]
 %   \centering

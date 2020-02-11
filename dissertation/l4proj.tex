@@ -132,6 +132,26 @@ If an image is acquired at many (tens or hundreds) regularly sampled wavebands, 
 Multispectral images comprise of a few discrete wavebands. As opposed to hyperspectral images, it is usually not possible to extract a full continuous spectrum of an individual pixel from multispectral images \citep{abdul_multi-disnet_2019}.
 
 
+%----------------------------------------------------------------------------------------------------------------------------------
+
+\section{Machine learning}
+
+\subsection{Supervised and unsupervised algorithms}
+
+Machine learning techniques can be categorised into supervised, semi-supervised, unsupervised, and reinforcement learning \citep{burkov_hundred-page_2019}.
+
+In supervised learning, a dataset consisting of a list of labelled features $\{(\vec{x}_i, y_i)\}^N_{i=1}$ is provided. $\vec{x_i}$ is called a feature vector. The supervised learning algorithm then attempts to fit a model $f$ on the dataset such that $\forall{\vec{x_i}}. (f(\vec{x_i}) = y_i)$. The model can then be used to predict the unknown label of a test data point. In practice, a perfect fit is not possible due to noise in the dataset. Therefore, supervised algorithms are evaluated according to a loss function measuring the difference between $f(\vec{x_i})$ and $y_i$. When fitting the model, the algorithm attempts to minimise the loss over the training data. Common choices for loss functions are mean squared error (MSE) for regression and categorical cross-entropy for classification problems.
+
+Unsupervised learning involves a dataset of unlabeled data $\{\vec{x}_i\}^N_{i=1}$. An unsupervised learning algorithm attempts to transform each feature vector $\vec{x}_i$ into another vector to solve a practical problem, such as dimensionality reduction or outlier detection \citep{burkov_hundred-page_2019}. 
+This project focuses on supervised learning.
+
+\subsection{Regression and classification}
+
+In supervised learning, one speaks of classification or regression, depending on whether the data labels $y_i$ are discrete classes or continous, real values.
+
+\subsection{Deep learning}
+
+
 
 
 

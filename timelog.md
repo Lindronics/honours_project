@@ -277,3 +277,17 @@
 ### 04 Feb 2020
 
 * *5.0 hours* Implemented a texture-based image registration metric
+
+### 05 Feb 2020
+
+* *3.0 hours* Further investigation of texture-based image registration
+* *1.5 hours* Minor changes to autoencoder
+
+### 10 Feb 2020
+
+* *3.0 hours* Dissertation section on texture-based registration
+* *2.0 hours* Dissertation section on spectral imaging
+
+### 11 Feb 2020
+
+* *5.0 hours* Added more background sections to dissertation

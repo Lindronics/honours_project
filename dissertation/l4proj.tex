@@ -97,7 +97,7 @@ Visible light and infrared are forms of electromagnetic radiation. Visible light
 
 Infrared light (IR), with wavelengths between $700 nm$ and $1 mm$, is generally invisible to humans. It is commonly subdivided into near infrared (NIR), short-wavelength infrared (SWIR), medium-wavelength infrared (MWIR), long-wavelength infrared (LWIR), and far infrared (FIR) \citep[p. 28]{byrnes_unexploded_2008}, as can be seen in Figure \ref{fig:em_spectrum}.
 
-\begin{figure}[h]
+\begin{figure}[ht]
   \centering
   \begin{subfigure}[h!]{0.9\textwidth}
     \includegraphics[width=\textwidth]{images/EM_spectrum.png}
@@ -189,7 +189,7 @@ Subsequently, the coordinates of about a dozen reference points were manually de
 
 % The effect of applying the resulting transformation to a set of coordinates are shown in Figure \ref{fig:transformation_arrows}.
 
-% \begin{figure}[h]
+% \begin{figure}[ht]
 %   \centering
 %   \begin{subfigure}[h!]{0.45\textwidth}
 %     \includegraphics[width=\textwidth]{images/registration/transformation_arrows.png}
@@ -199,7 +199,7 @@ Subsequently, the coordinates of about a dozen reference points were manually de
 %   \caption{}
 % \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[ht]
   \centering
   \begin{subfigure}[h!]{0.9\textwidth}
     \includegraphics[width=\textwidth]{images/registration/linear_model_alignment.png}
@@ -230,7 +230,7 @@ Moreover, an attempt at smoothing both images before calculating the NTG was mad
 
 Considering these results, it can be concluded that NTG is not a suitable metric for this particular problem. As the baseline seems to work, it is possible that the properties of the LWIR and RGB channels are too different for an intensity-based approach.
 
-\begin{figure}[h]
+\begin{figure}[ht]
   \centering
   \begin{subfigure}[h!]{0.45\textwidth}
     \includegraphics[width=\textwidth]{images/registration/gradient_distribution.png}
@@ -246,7 +246,7 @@ Considering these results, it can be concluded that NTG is not a suitable metric
 \end{figure}
 
 
-\begin{table}[]
+\begin{table}[ht]
   \centering
   \begin{tabular}{@{}lll@{}}
   \toprule
@@ -263,7 +263,7 @@ Considering these results, it can be concluded that NTG is not a suitable metric
 
 \subsection{Texture-based registration}
 
-As it has been demonstrated that intensity-based metrics are inadequate in this scenario, an approach based on image texture features, as proposed by \citet{jarc_graz_nodate} was tested. 
+As it has been demonstrated that intensity-based metrics are inadequate in this scenario, an approach based on image texture features, as proposed by \citet{jarc_graz_2007} was tested. 
 
 The method uses pairs of 1-D filter masks as introduced by \citet{laws_rapid_1980} to detect level, edge, spot and ripple features. These filters can be applied horizontally and vertically. In our implementation, all possible filter pairs were evaluated and the final scores were averaged.
 
@@ -281,7 +281,7 @@ where $H(X) = - \sum_{x \in X} p(x) \cdot log_2 p(x)$ is the entropy of $X$ and 
 
 % \section{Predicting LWIR images using an autoencoder}
 
-% \begin{figure}[h]
+% \begin{figure}[ht]
 %   \centering
 %   \begin{subfigure}[h!]{0.3\textwidth}
 %     \includegraphics[width=\textwidth]{images/autoencoder/mirror/grayscale.png}

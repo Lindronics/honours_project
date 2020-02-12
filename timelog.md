@@ -291,3 +291,8 @@
 ### 11 Feb 2020
 
 * *5.0 hours* Added more background sections to dissertation
+
+### 12 Feb 2020
+
+* *3.0 hours* Captured animal dataset with 12 classes and over 700 samples.
+* *3.0 hours* Pre-processed dataset (downsampling and label generation)

@@ -8,6 +8,7 @@
 %
 \usepackage{bm}
 \usepackage{booktabs}
+\usepackage{graphicx}
 
 \begin{document}
 
@@ -100,7 +101,7 @@ Infrared light (IR), with wavelengths between $700 nm$ and $1 mm$, is generally 
 \begin{figure}[ht]
   \centering
   \begin{subfigure}[h!]{0.9\textwidth}
-    \includegraphics[width=\textwidth]{images/EM_spectrum.png}
+    \includegraphics[width=\textwidth, trim={1.5cm 4cm 2cm 4cm}, clip=true]{images/EM_spectrum.pdf}
   \end{subfigure}
   \caption{The electromagnetic spectrum with detailled view of visible light and infrared. IR subdivisions modelled after \citet[p. 28]{byrnes_unexploded_2008}.}
   \label{fig:em_spectrum}

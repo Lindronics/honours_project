@@ -168,6 +168,42 @@ What is the problem that you want to solve, and how did you arrive at it?
 How is this problem to be approached, without reference to specific implementation details? 
 
 
+\section{Dataset}
+
+\subsection{Data augmentation}
+
+Due to the limited amount of resources available to the project, generating a dataset with sufficient scope and size is challenging. Since the performance of machine learning models is usually directly tied to the size and quality of the available dataset (XXX citation needed), advanced methods will have to be employed to artificially increase the amount of distinct data samples.
+
+\citet{mikolajczyk_data_2018} make the distinction between white-box and black-box data augmentation methods. While the latter use a form of deep learning (Generative Adversarial Networks) to synthesise new samples, white-box methods involve more traditional techniques, such as affine transformations.
+
+Although this project focuses primarily on white-box data augmentation, the implementation of a visible light to LWIR autencoder is discussed in Section \ref{autoencoder_implementation}. This autoencoder could be used to generate new LWIR data samples from visible light images retrieved from other sources, such as existing datasets.
+
+Figure \ref{fig:augmentation_affine} shows different affine transformations that were used to augment the captured dataset. 
+
+\begin{figure}[ht]
+  \centering
+  \begin{subfigure}[h!]{0.24\textwidth}
+    \includegraphics[width=\textwidth]{images/augmentation/original.png}
+    \caption{Original image}
+  \end{subfigure}
+  \begin{subfigure}[h!]{0.24\textwidth}
+    \includegraphics[width=\textwidth]{images/augmentation/zoomed.png}
+    \caption{Zoomed in}
+  \end{subfigure}
+  \begin{subfigure}[h!]{0.24\textwidth}
+    \includegraphics[width=\textwidth]{images/augmentation/rotated.png}
+    \caption{Rotated $20^{\circ}$}
+  \end{subfigure}
+  \begin{subfigure}[h!]{0.24\textwidth}
+    \includegraphics[width=\textwidth]{images/augmentation/flipped.png}
+    \caption{Horizontally flipped}
+  \end{subfigure}
+  \caption{Affine data augmentation strategies applied to a sample LWIR image.}
+  \label{fig:augmentation_affine}
+\end{figure}
+
+Another possible way of augmenting the data before classification is artificially drawing obstacles over the image samples. 
+
 %==================================================================================================================================
 \chapter{Implementation}
 What did you do to implement this idea, and what technical achievements did you make?
@@ -283,15 +319,23 @@ Finally, the mutual information (MI) of the resulting LWIR and RGB images was ca
 
 where $H(X) = - \sum_{x \in X} p(x) \cdot log_2 p(x)$ is the entropy of $X$ and $H(X,Y)$ represents the joint entropy of $X$ and $Y$.
 
+%----------------------------------------------------------------------------------------------------------------------------------
 
 
 \section{Predicting LWIR images using an autoencoder}
+\label{autoencoder_implementation}
+
+A deep convolutional autoencoder was created to reconstruct the LWIR signature of objects from the corresponding visible light image. 
+
+As shown in Figure \ref{fig:autoencoder_architecture}, the chosen architecture for the encoder consists of four blocks. Each block has a convolutional layer, followed by a leaky ReLU activation function, and a subsequent max pooling layer for downsampling. The $320 \times 240 \times 1$ input images are thus processed and downsampled to a $20 \times 15 \times 32$ tensor containing a compact, latent representation of the features in the original image.
+
+The encoder then uses four deconvolutional layers to attempt a reconstruction the LWIR image from the latent features output by the encoder.
 
 \begin{figure}[ht]
   \centering
   \includegraphics[width=0.9\textwidth]{images/autoencoder/autoencoder}
-  \label{fig:autoencoder_architecture}
   \caption{Neural network architecture of the autoencoder.}
+  \label{fig:autoencoder_architecture}
 \end{figure}
 
 

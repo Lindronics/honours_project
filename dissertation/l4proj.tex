@@ -172,13 +172,15 @@ How is this problem to be approached, without reference to specific implementati
 
 \subsection{Data augmentation}
 
-Due to the limited amount of resources available to the project, generating a dataset with sufficient scope and size is challenging. Since the performance of machine learning models is usually directly tied to the size and quality of the available dataset (XXX citation needed), advanced methods will have to be employed to artificially increase the amount of distinct data samples.
+Due to the limited amount of resources available to the project, generating a dataset with sufficient scope and size is challenging. Since the performance of machine learning models is usually directly tied to the size and quality of the available dataset, an insufficient dataset might make it impossible to train an accurate and robust classifier \citep{fawzi_adaptive_2016}. Therefore, data augmentation will have to be employed to artificially increase the amount of distinct data samples.
 
-\citet{mikolajczyk_data_2018} make the distinction between white-box and black-box data augmentation methods. While the latter use a form of deep learning (Generative Adversarial Networks) to synthesise new samples, white-box methods involve more traditional techniques, such as affine transformations.
+\citet{mikolajczyk_data_2018} make the distinction between white-box and black-box data augmentation methods. While the latter use a form of deep learning, namely Generative Adversarial Networks (GAN), to synthesise new samples, white-box methods involve more traditional techniques, such as affine transformations. 
 
-Although this project focuses primarily on white-box data augmentation, the implementation of a visible light to LWIR autencoder is discussed in Section \ref{autoencoder_implementation}. This autoencoder could be used to generate new LWIR data samples from visible light images retrieved from other sources, such as existing datasets.
+After evaluating various methods of data augmentation on a subset of the ImageNet dataset, \citet{perez_effectiveness_2017} conclude that traditional affine transformations alone can be very effective, although GAN-based methods are promising and might yield better results.
 
-Figure \ref{fig:augmentation_affine} shows different affine transformations that were used to augment the captured dataset. 
+Due to the relatively easy implementation, this project therefore focuses primarily on white-box data augmentation. However, the design and implementation of a visible light to LWIR autencoder is discussed in Section \ref{autoencoder_implementation}. This autoencoder could be used to generate new LWIR data samples from visible light images retrieved from other sources, such as existing datasets.
+
+Figure \ref{fig:augmentation_affine} shows different affine transformations that were used to augment the captured dataset.  
 
 \begin{figure}[ht]
   \centering
@@ -203,6 +205,11 @@ Figure \ref{fig:augmentation_affine} shows different affine transformations that
 \end{figure}
 
 Another possible way of augmenting the data before classification is artificially drawing obstacles over the image samples. 
+
+
+%----------------------------------------------------------------------------------------------------------------------------------
+
+
 
 %==================================================================================================================================
 \chapter{Implementation}

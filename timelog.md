@@ -296,3 +296,22 @@
 
 * *3.0 hours* Captured animal dataset with 12 classes and over 700 samples.
 * *3.0 hours* Pre-processed dataset (downsampling and label generation)
+
+
+### 14 Feb 2020
+
+* *0.5 hours* 10th supervisor meeting
+* *2.0 hours* Started implementing a classifier for dataset
+
+### 15 Feb 2020
+
+* *1.0 hour* Implemented residual block in Keras
+
+### 16 Feb 2020
+
+* *1.0 hour* Captured images of geese and cats to be added to dataset
+
+### 18 Feb 202
+
+* *1.5 hours* Worked on dissertation chapter about data augmentation
+* *4.0 hours* Implemented affine data augmentation for dataset

@@ -180,7 +180,7 @@ After evaluating various methods of data augmentation on a subset of the ImageNe
 
 Due to the relatively easy implementation, this project therefore focuses primarily on white-box data augmentation. However, the design and implementation of a visible light to LWIR autencoder is discussed in Section \ref{autoencoder_implementation}. This autoencoder could be used to generate new LWIR data samples from visible light images retrieved from other sources, such as existing datasets.
 
-Figure \ref{fig:augmentation_affine} shows different affine transformations that were used to augment the captured dataset.  
+Figure \ref{fig:augmentation_affine} shows different affine transformations that were used to augment the captured dataset.
 
 \begin{figure}[ht]
   \centering
@@ -208,6 +208,9 @@ Another possible way of augmenting the data before classification is artificiall
 
 
 %----------------------------------------------------------------------------------------------------------------------------------
+
+\section{Mobile application}
+
 
 
 
@@ -332,11 +335,13 @@ where $H(X) = - \sum_{x \in X} p(x) \cdot log_2 p(x)$ is the entropy of $X$ and 
 \section{Predicting LWIR images using an autoencoder}
 \label{autoencoder_implementation}
 
-A deep convolutional autoencoder was created to reconstruct the LWIR signature of objects from the corresponding visible light image. 
+\subsection{Traditional autoencoder}
 
-As shown in Figure \ref{fig:autoencoder_architecture}, the chosen architecture for the encoder consists of four blocks. Each block has a convolutional layer, followed by a leaky ReLU activation function, and a subsequent max pooling layer for downsampling. The $320 \times 240 \times 1$ input images are thus processed and downsampled to a $20 \times 15 \times 32$ tensor containing a compact, latent representation of the features in the original image.
+A deep convolutional autoencoder was created to predict the LWIR signature of objects from the corresponding visible light image. The architecture of the network is shown in Figure \ref{fig:autoencoder_architecture}. The network consists of an encoder and a decoder that each contain four blocks of layers.
 
-The encoder then uses four deconvolutional layers to attempt a reconstruction the LWIR image from the latent features output by the encoder.
+Each encoder block has a convolutional layer, followed by a leaky ReLU activation function and a subsequent max pooling layer for downsampling. The $320 \times 240 \times 1$ input images are thus processed and downsampled to a $20 \times 15 \times 32$ tensor containing a compact, latent representation of the features in the original image.
+
+The output of the decoder is then fed forward into four blocks of deconvolutional layers followed by leaky ReLU activation to attempt a reconstruction the LWIR image. 
 
 \begin{figure}[ht]
   \centering
@@ -344,6 +349,38 @@ The encoder then uses four deconvolutional layers to attempt a reconstruction th
   \caption{Neural network architecture of the autoencoder.}
   \label{fig:autoencoder_architecture}
 \end{figure}
+
+\subsection{U-Net}
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.9\textwidth]{images/unet/unet}
+  \caption{Neural network architecture of the U-Net.}
+  \label{fig:unet_architecture}
+\end{figure}
+
+\begin{figure}[ht]
+  \centering
+  \begin{subfigure}[h!]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{images/unet/pony_grayscale.png}
+    \includegraphics[width=\textwidth]{images/unet/pony_2_grayscale.png}
+    \caption{Original images (cropped)}
+  \end{subfigure}
+  \begin{subfigure}[h!]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{images/autoencoder/pony_predicted.png}
+    \includegraphics[width=\textwidth]{images/autoencoder/pony_2_predicted.png}
+    \caption{Autoencoder prediction}
+  \end{subfigure}
+  \begin{subfigure}[h!]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{images/unet/pony_predicted.png}
+    \includegraphics[width=\textwidth]{images/unet/pony_2_predicted.png}
+    \caption{U-Net prediction}
+  \end{subfigure}
+  \caption{Predicted LWIR signature of images of shetland ponys. Retrieved from \url{https://commons.wikimedia.org/wiki/File:Sandwick_Shetland_Pony.jpg} and \url{https://commons.wikimedia.org/wiki/File:Shetland_ponies_at_Sandwick.jpg}}
+  \label{fig:autoencoder_pony}
+\end{figure}
+
+
 
 
 % \begin{figure}[ht]
@@ -366,6 +403,10 @@ The encoder then uses four deconvolutional layers to attempt a reconstruction th
 %   \caption{Autoencoder prediction of LWIR image from grayscale.}
 % \end{figure}
 
+
+\section{Mobile application}
+
+The mobile application was implemented using Java and Android Studio. 
 
 
 

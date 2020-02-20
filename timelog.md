@@ -311,7 +311,17 @@
 
 * *1.0 hour* Captured images of geese and cats to be added to dataset
 
-### 18 Feb 202
+### 18 Feb 2020
 
 * *1.5 hours* Worked on dissertation chapter about data augmentation
 * *4.0 hours* Implemented affine data augmentation for dataset
+
+### 19 Feb 2020
+
+* *2.0 hours* Fixed issues with augmentation and regenerated dataset
+* *4.0 hours* Trained autoencoder on animals dataset
+
+### 20 Feb 2020
+
+* *1.0 hour* Created U-Net based on autoencoder and trained on subset of animals dataset
+* *1.5 hours* Evaluated autoencoder and U-Net on animal images from the internet

@@ -9,6 +9,7 @@
 \usepackage{bm}
 \usepackage{booktabs}
 \usepackage{graphicx}
+\usepackage[export]{adjustbox}
 
 \begin{document}
 
@@ -161,6 +162,16 @@ In supervised learning, one speaks of classification or regression, depending on
 \chapter{Analysis/Requirements}
 What is the problem that you want to solve, and how did you arrive at it?
 
+\section{Data generation}
+
+Collecting a multispectral dataset is significantly more challenging than a dataset consisting solely of visible-light images. The majority of image classification tasks use traditional imaging only (XXX citation needed). Consequently, the amount of research and resources available to use is much more limited.
+
+A large amount of existing datasets is available for traditional image classification tasks. The ImageNet dataset \citep{deng_imagenet_2009}, which is used as a benchmark for many image classification models, contains over a million images ready to be used. Many successful deep learning models, such as AlexNet \citep{krizhevsky_imagenet_2012} and ResNet \citep{he_deep_2016} have been applied to datasets such as ImageNet.
+
+When creating a new image classifier, it is then possible to incorporate pretrained versions of these networks into a new classifier and perform transfer learning on a new dataset. This strategy makes it feasible to train complex models on smaller amounts of data than usual, as many meaningful weights have already been learned by the pretrained model (XXX citation needed).
+
+For multispectral models, this approach becomes more difficult, as much fewer datasets are available to be used off-the-shelf. Datasets for visible light and thermal data, such as the KAIST Pedestrian Detection Benchmark \citep{hwang_multispectral_2015} are available. However, They usually lack the variety and size of traditional computer vision datasets.
+
 
 
 %==================================================================================================================================
@@ -178,7 +189,7 @@ Due to the limited amount of resources available to the project, generating a da
 
 After evaluating various methods of data augmentation on a subset of the ImageNet dataset, \citet{perez_effectiveness_2017} conclude that traditional affine transformations alone can be very effective, although GAN-based methods are promising and might yield better results.
 
-Due to the relatively easy implementation, this project therefore focuses primarily on white-box data augmentation. However, the design and implementation of a visible light to LWIR autencoder is discussed in Section \ref{autoencoder_implementation}. This autoencoder could be used to generate new LWIR data samples from visible light images retrieved from other sources, such as existing datasets.
+Due to the relatively easy implementation, this project therefore primarily uses white-box data augmentation. However, the design and implementation of a deep-learning model generating LWIR from visible light is discussed in Section \ref{autoencoder_implementation}. This autoencoder could be used to generate new LWIR data samples from visible light images retrieved from other sources, such as existing computer vision datasets.
 
 Figure \ref{fig:augmentation_affine} shows different affine transformations that were used to augment the captured dataset.
 
@@ -248,12 +259,16 @@ Subsequently, the coordinates of about a dozen reference points were manually de
 
 \begin{figure}[ht]
   \centering
-  \begin{subfigure}[h!]{0.4\textwidth}
-    \includegraphics[width=\textwidth]{images/registration/before_registration.png}
+  \begin{subfigure}[h!]{0.3\textwidth}
+    \includegraphics[width=\textwidth, trim={3.5cm 9cm 3.5cm 4.5cm}, clip, frame]{images/registration/unregistered.png}
     \caption{Before registration. The LWIR and VIS images are visibly misaligned.}
   \end{subfigure}
-  \begin{subfigure}[h!]{0.4\textwidth}
-    \includegraphics[width=\textwidth]{images/registration/after_registration.png}
+  \begin{subfigure}[h!]{0.3\textwidth}
+    \includegraphics[width=\textwidth, trim={3.5cm 9cm 3.5cm 4.5cm}, clip, frame]{images/registration/registered_zoom.png}
+    \caption{After zooming in. The images are almost aligned. A slight offset remains.}
+  \end{subfigure}
+  \begin{subfigure}[h!]{0.3\textwidth}
+    \includegraphics[width=\textwidth, trim={3.5cm 9cm 3.5cm 4.5cm}, clip, frame]{images/registration/registered_affine.png}
     \caption{After registration. The thermal signatures of the candles align with the VIS location.}
   \end{subfigure}
   \caption{Superimposed LWIR and VIS images before and after registration. Gradients inverted for better visibility.}
@@ -341,7 +356,11 @@ A deep convolutional autoencoder was created to predict the LWIR signature of ob
 
 Each encoder block has a convolutional layer, followed by a leaky ReLU activation function and a subsequent max pooling layer for downsampling. The $320 \times 240 \times 1$ input images are thus processed and downsampled to a $20 \times 15 \times 32$ tensor containing a compact, latent representation of the features in the original image.
 
-The output of the decoder is then fed forward into four blocks of deconvolutional layers followed by leaky ReLU activation to attempt a reconstruction the LWIR image. 
+The output of the decoder is then fed forward into four blocks of deconvolutional layers followed by leaky ReLU activation to attempt a reconstruction the LWIR image. Each deconvolutional layer tries to upsample the input by predicting appropriate pixel values.
+
+For this task, a subset of the animals dataset with 336 images of Shetland ponies was chosen. Mean squared error was selected as the loss function. The network was trained for 100 epochs with a batch size of 16. Training time averaged around 18 minutes on an NVIDIA Tesla P-100 GPU.
+
+After successful training of the network, two images of ponies were retrieved from Wikimedia Commons. They were then fed into the network in an attempt to generate the corresponding LWIR images. The output of the autoencoder can be seen in Figure \ref{fig:autoencoder_pony}.
 
 \begin{figure}[ht]
   \centering
@@ -352,6 +371,12 @@ The output of the decoder is then fed forward into four blocks of deconvolutiona
 
 \subsection{U-Net}
 
+U-Net can be seen as a special case of an autoencoder. It also features two parts that downsample or encode, and upsample or decode the input. Additionally, for each deconvolutional layer, the output of the corresponding opposite convolutional layer is concatenated to the input of the previous layer. These connections can be seen in Figure \ref{fig:unet_architecture}. 
+
+Similar to the traditional autoencoder, the U-Net was trained for 100 epochs on the the same dataset. Figure \ref{fig:autoencoder_pony} shows the output of the U-Net and compares it to the autoencoder output.
+
+
+
 \begin{figure}[ht]
   \centering
   \includegraphics[width=0.9\textwidth]{images/unet/unet}
@@ -361,17 +386,17 @@ The output of the decoder is then fed forward into four blocks of deconvolutiona
 
 \begin{figure}[ht]
   \centering
-  \begin{subfigure}[h!]{0.3\textwidth}
+  \begin{subfigure}[h!]{0.25\textwidth}
     \includegraphics[width=\textwidth]{images/unet/pony_grayscale.png}
     \includegraphics[width=\textwidth]{images/unet/pony_2_grayscale.png}
     \caption{Original images (cropped)}
   \end{subfigure}
-  \begin{subfigure}[h!]{0.3\textwidth}
+  \begin{subfigure}[h!]{0.25\textwidth}
     \includegraphics[width=\textwidth]{images/autoencoder/pony_predicted.png}
     \includegraphics[width=\textwidth]{images/autoencoder/pony_2_predicted.png}
     \caption{Autoencoder prediction}
   \end{subfigure}
-  \begin{subfigure}[h!]{0.3\textwidth}
+  \begin{subfigure}[h!]{0.25\textwidth}
     \includegraphics[width=\textwidth]{images/unet/pony_predicted.png}
     \includegraphics[width=\textwidth]{images/unet/pony_2_predicted.png}
     \caption{U-Net prediction}

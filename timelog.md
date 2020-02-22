@@ -325,3 +325,15 @@
 
 * *1.0 hour* Created U-Net based on autoencoder and trained on subset of animals dataset
 * *1.5 hours* Evaluated autoencoder and U-Net on animal images from the internet
+
+### 21 Feb 2020
+
+* *0.5 hours* 11th supervisor meeting
+* *2.0 hours* Fixed class balancing in data augmentation pipeline
+* *1.0 hour* Re-generated augmented dataset
+
+### 22 Feb 2020
+
+* *2.0 hours* Successfully ran simple NN on augmented dataset. It appears as if visible light only performs better than VIS+LWIR. Further investigation is needed.
+
+* *1.0 hour* Started analysis section in dissertation

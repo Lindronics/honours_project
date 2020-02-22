@@ -159,6 +159,7 @@ In supervised learning, one speaks of classification or regression, depending on
 
 
 %==================================================================================================================================
+
 \chapter{Analysis/Requirements}
 What is the problem that you want to solve, and how did you arrive at it?
 
@@ -173,6 +174,13 @@ A large amount of existing datasets is available for traditional image classific
 When creating a new image classifier, it is then possible to incorporate pretrained versions of these networks into a new classifier and perform transfer learning on a new dataset. This strategy makes it feasible to train complex models on smaller amounts of data than usual, as many meaningful weights have already been learned by the pretrained model (XXX citation needed).
 
 For multispectral models, this approach becomes more difficult, as much fewer datasets are available to be used off-the-shelf. Datasets for visible light and thermal data, such as the KAIST Pedestrian Detection Benchmark \citep{hwang_multispectral_2015} are available. However, They usually lack the variety and size of traditional computer vision datasets and are therefore less suitable for general tasks.
+
+Pre-training a multispectral classifier on an VIS-only dataset is not directly possible due to the incompatible input tensor shapes ($h \times w \times 3$ compared to $h \times w \times 4$) and the resulting difference in trainable weights.
+
+However, there are strategies to mitigate this issue. It is possible to divide the model into 2 separate branches of layers that process the VIS and LWIR images individually, and perform late feature fusion by concatenating the respective feature maps and adding at least one fully connected layer after the concatenation. This approach would make it possible to load pretrained weights into the VIS-branch of the model without affecting the LWIR branch. During training, the LWIR-branch of the model would get trained from scratch, whereas transfer learning is simultaneously performed on the VIS-branch.
+
+Another possible approach to enable the usage of existing off-the-shelf datasets is to perform generative image augmentation. In Section \ref{autoencoder_implementation} we explore the application of a primitive generative model for predicting the corresponding LWIR image of a known type of object from a given RGB image. Given sufficient quality of predicted images, it would then be possible to turn RGB-only images into multispectral training data.
+
 
 \subsection{Sensory equipment}
 
@@ -201,7 +209,7 @@ How is this problem to be approached, without reference to specific implementati
 
 Due to the limited amount of resources available to the project, generating a dataset with sufficient scope and size is challenging. Since the performance of machine learning models is usually directly tied to the size and quality of the available dataset, an insufficient dataset might make it impossible to train an accurate and robust classifier \citep{fawzi_adaptive_2016}. Therefore, data augmentation will have to be employed to artificially increase the amount of distinct data samples.
 
-\citet{mikolajczyk_data_2018} make the distinction between white-box and black-box data augmentation methods. While the latter use a form of deep learning, namely Generative Adversarial Networks (GAN), to synthesise new samples, white-box methods involve more traditional techniques, such as affine transformations. 
+\citet{mikolajczyk_data_2018} make the distinction between white-box and black-box data augmentation methods. While the latter use a form of deep learning, namely Generative Adversarial Networks (GAN), to synthesise new training samples, white-box methods involve more traditional techniques, such as affine transformations. 
 
 After evaluating various methods of data augmentation on a subset of the ImageNet dataset, \citet{perez_effectiveness_2017} conclude that traditional affine transformations alone can be very effective, although GAN-based methods are promising and might yield better results.
 

@@ -166,12 +166,28 @@ What is the problem that you want to solve, and how did you arrive at it?
 
 Collecting a multispectral dataset is significantly more challenging than a dataset consisting solely of visible-light images. The majority of image classification tasks use traditional imaging only (XXX citation needed). Consequently, the amount of research and resources available to use is much more limited.
 
+\subsection{Transfer learning}
+
 A large amount of existing datasets is available for traditional image classification tasks. The ImageNet dataset \citep{deng_imagenet_2009}, which is used as a benchmark for many image classification models, contains over a million images ready to be used. Many successful deep learning models, such as AlexNet \citep{krizhevsky_imagenet_2012} and ResNet \citep{he_deep_2016} have been applied to datasets such as ImageNet.
 
 When creating a new image classifier, it is then possible to incorporate pretrained versions of these networks into a new classifier and perform transfer learning on a new dataset. This strategy makes it feasible to train complex models on smaller amounts of data than usual, as many meaningful weights have already been learned by the pretrained model (XXX citation needed).
 
-For multispectral models, this approach becomes more difficult, as much fewer datasets are available to be used off-the-shelf. Datasets for visible light and thermal data, such as the KAIST Pedestrian Detection Benchmark \citep{hwang_multispectral_2015} are available. However, They usually lack the variety and size of traditional computer vision datasets.
+For multispectral models, this approach becomes more difficult, as much fewer datasets are available to be used off-the-shelf. Datasets for visible light and thermal data, such as the KAIST Pedestrian Detection Benchmark \citep{hwang_multispectral_2015} are available. However, They usually lack the variety and size of traditional computer vision datasets and are therefore less suitable for general tasks.
 
+\subsection{Sensory equipment}
+
+Even though thermal cameras have become significantly more affordable in recent years, their resolution remains much lower than that of conventional visible-light cameras. The FLIR One Pro, which was used for this project, is composed of two sensors:
+
+\begin{itemize}
+  \item A conventional camera for visible-light images with a resolution of $1440 \times 1080$ px.
+  \item A thermal sensor with a resolution of $160 \times 120$ px and a spectral range of $8 - 14 \mu m$.
+\end{itemize}
+
+The sensor is therefore able to perceive and record electromagnetic waves in the visible-light (VIS) and long wave infrared (LWIR) bands. Due to technical limitations, several challenges had to be overcome when working with data collected by the sensor.
+
+Firstly, the two cameras are not spatially aligned. Furthermore, the "zoom level" or focal length of the sensors does not appear to match. A misalignment of the channels is likely to have an impact on the performance of a convolutional network (XXX citation needed). Therefore, the issue of image registration of the two camera outputs arises. The strategy we introduced to perform robust registration is outlined in Section \ref{image_registration}.
+
+Secondly, the vastly different resolutions of the sensors could cause problems, as convolutional filters might struggle detecting edges and other features (XXX).
 
 
 %==================================================================================================================================
@@ -230,6 +246,7 @@ Another possible way of augmenting the data before classification is artificiall
 What did you do to implement this idea, and what technical achievements did you make?
 
 \section{Image registration: aligning the RGB and LWIR images}
+\label{image_registration}
 
 The images captured by the visible light camera and thermal sensor of the FLIR One Pro are not properly aligned by default. This can have adverse consequences to the classification performance of a machine learning model (XXX citation needed). Thus, an algorithm for properly aligning the images captured by the conventional camera and LWIR camera had to be developed. The process of transforming data from different sensors into one coordinate system is commonly referred to as image registration.
 

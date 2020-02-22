@@ -197,6 +197,11 @@ Firstly, the two cameras are not spatially aligned. Furthermore, the "zoom level
 
 Secondly, the vastly different resolutions of the sensors could cause problems, as convolutional filters might struggle detecting edges and other features (XXX).
 
+%----------------------------------------------------------------------------------------------------------------------------------
+
+\section{Mobile application}
+
+
 
 %==================================================================================================================================
 \chapter{Design}
@@ -204,6 +209,33 @@ How is this problem to be approached, without reference to specific implementati
 
 
 \section{Dataset}
+
+\subsection{Classes}
+
+A dataset consisting of 13 classes and 1012 samples was captured. 
+
+\begin{table}[ht]
+  \centering
+  \begin{tabular}{@{}ll@{}}
+    \toprule
+    \textbf{Class}  & \textbf{Samples} \\ \midrule
+    Cat             & 183              \\
+    Pig             & 30               \\
+    Pony            & 112              \\
+    Sheep           & 36               \\
+    Alpaca          & 85               \\
+    Ferret          & 33               \\
+    Peacock         & 157              \\
+    Hamburg chicken & 29               \\
+    Evil chicken    & 17               \\
+    Ugly duck       & 24               \\
+    Chicken         & 130              \\
+    Rabbit          & 32               \\
+    Goose           & 144              \\ \bottomrule
+  \end{tabular}
+  \caption{Classes and sample size of animals dataset.}
+  \label{table:dataset}
+\end{table}
 
 \subsection{Data augmentation}
 
@@ -461,9 +493,19 @@ The mobile application was implemented using Java and Android Studio.
 
 
 %==================================================================================================================================
+
 \chapter{Evaluation} 
 How good is your solution? How well did you solve the general problem, and what evidence do you have to support that?
 
+\begin{figure}[ht]
+  \centering
+  \begin{subfigure}[h!]{0.6\textwidth}
+    \includegraphics[width=\textwidth]{images/evaluation/confusion/vis_fir_confusion.png}
+    \caption{Confusion matrix}
+    \label{fig:confusion}
+  \end{subfigure}
+  \caption{ASDF}
+\end{figure}
 
 
 %==================================================================================================================================

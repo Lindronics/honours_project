@@ -335,5 +335,4 @@
 ### 22 Feb 2020
 
 * *2.0 hours* Successfully ran simple NN on augmented dataset. It appears as if visible light only performs better than VIS+LWIR. Further investigation is needed.
-
-* *1.0 hour* Started analysis section in dissertation
+* *3.0 hour* Started analysis section in dissertation

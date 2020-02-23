@@ -201,6 +201,16 @@ Secondly, the vastly different resolutions of the sensors could cause problems, 
 
 \section{Mobile application}
 
+This project aims to deploy the final deep learning model to a mobile edge device. This introduces many challenges related to mobile computing. Contrary to most computers, computational power on mobile devices is highly limited. Furthermore, to provide robust and reliable real-time classification, low latency between image capture and classification will be necessary. Two major strategies can be used to apply image classification on a mobile device:
+
+\begin{enumerate}
+  \item Deploy the model to a web service, upload captured frames from edge device, and retrieve the prediction.
+  \item Deploy the model to the edge device and perform all computations "offline".
+\end{enumerate}
+
+To minimise latency, the second approach was selected. It will therefore be possible to use the application even in situations with poor connectivity. However, the necessity to perform all computational tasks on the edge-device imposes many problems. The Tensorflow SDK for Java is very limited compared to the Python API. Furthermore, various image pre-processing tasks have to be performed without the standard Python data science stack that was used for training and experimentation. Many image processing libraries do not support multispectral data, further complicating image processing.
+
+The mobile application will furthermore provide the ability to capture datasets in a convenient way, without the need to seperately extract raw RGB and LWIR images after capture.
 
 
 %==================================================================================================================================
@@ -277,7 +287,6 @@ Another possible way of augmenting the data before classification is artificiall
 %----------------------------------------------------------------------------------------------------------------------------------
 
 \section{Mobile application}
-
 
 
 
@@ -428,7 +437,7 @@ After successful training of the network, two images of ponies were retrieved fr
 
 \subsection{U-Net}
 
-U-Net can be seen as a special case of an autoencoder. It also features two parts that downsample or encode, and upsample or decode the input. Additionally, for each deconvolutional layer, the output of the corresponding opposite convolutional layer is concatenated to the input of the previous layer. These connections can be seen in Figure \ref{fig:unet_architecture}. 
+U-Net was first introduced by \citet{ronneberger_u-net_2015} to improve performance of biomedical image segmentation systems. Similarly to a conventional autoencoder, it features a contracting path that downsamples or encodes the input, and a symmetric expanding path that upsamples or decodes the input. Additionally, for each deconvolutional layer, the output of the corresponding opposite convolutional layer is concatenated to the layer's input map. These connections can be seen in Figure \ref{fig:unet_architecture}. 
 
 Similar to the traditional autoencoder, the U-Net was trained for 100 epochs on the the same dataset. Figure \ref{fig:autoencoder_pony} shows the output of the U-Net and compares it to the autoencoder output.
 
@@ -496,6 +505,31 @@ The mobile application was implemented using Java and Android Studio.
 
 \chapter{Evaluation} 
 How good is your solution? How well did you solve the general problem, and what evidence do you have to support that?
+
+\section{Methods and hyperparameters}
+
+\subsection{Data augmentation}
+
+\subsection{Generation of artificial data}
+
+\subsection{Data sampling}
+
+\subsection{VIS only compared to VIS+LWIR}
+
+%----------------------------------------------------------------------------------------------------------------------------------
+
+\section{Different network designs}
+
+\subsection{Custom CNN}
+
+\subsection{AlexNet}
+
+\subsection{ResNet}
+
+%----------------------------------------------------------------------------------------------------------------------------------
+
+\section{Computational performance on mobile device}
+
 
 \begin{figure}[ht]
   \centering

@@ -1,4 +1,5 @@
 from os.path import join
+import os
 import shutil
 
 import tensorflow as tf
@@ -8,6 +9,9 @@ from models.classification import alexnet
 from models.classification.dataset import Dataset
 from preprocessing.augment import augment_dataset
 from preprocessing.generate_labels import generate_labels
+
+# Change working directory
+os.chdir('/nfs/honours_project')
 
 data_dir = "../honours_project_data/animals"
 labels_path = join(data_dir, "labels.txt")

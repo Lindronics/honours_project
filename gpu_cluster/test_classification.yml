@@ -5,7 +5,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: test_classification
+  name: test-classification
   namespace: 2265846lproject
 # this is where you define the content of the Job
 spec:
@@ -15,7 +15,7 @@ spec:
   backoffLimit: 0
   template:        
     metadata:
-      name: test_classification
+      name: test-classification
     spec:
       # in the "containers:" section you define the container(s) that
       # will run inside the Pod itself. Usually you'll just need one. 
@@ -36,7 +36,7 @@ spec:
         
         command: 
           - "python3"
-          - "/nfs/data/images_160x120_downsampled"
+          - "nfs/honours_project/models/classification/train.py"
         
         resources:
           # these are the hardware resources the container needs 
@@ -77,8 +77,8 @@ spec:
         # example of defining an environment variable and its value, so that they
         # will be visible inside this container
         env:
-        - name: SOME_ENV_VAR
-          value: "env var value"
+        - name: PYTHONPATH
+          value: "/nfs/honours_project"
       # this defines a volume called nfs-access which corresponds to your cluster
       # filespace. 
       volumes:

@@ -1,8 +1,9 @@
 import numpy as np
-import cv2
+# import cv2
 from itertools import count
 from collections import defaultdict
 from sklearn.model_selection import train_test_split
+import tensorflow as tf
 
 
 transformation = np.array([
@@ -49,11 +50,14 @@ class Dataset(K.utils.Sequence):
 
 
     def load(self, path, register=False):
-        img = cv2.imread(path) / 255
-        if register:
-            img = cv2.resize(img, (480, 640))
-            img = cv2.warpAffine(img, transformation, (480, 640))
-        img = cv2.resize(img, self.res)
+        img = tf.io.read_file(path)
+        img = tf.image.decode_jpeg(img, channels=3)
+        img = tf.image.convert_image_dtype(img, tf.float32)
+        # img = cv2.imread(path) / 255
+        # if register:
+        #     img = cv2.resize(img, (480, 640))
+        #     img = cv2.warpAffine(img, transformation, (480, 640))
+        # img = cv2.resize(img, self.res)
         return img
 
 

@@ -2,8 +2,9 @@ import numpy as np
 # import cv2
 from itertools import count
 from collections import defaultdict
-from sklearn.model_selection import train_test_split
+# from sklearn.model_selection import train_test_split
 import tensorflow as tf
+import tensorflow.keras as K
 
 
 transformation = np.array([
@@ -33,8 +34,9 @@ class Dataset(K.utils.Sequence):
                 labels.append(class_label)
 
         if split:
-            train_data, test_data = train_test_split(samples, stratify=labels, test_size=0.2, random_state=42)
-            self.samples = train_data if train else test_data
+            # train_data, test_data = train_test_split(samples, stratify=labels, test_size=0.2, random_state=42)
+            # self.samples = train_data if train else test_data
+            pass
         else:
             self.samples = samples
 

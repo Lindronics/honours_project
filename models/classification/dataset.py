@@ -84,7 +84,7 @@ class Dataset(K.utils.Sequence):
                     stacked = np.dstack([rgb, lwir])
                     X.append(stacked)
 
-            return np.array(X), np.array(y), [None]
+            return np.array(X), np.array(y)
         else:
             raise StopIteration
 

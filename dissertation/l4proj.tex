@@ -220,9 +220,11 @@ How is this problem to be approached, without reference to specific implementati
 
 \section{Dataset}
 
-\subsection{Classes}
+\subsection{Classes and samples}
 
-Initially, a dataset consisting of 13 classes and 1042 samples was captured.
+Initially, a dataset consisting of 13 classes and 1042 samples was captured, using the camera functionality of the mobile application. The app captures images in quick temporal succession, effectively like a video. Thus, many images are relatively similiar, as they were captured within only a few milliseconds difference. To distinguish between different "bursts" of images, images were grouped into distinct subsets, each subset representing a batch of similar images.
+
+Due to the difficulty of obtaining well-framed and unobstructed images, the data contains some noise. Some images contain more than one animal. Furthermore, some animals were housed in closed-off shelters and were only visible behind a metal grid. Therefore, each subset was labeled as either \textit{single}, \textit{multi}, or \textit{obstructed}, to allow greater flexibility when selecting data for training and validation. Moreover, no distinction between genders was made. This primarily impacts the peacock class, as male and female peacocks look fairly different.
 
 \begin{table}[ht]
   \centering
@@ -247,6 +249,10 @@ Initially, a dataset consisting of 13 classes and 1042 samples was captured.
   \label{table:raw_dataset}
 \end{table}
 
+Initially, the split between training and validation data was performed by randomly drawing samples from the dataset in a stratified way. As demonstrated in (XXX link), nearly perfect validation accuracy was achieved on this data. This most likely being a result of the aforementioned similarity of many images due to them being captured at similar times, we decided that a second, independent dataset was necessary to achieve representative evaluation results. The classes and samples of both datasets are shown in Table \ref{table:raw_dataset}.
+
+Finally, the subsets from both datasets were rearranged into a training dataset and a testing dataset. An attempt was made to obtain a balanced mixture of \textit{single}, \textit{multi}, and \textit{obstructed} subsets in both datasets. Nonetheless, it can be assumed that achieving a perfect, representative split is difficult due to the noise in the dataset and the limited variety of contexts. The train-test-split is shown in Table \ref{table:train_test_dataset}.
+
 
 \begin{table}[ht]
   \centering
@@ -266,6 +272,11 @@ Initially, a dataset consisting of 13 classes and 1042 samples was captured.
   \caption{Classes and sample size train and test datasets.}
   \label{table:train_test_dataset}
 \end{table}
+
+The classes with low support (Pig, Sheep, Ferret, Rabbit) were dropped from the datasets, as it was deemed unlikely that a model would be able to accurately be fit on such small numbers of samples.
+
+Figure \ref{fig:dataset_classes} shows example RGB and LWIR images from the training dataset.
+
 
 \begin{figure}[ht]
   \centering

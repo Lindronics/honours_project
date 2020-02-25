@@ -222,13 +222,13 @@ How is this problem to be approached, without reference to specific implementati
 
 \subsection{Classes}
 
-A dataset consisting of 13 classes and 1012 samples was captured. 
+Initially, a dataset consisting of 13 classes and 1042 samples was captured.
 
 \begin{table}[ht]
   \centering
   \begin{tabular}{@{}ll@{}ll@{}}
     \toprule
-    \textbf{Class}  & \textbf{Samples 1 } & \textbf{Samples 2} \\ \midrule
+    \textbf{Class}  & \textbf{Dataset 1 } & \textbf{Dataset 2} \\ \midrule
     Cat             & 205              & 0 \\
     Pig             & 30               & 0 \\
     Pony            & 112              & 127 \\
@@ -243,9 +243,80 @@ A dataset consisting of 13 classes and 1012 samples was captured.
     Rabbit          & 32               & 16 \\
     Goose           & 144              & 0 \\ \bottomrule
   \end{tabular}
-  \caption{Classes and sample size of animals dataset.}
-  \label{table:dataset}
+  \caption{Classes and sample size of raw animals datasets.}
+  \label{table:raw_dataset}
 \end{table}
+
+
+\begin{table}[ht]
+  \centering
+  \begin{tabular}{@{}ll@{}ll@{}}
+    \toprule
+    \textbf{Class}  & \textbf{Train } & \textbf{Test} \\ \midrule
+    Cat             & 149              & 56 \\
+    Pony            & 211              & 28 \\
+    Alpaca          & 406               & 70 \\
+    Peacock         & 157              & 79 \\
+    Hamburg chicken & 58               & 29 \\
+    Evil chicken    & 129               & 17 \\
+    Ugly duck       & 141               & 24 \\
+    Chicken         & 211              & 78 \\
+    Goose           & 125              & 19 \\ \bottomrule
+  \end{tabular}
+  \caption{Classes and sample size train and test datasets.}
+  \label{table:train_test_dataset}
+\end{table}
+
+\begin{figure}[ht]
+  \centering
+  \begin{subfigure}[h!]{0.18\textwidth}
+    \includegraphics[width=\textwidth]{images/dataset/cat/rgb.png}
+    \includegraphics[width=\textwidth]{images/dataset/cat/lwir.png}
+    \caption{Cat}
+  \end{subfigure}
+  \begin{subfigure}[h!]{0.18\textwidth}
+    \includegraphics[width=\textwidth]{images/dataset/pony/rgb.png}
+    \includegraphics[width=\textwidth]{images/dataset/pony/lwir.png}
+    \caption{Pony}
+  \end{subfigure}
+  \begin{subfigure}[h!]{0.18\textwidth}
+    \includegraphics[width=\textwidth]{images/dataset/alpaca/rgb.png}
+    \includegraphics[width=\textwidth]{images/dataset/alpaca/lwir.png}
+    \caption{Alpaca}
+  \end{subfigure}
+  \begin{subfigure}[h!]{0.18\textwidth}
+    \includegraphics[width=\textwidth]{images/dataset/peacock/rgb.png}
+    \includegraphics[width=\textwidth]{images/dataset/peacock/lwir.png}
+    \caption{Peacock}
+  \end{subfigure}
+  \begin{subfigure}[h!]{0.18\textwidth}
+    \includegraphics[width=\textwidth]{images/dataset/pretty_chicken/rgb.png}
+    \includegraphics[width=\textwidth]{images/dataset/pretty_chicken/lwir.png}
+    \caption{Hamburg chicken}
+  \end{subfigure}
+  \begin{subfigure}[h!]{0.18\textwidth}
+    \includegraphics[width=\textwidth]{images/dataset/evil_chicken/rgb.png}
+    \includegraphics[width=\textwidth]{images/dataset/evil_chicken/lwir.png}
+    \caption{Evil chicken}
+  \end{subfigure}
+  \begin{subfigure}[h!]{0.18\textwidth}
+    \includegraphics[width=\textwidth]{images/dataset/ugly_duck/rgb.png}
+    \includegraphics[width=\textwidth]{images/dataset/ugly_duck/lwir.png}
+    \caption{Ugly duck}
+  \end{subfigure}
+  \begin{subfigure}[h!]{0.18\textwidth}
+    \includegraphics[width=\textwidth]{images/dataset/chicken/rgb.png}
+    \includegraphics[width=\textwidth]{images/dataset/chicken/lwir.png}
+    \caption{Chicken}
+  \end{subfigure}
+  \begin{subfigure}[h!]{0.18\textwidth}
+    \includegraphics[width=\textwidth]{images/dataset/goose/rgb.png}
+    \includegraphics[width=\textwidth]{images/dataset/goose/lwir.png}
+    \caption{Goose}
+  \end{subfigure}
+  \caption{Examples for each class in the final dataset.}
+  \label{fig:dataset_classes}
+\end{figure}
 
 \subsection{Data augmentation}
 

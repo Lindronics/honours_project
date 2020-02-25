@@ -14,20 +14,13 @@ from preprocessing.generate_labels import generate_labels
 os.chdir('/nfs/honours_project')
 
 data_dir = "../honours_project_data/animals"
-labels_path = join(data_dir, "labels.txt")
+labels_path = join(data_dir, "augmented.txt")
 
 print("Pre-processing dataset")
-class_whitelist = [
-    "pony",
-    "alpaca",
-    "chicken",
-    "peacock",
-    "cat",
-]
-filter_fn = lambda x: x.split("_")[0] in class_whitelist
-generate_labels("train",  filter_fn, join(data_dir, "images_160x120_downsampled"), labels_path)
+filter_fn = lambda x: True
+generate_labels("train",  filter_fn, join(data_dir, "images_160x120_augmented"), labels_path)
 
-train_data = Dataset(labels_path, rgb_only=False, res=(120, 160), register=True, batch_size=16, split=False)
+train_data = Dataset(labels_path, rgb_only=False, res=(120, 160), register=False, batch_size=16, split=False)
 
 print("Loading model")
 model = alexnet.get_model(train_data)

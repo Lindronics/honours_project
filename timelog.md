@@ -337,7 +337,16 @@
 * *2.0 hours* Successfully ran simple NN on augmented dataset. It appears as if visible light only performs better than VIS+LWIR. Further investigation is needed.
 * *3.0 hour* Started analysis section in dissertation
 
+### 23 Feb 2020
+
+* *1.5 hours* Dissertation: mobile application analysis
+
 ### 24 Feb 2020
 
 * *2.0 hours* Implemented a variation of AlexNet
 * *3.0 hours* Familiarised myself with running jobs on the GPU cluster. Managed to run a simple classification job.
+
+### 25 Feb 2020
+
+* *2.5 hours* Set up custom Docker image for GPU cluster
+* *3.0 hours* Captured second animals dataset. This is to be able to perform a representative train/test split.

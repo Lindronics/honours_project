@@ -6,7 +6,7 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tqdm import tqdm
 import argparse
 
-from preprocessing.generate_labels import generate_labels
+from preprocessing.generate_labels import generate_labels, write_labels
 
 
 transformation = np.array([
@@ -14,16 +14,56 @@ transformation = np.array([
     [0.017762, 1.203090, -73.950204],
 ])
 
-def save(path, name, rgb, lwir, label, extension=""):
+def save(path:str, name:str, rgb:np.ndarray, lwir:np.ndarray, label:str, extension:str="") -> tuple:
+    """
+    Saves image to a path.
+
+    Params
+    ------
+    path: str
+        Subset/batch directory to save to
+    name: str
+        Name of the image
+    rgb: np.ndarray
+        RGB image
+    lwir: np.ndarray
+        LWIR image
+    label: str
+        Class label
+    extension: str
+        String to be added to end of filename (e.g. number)
+
+    Returns
+    -------
+    Tuple of new (rgb path, lwir path, class label)
+    """
     rgb_path = os.path.join(path, "rgb", name + f"_{extension}.png")
     lwir_path = os.path.join(path, "lwir", name + f"_{extension}.png")
 
     cv2.imwrite(rgb_path, rgb)
     cv2.imwrite(lwir_path, lwir)
-    return " ".join([rgb_path, lwir_path, label])
+    return tuple([rgb_path, lwir_path, label])
 
 
-def augment_dataset(metadata, augmented_dir, multiplier=2, register=False):
+def augment_dataset(samples: list, augmented_dir:str, multiplier:int=2, register:bool=False):
+    """ 
+    Augments a dataset. Will attempt to balance classes.
+
+    Params
+    ------
+    samples: list
+        List of sample annotation tuples (rgb path, lwir path, class label)
+    augmented_dir: str
+        Directory to store augmented data at
+    multiplier: int
+        Multiplication factor for number of new samples
+    register: bool
+        Whether to align RGB images with LWIR images
+
+    Returns
+    ------
+    A list containing tuples of (rgb path, lwir path, class name) for new augmented dataset
+    """
 
     if os.path.exists(augmented_dir):
         shutil.rmtree(augmented_dir)
@@ -37,13 +77,9 @@ def augment_dataset(metadata, augmented_dir, multiplier=2, register=False):
     classes = dict()
     samples = list()
 
-    # Load labels
-    with open(metadata, "r") as f:
-        for line in f:
-            line = line.split()
-            samples.append(line)
-
-            classes[line[-1]] = classes.get(line[-1], 0) + 1
+    # Get classes
+    for sample in samples:
+        classes[sample[-1]] = classes.get(sample[-1], 0) + 1
 
     # Get maximum class samples
     max_class = max(classes.items(), key=lambda x: x[1])
@@ -90,10 +126,7 @@ def augment_dataset(metadata, augmented_dir, multiplier=2, register=False):
 
             augmented_samples.append(save(out_path, name, rgb_t, lwir_t, label, extension=i))
 
-
-    with open("augmented.txt", "w") as f:
-        for line in augmented_samples:
-            f.write(line + "\n")
+    return augmented_samples
 
 
 if __name__ == "__main__":
@@ -104,9 +137,8 @@ if __name__ == "__main__":
     parser.add_argument("labels_path", help="Output file path for labels file")
     args = vars(parser.parse_args())
 
-    generate_labels("Full", lambda x: True, args["in_path"], args["labels_path"], channel_prefix=True)
-
-    augment_dataset(args["labels_path"], args["out_path"], multiplier=4, register=True)
-    generate_labels("Full augmented", lambda x: True, args["out_path"], args["labels_path"], channel_prefix=False)
+    labels = generate_labels(lambda x: True, args["in_path"], channel_prefix=True)
+    new_labels = augment_dataset(labels, args["out_path"], multiplier=4, register=True)
+    write_labels(new_labels, args["labels_path"])
     
     print("\nFinished.")

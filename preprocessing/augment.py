@@ -4,6 +4,10 @@ import cv2
 import numpy as np
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import tqdm
+import argparse
+
+from preprocessing.generate_labels import generate_labels
+
 
 transformation = np.array([
     [1.202290, -0.026808, -50.528589],
@@ -90,3 +94,19 @@ def augment_dataset(metadata, augmented_dir, multiplier=2, register=False):
     with open("augmented.txt", "w") as f:
         for line in augmented_samples:
             f.write(line + "\n")
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description="Augment and pre-process dataset")
+    parser.add_argument("in_path", help="Input directory containing images")
+    parser.add_argument("out_path", help="Output directory for augmented images")
+    parser.add_argument("labels_path", help="Output file path for labels file")
+    args = vars(parser.parse_args())
+
+    generate_labels("Full", lambda x: True, args["in_path"], args["labels_path"], channel_prefix=True)
+
+    augment_dataset(args["labels_path"], args["out_path"], multiplier=4, register=True)
+    generate_labels("Full augmented", lambda x: True, args["out_path"], args["labels_path"], channel_prefix=False)
+    
+    print("\nFinished.")

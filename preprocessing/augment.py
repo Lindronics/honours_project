@@ -6,7 +6,7 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tqdm import tqdm
 import argparse
 
-from preprocessing.generate_labels import generate_labels, write_labels
+from generate_labels import generate_labels, write_labels
 
 
 transformation = np.array([
@@ -74,8 +74,7 @@ def augment_dataset(samples: list, augmented_dir:str, multiplier:int=2, register
         zoom_range=[0.5, 1],
     )
 
-    classes = dict()
-    samples = list()
+    classes = {}
 
     # Get classes
     for sample in samples:

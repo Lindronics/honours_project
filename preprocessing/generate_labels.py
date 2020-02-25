@@ -2,7 +2,7 @@ from os import listdir
 from os.path import join, isdir
 
 
-def generate_labels(filter_fn:function, root:str, channel_prefix:bool=True):
+def generate_labels(filter_fn, root:str, channel_prefix:bool=True):
     """ 
     Generates labels to be read by Dataset loader
     
@@ -24,7 +24,7 @@ def generate_labels(filter_fn:function, root:str, channel_prefix:bool=True):
     classes = [c for c in listdir(root) if isdir(join(root, c))]
     samples = {c: 0 for c in classes}
     
-    samples = []
+    labels = []
     for c in classes:
         batches = [b for b in listdir(join(root, c)) if isdir(join(root, c, b)) and filter_fn(b)]
         
@@ -36,7 +36,7 @@ def generate_labels(filter_fn:function, root:str, channel_prefix:bool=True):
             rgb_paths = [join(root, c, b, "rgb", i) for i in rgb_images]
 
             for lwir_path, rgb_path in zip(lwir_paths, rgb_paths):
-                samples.append(tuple([rgb_path, lwir_path, c]))
+                labels.append(tuple([rgb_path, lwir_path, c]))
                 samples[c] += 1
 
     print(f"Dataset composition:")
@@ -46,7 +46,7 @@ def generate_labels(filter_fn:function, root:str, channel_prefix:bool=True):
         print(f" - {c}: \t{s}")
     print(f"{sum_} items total.")
 
-    return samples
+    return labels
 
 
 def write_labels(labels: list, path: str):

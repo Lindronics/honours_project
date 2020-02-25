@@ -5,6 +5,10 @@ import numpy as np
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import tqdm
 
+transformation = np.array([
+    [1.202290, -0.026808, -50.528589],
+    [0.017762, 1.203090, -73.950204],
+])
 
 def save(path, name, rgb, lwir, label, extension=""):
     rgb_path = os.path.join(path, "rgb", name + f"_{extension}.png")
@@ -15,7 +19,7 @@ def save(path, name, rgb, lwir, label, extension=""):
     return " ".join([rgb_path, lwir_path, label])
 
 
-def augment_dataset(metadata, augmented_dir, multiplier=2):
+def augment_dataset(metadata, augmented_dir, multiplier=2, register=False):
 
     if os.path.exists(augmented_dir):
         shutil.rmtree(augmented_dir)
@@ -51,6 +55,13 @@ def augment_dataset(metadata, augmented_dir, multiplier=2):
     augmented_samples = []
     for rgb_path, lwir_path, label in tqdm(samples, position=0):
         rgb = cv2.imread(rgb_path)
+
+        if register:
+            initial_shape = rgb.shape
+            rgb = cv2.resize(rgb, (480, 640))
+            rgb = cv2.warpAffine(rgb, transformation, (480, 640))
+            rgb = cv2.resize(rgb, (initial_shape[1], initial_shape[0]))
+
         lwir = cv2.imread(lwir_path)
 
         name = (rgb_path.split("/")[-1]).split(".")[0][4:]

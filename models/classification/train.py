@@ -18,7 +18,7 @@ labels_path = join(data_dir, "augmented.txt")
 
 print("Pre-processing dataset")
 filter_fn = lambda x: True
-generate_labels("train",  filter_fn, join(data_dir, "images_160x120_augmented"), labels_path)
+generate_labels("train",  filter_fn, join(data_dir, "images_160x120_augmented"), labels_path, channel_prefix=False)
 
 train_data = Dataset(labels_path, rgb_only=False, res=(120, 160), register=False, batch_size=16, split=False)
 

@@ -536,17 +536,17 @@ Similar to the traditional autoencoder, the U-Net was trained for 100 epochs on 
   \centering
   \begin{subfigure}[h!]{0.25\textwidth}
     \includegraphics[width=\textwidth]{images/unet/pony_grayscale.png}
-    \includegraphics[width=\textwidth]{images/unet/pony_2_grayscale.png}
+    % \includegraphics[width=\textwidth]{images/unet/pony_2_grayscale.png}
     \caption{Original images (cropped)}
   \end{subfigure}
   \begin{subfigure}[h!]{0.25\textwidth}
     \includegraphics[width=\textwidth]{images/autoencoder/pony_predicted.png}
-    \includegraphics[width=\textwidth]{images/autoencoder/pony_2_predicted.png}
+    % \includegraphics[width=\textwidth]{images/autoencoder/pony_2_predicted.png}
     \caption{Autoencoder prediction}
   \end{subfigure}
   \begin{subfigure}[h!]{0.25\textwidth}
     \includegraphics[width=\textwidth]{images/unet/pony_predicted.png}
-    \includegraphics[width=\textwidth]{images/unet/pony_2_predicted.png}
+    % \includegraphics[width=\textwidth]{images/unet/pony_2_predicted.png}
     \caption{U-Net prediction}
   \end{subfigure}
   \caption{Predicted LWIR signature of images of shetland ponys. Retrieved from \url{https://commons.wikimedia.org/wiki/File:Sandwick_Shetland_Pony.jpg} and \url{https://commons.wikimedia.org/wiki/File:Shetland_ponies_at_Sandwick.jpg}}
@@ -557,25 +557,33 @@ Similar to the traditional autoencoder, the U-Net was trained for 100 epochs on 
 
 
 % \begin{figure}[ht]
-%   \centering
-%   \begin{subfigure}[h!]{0.3\textwidth}
-%     \includegraphics[width=\textwidth]{images/autoencoder/mirror/grayscale.png}
-%     \caption{Grayscale of visible light}
-%     \label{fig:gradient_distribution}
-%   \end{subfigure}
-%   \begin{subfigure}[h!]{0.3\textwidth}
-%     \includegraphics[width=\textwidth]{images/autoencoder/mirror/pred_fir.png}
-%     \caption{Predicted LWIR}
-%     \label{fig:gradient_distribution_red_green}
-%   \end{subfigure}
-%   \begin{subfigure}[h!]{0.3\textwidth}
-%     \includegraphics[width=\textwidth]{images/autoencoder/mirror/actual_fir.png}
-%     \caption{Actual LWIR}
-%     \label{fig:gradient_distribution_red_green}
-%   \end{subfigure}
-%   \caption{Autoencoder prediction of LWIR image from grayscale.}
+  %   \centering
+  %   \begin{subfigure}[h!]{0.3\textwidth}
+    %     \includegraphics[width=\textwidth]{images/autoencoder/mirror/grayscale.png}
+    %     \caption{Grayscale of visible light}
+    %     \label{fig:gradient_distribution}
+  %   \end{subfigure}
+  %   \begin{subfigure}[h!]{0.3\textwidth}
+    %     \includegraphics[width=\textwidth]{images/autoencoder/mirror/pred_fir.png}
+    %     \caption{Predicted LWIR}
+    %     \label{fig:gradient_distribution_red_green}
+  %   \end{subfigure}
+  %   \begin{subfigure}[h!]{0.3\textwidth}
+    %     \includegraphics[width=\textwidth]{images/autoencoder/mirror/actual_fir.png}
+    %     \caption{Actual LWIR}
+    %     \label{fig:gradient_distribution_red_green}
+  %   \end{subfigure}
+  %   \caption{Autoencoder prediction of LWIR image from grayscale.}
 % \end{figure}
 
+\section{Classification}
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.9\textwidth]{images/models/alexnet}
+  \caption{Neural network architecture of AlexNet.}
+  \label{fig:alexnet}
+\end{figure}
 
 \section{Mobile application}
 

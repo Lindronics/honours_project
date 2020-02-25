@@ -32,7 +32,7 @@ spec:
         # - Tensorflow 2.0.0
         # - GPU support (CUDA libraries etc)
         # - Python 3
-        image: tensorflow/tensorflow:2.0.0-gpu-py3
+        image: lindronics/honours_project:v1
         
         command: 
           - "python3"

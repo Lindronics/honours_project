@@ -7,7 +7,7 @@ import numpy as np
 
 from models.classification import alexnet
 from models.classification.dataset import Dataset
-# from preprocessing.augment import augment_dataset
+from preprocessing.augment import augment_dataset
 from preprocessing.generate_labels import generate_labels
 
 # Change working directory

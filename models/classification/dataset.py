@@ -1,8 +1,8 @@
 import numpy as np
-# import cv2
+import cv2
 from itertools import count
 from collections import defaultdict
-# from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split
 import tensorflow as tf
 import tensorflow.keras as K
 
@@ -34,8 +34,8 @@ class Dataset(K.utils.Sequence):
                 labels.append(class_label)
 
         if split:
-            # train_data, test_data = train_test_split(samples, stratify=labels, test_size=0.2, random_state=42)
-            # self.samples = train_data if train else test_data
+            train_data, test_data = train_test_split(samples, stratify=labels, test_size=0.2, random_state=42)
+            self.samples = train_data if train else test_data
             pass
         else:
             self.samples = samples
@@ -54,12 +54,12 @@ class Dataset(K.utils.Sequence):
     def load(self, path, register=False):
         img = tf.io.read_file(path)
         img = tf.image.decode_jpeg(img, channels=3)
-        img = tf.image.convert_image_dtype(img, tf.float32)
+        img = tf.image.convert_image_dtype(img, tf.float32).numpy()
         # img = cv2.imread(path) / 255
-        # if register:
-        #     img = cv2.resize(img, (480, 640))
-        #     img = cv2.warpAffine(img, transformation, (480, 640))
-        # img = cv2.resize(img, self.res)
+        if register:
+            img = cv2.resize(img, (480, 640))
+            img = cv2.warpAffine(img, transformation, (480, 640))
+        img = cv2.resize(img, self.res)
         return img
 
 

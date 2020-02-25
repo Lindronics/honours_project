@@ -3,7 +3,7 @@ import shutil
 import cv2
 import numpy as np
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
-import tqdm
+from tqdm import tqdm
 import argparse
 
 from preprocessing.generate_labels import generate_labels

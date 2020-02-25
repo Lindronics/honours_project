@@ -45,7 +45,7 @@ def save(path:str, name:str, rgb:np.ndarray, lwir:np.ndarray, label:str, extensi
     return tuple([rgb_path, lwir_path, label])
 
 
-def augment_dataset(samples: list, augmented_dir:str, multiplier:int=2, register:bool=False):
+def augment_dataset(samples: list, augmented_dir:str, multiplier:int=2, register:bool=False, res:tuple=(120, 160)):
     """ 
     Augments a dataset. Will attempt to balance classes.
 
@@ -96,12 +96,12 @@ def augment_dataset(samples: list, augmented_dir:str, multiplier:int=2, register
         rgb = cv2.imread(rgb_path)
 
         if register:
-            initial_shape = rgb.shape
             rgb = cv2.resize(rgb, (480, 640))
             rgb = cv2.warpAffine(rgb, transformation, (480, 640))
-            rgb = cv2.resize(rgb, (initial_shape[1], initial_shape[0]))
+        rgb = cv2.resize(rgb, res)
 
         lwir = cv2.imread(lwir_path)
+        lwir = cv2.resize(lwir, res)
 
         name = (rgb_path.split("/")[-1]).split(".")[0][4:]
         out_path = os.path.join(augmented_dir, label, f"{label}_single_1")
@@ -134,10 +134,14 @@ if __name__ == "__main__":
     parser.add_argument("in_path", help="Input directory containing images")
     parser.add_argument("out_path", help="Output directory for augmented images")
     parser.add_argument("labels_path", help="Output file path for labels file")
+    parser.add_argument("multiplier", help="Multiplier")
+    parser.add_argument("-d", "--downsample", dest="downsample", help="Downsample to 160x120", action="store_true")
     args = vars(parser.parse_args())
 
+    res = (120, 160) if args["downsample"] else (480, 640)
+
     labels = generate_labels(lambda x: True, args["in_path"], channel_prefix=True)
-    new_labels = augment_dataset(labels, args["out_path"], multiplier=4, register=True)
+    new_labels = augment_dataset(labels, args["out_path"], multiplier=int(args["multiplier"]), register=True, res=res)
     write_labels(new_labels, args["labels_path"])
     
     print("\nFinished.")

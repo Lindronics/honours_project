@@ -5,7 +5,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: test-classification
+  name: augment-dataset
   namespace: 2265846lproject
 # this is where you define the content of the Job
 spec:
@@ -15,7 +15,7 @@ spec:
   backoffLimit: 0
   template:        
     metadata:
-      name: test-classification
+      name: augment-dataset
     spec:
       # in the "containers:" section you define the container(s) that
       # will run inside the Pod itself. Usually you'll just need one. 
@@ -37,9 +37,18 @@ spec:
         command: 
           - "python3"
           - "nfs/honours_project/preprocessing/augment.py"
-          - "/nfs/honours_project_data/animals/images_160x120_downsampled"
-          - "/nfs/honours_project_data/animals/images_160x120_augmented"
-          - "/nfs/honours_project_data/animals/labels_augmented.txt"
+          - "-d"
+          - "nfs/honours_project_data/animals_train/images"
+          - "nfs/honours_project_data/animals_train/images_augmented"
+          - "nfs/honours_project_data/animals_train/labels.txt"
+
+          - "&&"
+          - "python3"
+          - "nfs/honours_project/preprocessing/augment.py"
+          - "-d"
+          - "nfs/honours_project_data/animals_test/images"
+          - "nfs/honours_project_data/animals_test/images_augmented"
+          - "nfs/honours_project_data/animals_test/labels.txt"
         
         resources:
           # these are the hardware resources the container needs 

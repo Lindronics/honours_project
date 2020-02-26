@@ -35,7 +35,8 @@ spec:
         image: lindronics/honours_project:v1
         
         command: 
-          - sh nfs/honours_project/gpu_cluster/helpers/augment.sh
+          - sh
+          - nfs/honours_project/gpu_cluster/helpers/augment.sh
         
         resources:
           # these are the hardware resources the container needs 
@@ -77,7 +78,7 @@ spec:
         # will be visible inside this container
         env:
         - name: PYTHONPATH
-          value: "/nfs/honours_project"
+          value: "/nfs"
       # this defines a volume called nfs-access which corresponds to your cluster
       # filespace. 
       volumes:

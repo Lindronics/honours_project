@@ -35,20 +35,7 @@ spec:
         image: lindronics/honours_project:v1
         
         command: 
-          - "python3"
-          - "nfs/honours_project/preprocessing/augment.py"
-          - "-d"
-          - "nfs/honours_project_data/animals_train/images"
-          - "nfs/honours_project_data/animals_train/images_augmented"
-          - "nfs/honours_project_data/animals_train/labels.txt"
-
-          - "&&"
-          - "python3"
-          - "nfs/honours_project/preprocessing/augment.py"
-          - "-d"
-          - "nfs/honours_project_data/animals_test/images"
-          - "nfs/honours_project_data/animals_test/images_augmented"
-          - "nfs/honours_project_data/animals_test/labels.txt"
+          - sh nfs/honours_project/gpu_cluster/helpers/augment.sh
         
         resources:
           # these are the hardware resources the container needs 

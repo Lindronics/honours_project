@@ -222,9 +222,9 @@ How is this problem to be approached, without reference to specific implementati
 
 \subsection{Classes and samples}
 
-Initially, a dataset consisting of 13 classes and 1042 samples was captured, using the camera functionality of the mobile application. The app captures images in quick temporal succession, effectively like a video. Thus, many images are relatively similiar, as they were captured within only a few milliseconds difference. To distinguish between different "bursts" of images, images were grouped into distinct subsets, each subset representing a batch of similar images.
+Initially, a dataset consisting of 13 classes and 1042 samples was captured using the camera functionality of the mobile application. The app captures images in quick temporal succession, effectively like a video. Thus, many images are relatively similiar, as they were captured within only a few milliseconds difference. To distinguish between different "bursts" of images, images were grouped into distinct subsets, each subset representing a batch of similar images.
 
-Due to the difficulty of obtaining well-framed and unobstructed images, the data contains some noise. Some images contain more than one animal. Furthermore, some animals were housed in closed-off shelters and were only visible behind a metal grid. Therefore, each subset was labeled as either \textit{single}, \textit{multi}, or \textit{obstructed}, to allow greater flexibility when selecting data for training and validation. Moreover, no distinction between genders was made. This primarily impacts the peacock class, as male and female peacocks look fairly different.
+Due to the difficulty of obtaining well-framed and unobstructed images, the data contains some noise. Some images contain more than one animal. Furthermore, some animals were housed in closed-off shelters and were only visible behind a metal grid. Therefore, each subset was labeled as either \textit{single}, \textit{multi}, or \textit{obstructed}, to allow greater flexibility when selecting data for training and validation. Moreover, no distinction between genders was made. This primarily impacts the peacock class, as male and female peacocks have a very distinct appearance.
 
 \begin{table}[ht]
   \centering
@@ -249,7 +249,7 @@ Due to the difficulty of obtaining well-framed and unobstructed images, the data
   \label{table:raw_dataset}
 \end{table}
 
-Initially, the split between training and validation data was performed by randomly drawing samples from the dataset in a stratified way. As demonstrated in (XXX link), nearly perfect validation accuracy was achieved on this data. This most likely being a result of the aforementioned similarity of many images due to them being captured at similar times, we decided that a second, independent dataset was necessary to achieve representative evaluation results. The classes and samples of both datasets are shown in Table \ref{table:raw_dataset}.
+Initially, the separation into training and validation data was performed using a stratified random split of all the data. As demonstrated in (XXX link), nearly perfect validation accuracy was achieved on this split. This most likely being a result of the aforementioned similarity of many images due to them being captured at similar times, we decided that a second, independent dataset was necessary to achieve representative evaluation results. The classes and samples of both datasets are shown in Table \ref{table:raw_dataset}.
 
 Finally, the subsets from both datasets were rearranged into a training dataset and a testing dataset. An attempt was made to obtain a balanced mixture of \textit{single}, \textit{multi}, and \textit{obstructed} subsets in both datasets. Nonetheless, it can be assumed that achieving a perfect, representative split is difficult due to the noise in the dataset and the limited variety of contexts. The train-test-split is shown in Table \ref{table:train_test_dataset}.
 
@@ -273,61 +273,60 @@ Finally, the subsets from both datasets were rearranged into a training dataset 
   \label{table:train_test_dataset}
 \end{table}
 
-The classes with low support (Pig, Sheep, Ferret, Rabbit) were dropped from the datasets, as it was deemed unlikely that a model would be able to accurately be fit on such small numbers of samples.
-
-Figure \ref{fig:dataset_classes} shows example RGB and LWIR images from the training dataset.
-
+The classes with low support (Pig, Sheep, Ferret, Rabbit) were dropped from the datasets, as it was deemed unlikely that a model would be able to accurately be fit on such small numbers of samples. A problem that remained is the class imbalance in both datasets. Alpacas are over-represented and Hamburg chicken are significantly under-represented.
 
 \begin{figure}[ht]
   \centering
   \begin{subfigure}[h!]{0.18\textwidth}
-    \includegraphics[width=\textwidth]{images/dataset/cat/rgb.png}
-    \includegraphics[width=\textwidth]{images/dataset/cat/lwir.png}
+    \includegraphics[width=\textwidth, trim={0cm 6cm 0cm 6cm}, clip]{images/dataset/cat/rgb.png}
+    \includegraphics[width=\textwidth, trim={0cm 2.5cm 0cm 2.5cm}, clip]{images/dataset/cat/lwir.png}
     \caption{Cat}
   \end{subfigure}
   \begin{subfigure}[h!]{0.18\textwidth}
-    \includegraphics[width=\textwidth]{images/dataset/pony/rgb.png}
-    \includegraphics[width=\textwidth]{images/dataset/pony/lwir.png}
+    \includegraphics[width=\textwidth, trim={0cm 6cm 0cm 6cm}, clip]{images/dataset/pony/rgb.png}
+    \includegraphics[width=\textwidth, trim={0cm 2.5cm 0cm 2.5cm}, clip]{images/dataset/pony/lwir.png}
     \caption{Pony}
   \end{subfigure}
   \begin{subfigure}[h!]{0.18\textwidth}
-    \includegraphics[width=\textwidth]{images/dataset/alpaca/rgb.png}
-    \includegraphics[width=\textwidth]{images/dataset/alpaca/lwir.png}
+    \includegraphics[width=\textwidth, trim={0cm 6cm 0cm 6cm}, clip]{images/dataset/alpaca/rgb.png}
+    \includegraphics[width=\textwidth, trim={0cm 2.5cm 0cm 2.5cm}, clip]{images/dataset/alpaca/lwir.png}
     \caption{Alpaca}
   \end{subfigure}
   \begin{subfigure}[h!]{0.18\textwidth}
-    \includegraphics[width=\textwidth]{images/dataset/peacock/rgb.png}
-    \includegraphics[width=\textwidth]{images/dataset/peacock/lwir.png}
+    \includegraphics[width=\textwidth, trim={0cm 6cm 0cm 6cm}, clip]{images/dataset/peacock/rgb.png}
+    \includegraphics[width=\textwidth, trim={0cm 2.5cm 0cm 2.5cm}, clip]{images/dataset/peacock/lwir.png}
     \caption{Peacock}
   \end{subfigure}
   \begin{subfigure}[h!]{0.18\textwidth}
-    \includegraphics[width=\textwidth]{images/dataset/pretty_chicken/rgb.png}
-    \includegraphics[width=\textwidth]{images/dataset/pretty_chicken/lwir.png}
+    \includegraphics[width=\textwidth, trim={0cm 6cm 0cm 6cm}, clip]{images/dataset/pretty_chicken/rgb.png}
+    \includegraphics[width=\textwidth, trim={0cm 2.5cm 0cm 2.5cm}, clip]{images/dataset/pretty_chicken/lwir.png}
     \caption{Hamburg chicken}
   \end{subfigure}
   \begin{subfigure}[h!]{0.18\textwidth}
-    \includegraphics[width=\textwidth]{images/dataset/evil_chicken/rgb.png}
-    \includegraphics[width=\textwidth]{images/dataset/evil_chicken/lwir.png}
+    \includegraphics[width=\textwidth, trim={0cm 6cm 0cm 6cm}, clip]{images/dataset/evil_chicken/rgb.png}
+    \includegraphics[width=\textwidth, trim={0cm 2.5cm 0cm 2.5cm}, clip]{images/dataset/evil_chicken/lwir.png}
     \caption{Evil chicken}
   \end{subfigure}
   \begin{subfigure}[h!]{0.18\textwidth}
-    \includegraphics[width=\textwidth]{images/dataset/ugly_duck/rgb.png}
-    \includegraphics[width=\textwidth]{images/dataset/ugly_duck/lwir.png}
+    \includegraphics[width=\textwidth, trim={0cm 6cm 0cm 6cm}, clip]{images/dataset/ugly_duck/rgb.png}
+    \includegraphics[width=\textwidth, trim={0cm 2.5cm 0cm 2.5cm}, clip]{images/dataset/ugly_duck/lwir.png}
     \caption{Ugly duck}
   \end{subfigure}
   \begin{subfigure}[h!]{0.18\textwidth}
-    \includegraphics[width=\textwidth]{images/dataset/chicken/rgb.png}
-    \includegraphics[width=\textwidth]{images/dataset/chicken/lwir.png}
+    \includegraphics[width=\textwidth, trim={0cm 6cm 0cm 6cm}, clip]{images/dataset/chicken/rgb.png}
+    \includegraphics[width=\textwidth, trim={0cm 2.5cm 0cm 2.5cm}, clip]{images/dataset/chicken/lwir.png}
     \caption{Chicken}
   \end{subfigure}
   \begin{subfigure}[h!]{0.18\textwidth}
-    \includegraphics[width=\textwidth]{images/dataset/goose/rgb.png}
-    \includegraphics[width=\textwidth]{images/dataset/goose/lwir.png}
+    \includegraphics[width=\textwidth, trim={0cm 6cm 0cm 6cm}, clip]{images/dataset/goose/rgb.png}
+    \includegraphics[width=\textwidth, trim={0cm 2.5cm 0cm 2.5cm}, clip]{images/dataset/goose/lwir.png}
     \caption{Goose}
   \end{subfigure}
-  \caption{Examples for each class in the final dataset.}
+  \caption{Example images for each class in the final dataset. Images have been cropped vertically.}
   \label{fig:dataset_classes}
 \end{figure}
+
+Figure \ref{fig:dataset_classes} shows example RGB and LWIR images from the training dataset. While these examples are sampeled from the "ideal" \textit{single} subsets, they highlight another important caveat. Not all images were captured at the same distance. Consequently, different animals fill different amounts of space within the images, possibly skewing classification results. An attempt was made to mitigate this issue through affine data agumentation.
 
 \subsection{Data augmentation}
 
@@ -363,7 +362,7 @@ Figure \ref{fig:augmentation_affine} shows different affine transformations that
   \label{fig:augmentation_affine}
 \end{figure}
 
-Another possible way of augmenting the data before classification is artificially drawing obstacles over the image samples. 
+Another possible way of augmenting the data before classification is artificially drawing obstacles over the images. This approach is likely to help the model generalise better, as a significant amount of samples from certain classes is obstructed by metal grids or foliage. However, this would require further investigation into the varying properties of visible light and LWIR images, and their interaction with different types of obstacles. Hence, this approach was omitted.
 
 
 %----------------------------------------------------------------------------------------------------------------------------------
@@ -494,11 +493,19 @@ where $H(X) = - \sum_{x \in X} p(x) \cdot log_2 p(x)$ is the entropy of $X$ and 
 
 %----------------------------------------------------------------------------------------------------------------------------------
 
+\section{Data augmentation}
 
-\section{Predicting LWIR images using an autoencoder}
+\subsection{Affine data augmentation}
+
+Various libraries and tools are available to perform real-time data augmentation as part of the training pipeline. However, to achieve the highest possible level of control, a custom data augmentation function was designed. It leverages Tensorflow's ImageDataGenerator to apply random affine transformations to images in the dataset.
+
+The script works by counting the number of samples per class and determining the class with the highest support. Each sample in that class is then augmented $n$ times. Finally, all remaining classes are being augmented until their sample size reaches that of the max class. The aim of this algorithm is to provide an even dataset without class imbalances.
+
+
+\subsection{Predicting LWIR images using an autoencoder}
 \label{autoencoder_implementation}
 
-\subsection{Traditional autoencoder}
+\subsubsection{Traditional autoencoder}
 
 A deep convolutional autoencoder was created to predict the LWIR signature of objects from the corresponding visible light image. The architecture of the network is shown in Figure \ref{fig:autoencoder_architecture}. The network consists of an encoder and a decoder that each contain four blocks of layers.
 
@@ -517,7 +524,7 @@ After successful training of the network, two images of ponies were retrieved fr
   \label{fig:autoencoder_architecture}
 \end{figure}
 
-\subsection{U-Net}
+\subsubsection{U-Net}
 
 U-Net was first introduced by \citet{ronneberger_u-net_2015} to improve performance of biomedical image segmentation systems. Similarly to a conventional autoencoder, it features a contracting path that downsamples or encodes the input, and a symmetric expanding path that upsamples or decodes the input. Additionally, for each deconvolutional layer, the output of the corresponding opposite convolutional layer is concatenated to the layer's input map. These connections can be seen in Figure \ref{fig:unet_architecture}. 
 

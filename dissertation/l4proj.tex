@@ -585,6 +585,18 @@ Similar to the traditional autoencoder, the U-Net was trained for 100 epochs on 
 
 \section{Classification}
 
+\subsection{Data loading}
+
+Google Colaboratory was used throughout the majority of the project. Due to the limited amount of memory Colab provides, it was impossible to pre-load the entire training dataset into memory for training. For this reason, a data loader class was implemented that supported lazy loading of data batches. When constructing the loader, a batch size can be specified, in addition to whether image samples shall be registered, and the target image resolution. 
+
+Since the data loader extends Keras' Sequence class, it fully integrates with the Model training API. When constructed, it loads a list of all samples, containing image paths and class labels. It then enumerates the classes.
+
+When \lstinline{model.fit()} is called with the data loader as data source, Keras will call the \lstinline{__getitem__()} function repeatedly to lazily load batches of data into memory. The data loader will load the images in a batch, register them if demanded, and convert them into a tensor of shape $(batch size \times height \times width \times channels)$. Finally, it will return a tuple containing the image tensor and the one-hot representation of the numeric class labels.
+
+While this approach was necessary to fit the model on the whole training dataset, we found that it noticably slowed down training speeds. This is most likely due to slow I/O bottlenecking the loading speed. An attempt was made to use Tensorflow's data API instead of OpenCV for loading and pre-processing to load the data directly into VRAM. However, the performance improvement was negligible.
+
+\subsection{Models}
+
 \begin{figure}[ht]
   \centering
   \includegraphics[width=0.9\textwidth]{images/models/alexnet}

@@ -221,6 +221,7 @@ How is this problem to be approached, without reference to specific implementati
 \section{Dataset}
 
 \subsection{Classes and samples}
+\label{classes_samples}
 
 Initially, a dataset consisting of 13 classes and 1042 samples was captured using the camera functionality of the mobile application. The app captures images in quick temporal succession, effectively like a video. Thus, many images are relatively similiar, as they were captured within only a few milliseconds difference. To distinguish between different "bursts" of images, images were grouped into distinct subsets, each subset representing a batch of similar images.
 
@@ -367,7 +368,43 @@ Another possible way of augmenting the data before classification is artificiall
 
 %----------------------------------------------------------------------------------------------------------------------------------
 
+\section{Classifiers}
+
+As shown in \ref{fig:augmentation_affine}, the spatial and intensity properties of RGB and LWIR images are significantly different. Consequently, we decided to implement four versions of every CNN and evaluate the results separately.
+
+\begin{enumerate}
+  \item A single-branch implementation similar to the default implementation of most networks. The RGB+LWIR channels are stacked into a tensor of shape $({batch_size} \times width \times height \times 4)$. This tensor is then fed into a sequence of hidden layers.
+  \item An RGB-only implementation. This will be used as a baseline.
+  \item A multi-branch implementation with late feature fusion. Here, the RGB and LWIR images are fed into separate branches of hidden layers. Finally, the respective outputs are being flattened, concatenated and fed into the fully-connected layers at the end of the network.
+  \item A multi-branch implementation with voting classifiers. Similarly to the late feature-fusion implementation, the images are run through seperate branches. However, the branches have their own individual fully-connected layers, which produce separate predictions. The final output is the mean of these two predictions. 
+\end{enumerate}
+
+This project will therefore attempt to evaluate the performance of early feature-fusion, late feature-fusion and voting classifiers. 
+
+\subsection{AlexNet}
+
+AlexNet was first introduced by \citet{krizhevsky_imagenet_2012}.
+
+Our implementation of AlexNet diverges slightly from the original in several points.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.9\textwidth]{images/models/alexnet}
+  \caption{Neural network architecture of AlexNet.}
+  \label{fig:alexnet}
+\end{figure}
+
+%----------------------------------------------------------------------------------------------------------------------------------
+
+
 \section{Mobile application}
+
+The mobile application was designed with two primary requirements in mind:
+
+\begin{itemize}
+  \item Enabling the easy capture of combined visible-light and thermal datasets.
+  \item Being able to perform live multi-class classification on multiple species of animals.
+\end{itemize}
 
 
 
@@ -597,12 +634,7 @@ While this approach was necessary to fit the model on the whole training dataset
 
 \subsection{Models}
 
-\begin{figure}[ht]
-  \centering
-  \includegraphics[width=0.9\textwidth]{images/models/alexnet}
-  \caption{Neural network architecture of AlexNet.}
-  \label{fig:alexnet}
-\end{figure}
+
 
 \section{Mobile application}
 
@@ -619,9 +651,30 @@ How good is your solution? How well did you solve the general problem, and what 
 
 \subsection{Data augmentation}
 
-\subsection{Generation of artificial data}
+\subsection{Training-validation split}
 
-\subsection{Data sampling}
+Multiple configurations of train/test split were attempted. Splitting the data with stratified sampling and train-test-split of 80-20, all models nearly achieved perfect classification accuracy. Figure \ref{fig:conf_stratified} shows the confusion matrix of the XXX classifier.  
+
+\begin{figure}[ht]
+  \centering
+  \begin{subfigure}[h!]{0.4\textwidth}
+    \includegraphics[width=\textwidth]{images/evaluation/confusion/vis_fir_confusion.png}
+    \caption{Stratified sampling}
+    \label{fig:conf_stratified}
+  \end{subfigure}
+  \begin{subfigure}[h!]{0.4\textwidth}
+    \includegraphics[width=\textwidth]{images/evaluation/confusion/vis_fir_confusion.png}
+    \caption{Manual split (Section \ref{classes_samples})}
+    \label{fig:conf_stratified}
+  \end{subfigure}
+  \caption{Confusion matrices for differnt train-validation splits.}
+\end{figure}
+
+This result is most likely due to the similarity of many images as mentioned in Section XXX. Since train and test samples are drawn from the same raw dataset, we conclude that it is very likely that the models are significantly overfitted on the captured data. It is unlikely that they would perform as well on chaotic new data as indicated by the validation accuracy.
+
+Fitting the models on the training dataset as defined in Section \ref{classes_samples}, validation scores dropped significantly. This was in accordance with our expectations, as the samples from the training and validation datasets should now be independent. Therefore, the models are not able to overfit on the whole dataset anymore and the validation score is more representative of potential performance on new data.
+
+\subsection{Generation of artificial data}
 
 \subsection{VIS only compared to VIS+LWIR}
 
@@ -638,17 +691,6 @@ How good is your solution? How well did you solve the general problem, and what 
 %----------------------------------------------------------------------------------------------------------------------------------
 
 \section{Computational performance on mobile device}
-
-
-\begin{figure}[ht]
-  \centering
-  \begin{subfigure}[h!]{0.6\textwidth}
-    \includegraphics[width=\textwidth]{images/evaluation/confusion/vis_fir_confusion.png}
-    \caption{Confusion matrix}
-    \label{fig:confusion}
-  \end{subfigure}
-  \caption{ASDF}
-\end{figure}
 
 
 %==================================================================================================================================

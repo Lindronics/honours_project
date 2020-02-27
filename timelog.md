@@ -350,3 +350,16 @@
 
 * *2.5 hours* Set up custom Docker image for GPU cluster
 * *3.0 hours* Captured second animals dataset. This is to be able to perform a representative train/test split.
+* *2.0 hours* Added and refactored various pre-processing scripts from test notebooks. These will make it easier to run various tasks on the cluster.
+* *1.0 hour* Dissertation: dataset
+
+### 26 Feb 2020
+
+* *2.0 hours* Dissertation additions
+* *2.0 hours* Performed various tests on combined datasets. Models appear to struggle with chicken and alpacas.
+* *1.0 hours* Various improvements to pre-processing scripts
+
+### 27 Feb 2020
+
+* *1.0 hours* Experiments with subsets of dataset (e.g. chickena and alpacas only).
+* *1.0 hours* Evaluated different data augmentation techniques

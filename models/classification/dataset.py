@@ -1,3 +1,4 @@
+import random
 import numpy as np
 import cv2
 from itertools import count
@@ -59,6 +60,8 @@ class Dataset(K.utils.Sequence):
             self.samples = train_data if train else test_data
             pass
         else:
+            random.seed(42)
+            random.shuffle(samples)
             self.samples = samples
 
         self.class_dict = {key: val for val, key in self.classes.items()}

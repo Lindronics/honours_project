@@ -51,7 +51,7 @@ spec:
             cpu: "2000m" 
             # memory units are also defined by a suffix. typically this will
             # be "Mi" or "Gi" as appropriate
-            memory: "2Gi"
+            memory: "16Gi"
             # GPUs are slightly different as they're not natively supported
             # by Kubernetes. This indicates that the container requires 1 
             # GPU in order to run
@@ -67,7 +67,7 @@ spec:
           # and the others will not be visible to code inside it
           limits:
             cpu: "4000m" 
-            memory: "8Gi"
+            memory: "16Gi"
             nvidia.com/gpu: 1 
         # this says "mount the external volume 'nfs-access' at the location /nfs
         # inside this container"

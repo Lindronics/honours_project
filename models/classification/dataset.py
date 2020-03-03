@@ -147,7 +147,7 @@ class Dataset(K.utils.Sequence):
         """
         X, y = [], []
         for i in range(len(self)):
-            X_batch, y_batch, _ = self.__getitem__(i)
+            X_batch, y_batch = self.__getitem__(i)
             X.append(X_batch)
             y.append(y_batch)
 

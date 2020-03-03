@@ -8,7 +8,7 @@ import tensorflow.keras as K
 from sklearn.metrics import classification_report
 
 from models import AlexNet
-from models.classification.dataset import Dataset
+from dataset import Dataset
 
 def grid_search(train_labels: str, 
                 test_labels: str, 
@@ -56,16 +56,16 @@ def grid_search(train_labels: str,
 
     # Models
     for model_type in models:
-        print(f"=>Starting evaluation of {model_type.__name__}.")
+        print(f"\n=> Starting evaluation of {model_type.__name__}.")
 
         for mode in model_type.modes:
-            print(f"\n\n=>Evaluating {mode} mode.")
+            print(f"\n=> Evaluating {mode} mode.")
             name_prefix = f"{model_type.__name__}_{mode}_"
 
             # Prepare model
-            net = model_type(mode)
+            net = model_type(mode, num_classes=train.num_classes())
             input_tensor = K.layers.Input(train.shape())
-            output_tensor = net(input_tensor, train)
+            output_tensor = net(input_tensor)
             model = K.Model(input_tensor, output_tensor)
 
             model.compile(optimizer="sgd",
@@ -90,18 +90,18 @@ def grid_search(train_labels: str,
             model.save_weights(os.path.join(output, name_prefix + "weights.h5"))
 
             # Evaluate
-            print("\n=>Starting evaluation")
-            with open(os.path.join(output, name_prefix + "report.txt")) as f:
-                f.write(f"### Evaluation results for {model_type.__name__} - {mode} ###\n\n")
+            print("\n=> Starting evaluation")
+            with open(os.path.join(output, name_prefix + "report.txt"), "w") as f:
+                f.write(f"##### Evaluation results for {model_type.__name__} - {mode} #####\n\n")
 
                 # Test classification report
-                f.write("# Test #\n")
+                f.write("\n### Test ###\n")
                 y_pred = np.argmax(model.predict(test), axis=1)
                 y_test_ = test.get_labels()[:y_pred.shape[0]]
                 f.write(classification_report(y_test_, y_pred, target_names=test.class_labels))
             
                 # Train classification report
-                f.write("# Train #\n")
+                f.write("\n### Train ###\n")
                 y_pred = np.argmax(model.predict(train), axis=1)
                 y_train_ = train.get_labels()[:y_pred.shape[0]]
                 f.write(classification_report(y_train_, y_pred, target_names=train.class_labels))
@@ -124,8 +124,8 @@ if __name__ == "__main__":
                 args["test"], 
                 args["out"], 
                 res=res, 
-                lazy=args["lazy"], 
-                epochs=args["epochs"], 
-                register=args["register"])
+                lazy=bool(args["lazy"]), 
+                epochs=int(args["epochs"]), 
+                register=bool(args["register"]))
     
-    print("\nFinished.")
+    print("\n=> Finished.")

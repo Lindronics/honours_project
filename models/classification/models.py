@@ -3,8 +3,22 @@ import tensorflow.keras as K
 
 
 class AbstractModel():
+    """ 
+    Abstract model class. Provides an interface for all models.
+    """
+
+    modes = ["rgb", "lwir", "stacked", "voting", "fusion"]
 
     def __init__(self, mode, num_classes):
+        """
+        Params
+        ------
+        mode: str
+            Multispectral mode of the model. 
+            Can be rgb, lwir, stacked, voting or fusion.
+        num_classes: int
+            Number of classes
+        """
         modes = {
             "rgb": self.rgb,
             "lwir": self.lwir,
@@ -19,9 +33,15 @@ class AbstractModel():
         return self.method(x)
 
     def net(self, x, fc=True):
+        """
+        Defines convolutional network.
+        """
         raise NotImplementedError
 
     def fc(self, x):
+        """
+        Defines fully connected part of network.
+        """
         raise NotImplementedError
 
     def rgb(self, x):
@@ -53,6 +73,9 @@ class AbstractModel():
 
 
 class AlexNet(AbstractModel):
+    """
+    AlexNet implementation with some modifications.
+    """
 
     def net(self, x, fc=True):
         x = K.layers.Conv2D(filters=96, kernel_size=11, strides=2, padding="same", activation="relu")(x)

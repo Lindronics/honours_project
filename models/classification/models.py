@@ -102,3 +102,51 @@ class AlexNet(AbstractModel):
         return x
 
 
+class ResNet(AbstractModel):
+    """
+    Custom network with residual blocks.
+    """
+
+    def residual_block(self, x, kernel_size):
+        """
+        Custom residual block implementation
+        """
+        x_shortcut = x
+        x = K.layers.Conv2D(filters=x.shape[-1], kernel_size=kernel_size, strides=1, padding="same")(x)
+        x = K.layers.BatchNormalization()(x)
+        x = K.layers.ReLU()(x)
+        x = K.layers.Conv2D(filters=x.shape[-1], kernel_size=kernel_size, strides=1, padding="same")(x)
+        x = K.layers.BatchNormalization()(x)
+        x = K.layers.Add()([x_shortcut, x])
+        x = K.layers.ReLU()(x)
+        return x
+
+        
+    def net(self, x, fc=True):
+        x = K.layers.Conv2D(filters=32, kernel_size=11, strides=2, activation="relu", padding="valid")(x)
+        x = K.layers.MaxPool2D(pool_size=2)(x)
+
+        x = residual_block(x, kernel_size=5)
+        x = residual_block(x, kernel_size=5)
+        x = residual_block(x, kernel_size=5)
+
+        x = K.layers.Conv2D(filters=64, kernel_size=7, strides=2, activation="relu", padding="valid")(x)
+        x = K.layers.MaxPool2D(pool_size=2)(x)
+
+        x = residual_block(x, kernel_size=5)
+        x = residual_block(x, kernel_size=5)
+        x = residual_block(x, kernel_size=5)
+
+        x = K.layers.Flatten()(x)
+
+        if fc:
+            return self.fc(x)
+        return x
+        
+    def fc(self, x):
+        x = K.layers.Dense(1024, activation="relu")(x)
+        x = K.layers.Dropout(0.25)(x)
+        x = K.layers.Dense(512, activation="relu")(x)
+        x = K.layers.Dropout(0.25)(x)
+        x = K.layers.Dense(self.num_classes, activation="softmax")(x)
+        return x

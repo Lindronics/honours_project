@@ -41,7 +41,7 @@ spec:
           - "nfs/honours_project_data/animals_train_final/labels.txt"
           - "nfs/honours_project_data/animals_test_final/labels.txt"
           - "nfs/out"
-          - "20"
+          - "30"
         
         resources:
           # these are the hardware resources the container needs 

@@ -7,7 +7,7 @@ import tensorflow.keras as K
 
 from sklearn.metrics import classification_report
 
-from models import AlexNet
+from models import AlexNet, ResNet
 from dataset import Dataset
 
 def grid_search(train_labels: str, 
@@ -43,7 +43,7 @@ def grid_search(train_labels: str,
 
     print("=> Starting grid search.")
 
-    models = [AlexNet]
+    models = [AlexNet, ResNet]
 
     # Data
     print("=> Loading data.")
@@ -92,19 +92,26 @@ def grid_search(train_labels: str,
             # Evaluate
             print("\n=> Starting evaluation")
             with open(os.path.join(output, name_prefix + "report.txt"), "w") as f:
-                f.write(f"##### Evaluation results for {model_type.__name__} - {mode} #####\n\n")
+                title = f"##### Evaluation results for {model_type.__name__} - {mode} #####"
+                f.write("#" * len(title) + "\n")
+                f.write(title + "\n")
+                f.write("#" * len(title) + "\n\n")
 
                 # Test classification report
-                f.write("\n### Test ###\n")
+                f.write("\n##### Test #####\n")
                 y_pred = np.argmax(model.predict(test), axis=1)
                 y_test_ = test.get_labels()[:y_pred.shape[0]]
                 f.write(classification_report(y_test_, y_pred, target_names=test.class_labels))
             
                 # Train classification report
-                f.write("\n### Train ###\n")
+                f.write("\n##### Train #####\n")
                 y_pred = np.argmax(model.predict(train), axis=1)
                 y_train_ = train.get_labels()[:y_pred.shape[0]]
                 f.write(classification_report(y_train_, y_pred, target_names=train.class_labels))
+
+                # Model summary
+                f.write("\n##### Model summary #####\n")
+                model.summary(print_fn=lambda x: f.write(x + "\n"))
 
 
 if __name__ == "__main__":

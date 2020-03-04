@@ -126,16 +126,16 @@ class ResNet(AbstractModel):
         x = K.layers.Conv2D(filters=32, kernel_size=11, strides=2, activation="relu", padding="valid")(x)
         x = K.layers.MaxPool2D(pool_size=2)(x)
 
-        x = residual_block(x, kernel_size=5)
-        x = residual_block(x, kernel_size=5)
-        x = residual_block(x, kernel_size=5)
+        x = self.residual_block(x, kernel_size=5)
+        x = self.residual_block(x, kernel_size=5)
+        x = self.residual_block(x, kernel_size=5)
 
         x = K.layers.Conv2D(filters=64, kernel_size=7, strides=2, activation="relu", padding="valid")(x)
         x = K.layers.MaxPool2D(pool_size=2)(x)
 
-        x = residual_block(x, kernel_size=5)
-        x = residual_block(x, kernel_size=5)
-        x = residual_block(x, kernel_size=5)
+        x = self.residual_block(x, kernel_size=5)
+        x = self.residual_block(x, kernel_size=5)
+        x = self.residual_block(x, kernel_size=5)
 
         x = K.layers.Flatten()(x)
 

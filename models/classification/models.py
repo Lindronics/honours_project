@@ -7,7 +7,7 @@ class AbstractModel():
     Abstract model class. Provides an interface for all models.
     """
 
-    modes = ["rgb", "lwir", "stacked", "voting", "fusion"]
+    modes = ["rgb", "lwir", "grayscale", "stacked", "voting", "fusion"]
 
     def __init__(self, mode, num_classes):
         """
@@ -15,13 +15,14 @@ class AbstractModel():
         ------
         mode: str
             Multispectral mode of the model. 
-            Can be rgb, lwir, stacked, voting or fusion.
+            Can be rgb, lwir, grayscale, stacked, voting or fusion.
         num_classes: int
             Number of classes
         """
         modes = {
             "rgb": self.rgb,
             "lwir": self.lwir,
+            "grayscale": self.grayscale,
             "stacked": self.stacked,
             "voting": self.voting,
             "fusion": self.fusion
@@ -51,6 +52,12 @@ class AbstractModel():
 
     def lwir(self, x):
         x = x[..., 0:3]
+        x = self.net(x)
+        return x
+
+    def grayscale(self, x):
+        x = x[..., 0:3]
+        x = tf.math.reduce_mean(x, axis=-1, keepdims=True)
         x = self.net(x)
         return x
 

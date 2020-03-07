@@ -68,8 +68,8 @@ def grid_search(train_labels: str,
             output_tensor = net(input_tensor)
             model = K.Model(input_tensor, output_tensor)
 
-            model.compile(optimizer="sgd",
-                          loss="mean_squared_error",
+            model.compile(optimizer="adam",
+                          loss="categorical_crossentropy",
                           metrics=["accuracy"])
 
             # Train model
@@ -99,15 +99,19 @@ def grid_search(train_labels: str,
 
                 # Test classification report
                 f.write("\n##### Test #####\n")
-                y_pred = np.argmax(model.predict(test), axis=1)
-                y_test_ = test.get_labels()[:y_pred.shape[0]]
+                if lazy:
+                    y_pred = np.argmax(model.predict(test), axis=1)
+                    y_test_ = test.get_labels()[:y_pred.shape[0]]
+                else:
+                    y_pred = np.argmax(model.predict(X_test), axis=1)
+                    y_test_ = y_test
                 f.write(classification_report(y_test_, y_pred, target_names=test.class_labels))
             
-                # Train classification report
-                f.write("\n##### Train #####\n")
-                y_pred = np.argmax(model.predict(train), axis=1)
-                y_train_ = train.get_labels()[:y_pred.shape[0]]
-                f.write(classification_report(y_train_, y_pred, target_names=train.class_labels))
+                # # Train classification report
+                # f.write("\n##### Train #####\n")
+                # y_pred = np.argmax(model.predict(train), axis=1)
+                # y_train_ = train.get_labels()[:y_pred.shape[0]]
+                # f.write(classification_report(y_train_, y_pred, target_names=train.class_labels))
 
                 # Model summary
                 f.write("\n##### Model summary #####\n")

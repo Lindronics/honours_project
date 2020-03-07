@@ -107,7 +107,7 @@ def grid_search(train_labels: str,
                     y_test_ = test.get_labels()[:y_pred.shape[0]]
                 else:
                     y_pred = np.argmax(model.predict(X_test), axis=1)
-                    y_test_ = y_test
+                    y_test_ = np.argmax(y_test, axis=1)
                 f.write(classification_report(y_test_, y_pred, target_names=test.class_labels))
             
                 # # Train classification report

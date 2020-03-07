@@ -229,46 +229,46 @@ Due to the difficulty of obtaining well-framed and unobstructed images, the data
 
 \begin{table}[ht]
   \centering
-  \begin{tabular}{@{}ll@{}ll@{}}
+  \begin{tabular}{@{}llll@{}}
     \toprule
-    \textbf{Class}  & \textbf{Dataset 1 } & \textbf{Dataset 2} \\ \midrule
-    Cat             & 205              & 0 \\
-    Pig             & 30               & 0 \\
-    Pony            & 112              & 127 \\
-    Sheep           & 36               & 0 \\
-    Alpaca          & 85               & 391 \\
-    Ferret          & 33               & 0 \\
-    Peacock         & 157              & 79 \\
-    Hamburg chicken & 29               & 58 \\
-    Evil chicken    & 17               & 129 \\
-    Ugly duck       & 24               & 141 \\
-    Chicken         & 138              & 151 \\
-    Rabbit          & 32               & 16 \\
-    Goose           & 144              & 0 \\ \bottomrule
+    \textbf{Class}  & \textbf{Dataset 1} & \textbf{Dataset 2} & \textbf{Dataset 3}  \\ \midrule
+    Cat             & 205              & 0                    & 0                   \\ 
+    Pig             & 30               & 0                    & 0                   \\
+    Pony            & 112              & 127                  & 234                 \\
+    Sheep           & 36               & 0                    & 0                   \\
+    Alpaca          & 85               & 391                  & 115                 \\
+    Ferret          & 33               & 0                    & 0                   \\
+    Peacock         & 157              & 79                   & 0                   \\
+    Hamburg chicken & 29               & 58                   & 49                  \\
+    Silkie chicken  & 17               & 129                  & 83                  \\
+    Muscovy duck    & 24               & 141                  & 105                 \\
+    Chicken         & 138              & 151                  & 170                 \\
+    Rabbit          & 32               & 16                   & 0                   \\
+    Goose           & 144              & 0                    & 0                   \\ \bottomrule
   \end{tabular}
   \caption{Classes and sample size of raw animals datasets.}
   \label{table:raw_dataset}
 \end{table}
 
-Initially, the separation into training and validation data was performed using a stratified random split of all the data. As demonstrated in (XXX link), nearly perfect validation accuracy was achieved on this split. This most likely being a result of the aforementioned similarity of many images due to them being captured at similar times, we decided that a second, independent dataset was necessary to achieve representative evaluation results. The classes and samples of both datasets are shown in Table \ref{table:raw_dataset}.
+Initially, the separation into training and validation data was performed using a stratified random split of all the data. As demonstrated in Section \ref{eval_train_val_split}, nearly perfect validation accuracy was achieved on this split. This most likely being a result of the aforementioned similarity of many images due to them being captured at similar times, we decided that a second, independent dataset was necessary to achieve representative evaluation results. The classes and samples of both datasets are shown in Table \ref{table:raw_dataset}.
 
 Finally, the subsets from both datasets were rearranged into a training dataset and a testing dataset. An attempt was made to obtain a balanced mixture of \textit{single}, \textit{multi}, and \textit{obstructed} subsets in both datasets. Nonetheless, it can be assumed that achieving a perfect, representative split is difficult due to the noise in the dataset and the limited variety of contexts. The train-test-split is shown in Table \ref{table:train_test_dataset}.
 
 
 \begin{table}[ht]
   \centering
-  \begin{tabular}{@{}ll@{}ll@{}}
+  \begin{tabular}{@{}lll@{}}
     \toprule
     \textbf{Class}  & \textbf{Train } & \textbf{Test} \\ \midrule
-    Cat             & 149              & 56 \\
-    Pony            & 211              & 28 \\
-    Alpaca          & 406               & 70 \\
-    Peacock         & 157              & 79 \\
-    Hamburg chicken & 58               & 29 \\
-    Evil chicken    & 129               & 17 \\
-    Ugly duck       & 141               & 24 \\
-    Chicken         & 211              & 78 \\
-    Goose           & 125              & 19 \\ \bottomrule
+    Cat             & 149             & 56 \\
+    Pony            & 415             & 58 \\
+    Alpaca          & 377             & 87 \\
+    Peacock         & 157             & 79 \\
+    Hamburg chicken & 77              & 59 \\
+    Silkie chicken  & 191             & 38 \\
+    Muscovy duck    & 206             & 64 \\
+    Chicken         & 277             & 119 \\
+    Goose           & 125             & 19 \\ \bottomrule
   \end{tabular}
   \caption{Classes and sample size train and test datasets.}
   \label{table:train_test_dataset}
@@ -331,15 +331,15 @@ Figure \ref{fig:dataset_classes} shows example RGB and LWIR images from the trai
 
 \subsection{Data augmentation}
 
-Due to the limited amount of resources available to the project, generating a dataset with sufficient scope and size is challenging. Since the performance of machine learning models is usually directly tied to the size and quality of the available dataset, an insufficient dataset might make it impossible to train an accurate and robust classifier \citep{fawzi_adaptive_2016}. Therefore, data augmentation will have to be employed to artificially increase the amount of distinct data samples.
+Due to the limited amount of time and resources available to the project, generating a dataset with sufficient scope and size is challenging. Since the performance of machine learning models is usually directly tied to the size and quality of the available dataset, an insufficient dataset might make it impossible to train an accurate and robust classifier \citep{fawzi_adaptive_2016}. Therefore, data augmentation will have to be employed to artificially increase the amount of usable training samples.
 
 \citet{mikolajczyk_data_2018} make the distinction between white-box and black-box data augmentation methods. While the latter use a form of deep learning, namely Generative Adversarial Networks (GAN), to synthesise new training samples, white-box methods involve more traditional techniques, such as affine transformations. 
 
 After evaluating various methods of data augmentation on a subset of the ImageNet dataset, \citet{perez_effectiveness_2017} conclude that traditional affine transformations alone can be very effective, although GAN-based methods are promising and might yield better results.
 
-Due to the relatively easy implementation, this project therefore primarily uses white-box data augmentation. However, the design and implementation of a deep-learning model generating LWIR from visible light is discussed in Section \ref{autoencoder_implementation}. This autoencoder could be used to generate new LWIR data samples from visible light images retrieved from other sources, such as existing computer vision datasets.
+Due to the relatively easy implementation, this project therefore primarily uses white-box data augmentation. However, the design and implementation of a deep-learning model generating LWIR from visible light images is discussed in Section \ref{autoencoder_implementation}. This model could be used to generate new LWIR data samples from visible light images retrieved from other sources, such as existing computer vision datasets.
 
-Figure \ref{fig:augmentation_affine} shows different affine transformations that were used to augment the captured dataset.
+Figure \ref{fig:augmentation_affine} shows different affine transformations that were used to augment the captured dataset. The most natural transformation in this scenario is a horizontal flip, as we can assume that the objects to be classified are symmentric along the horizontal axis and the images have all been captured with similar camera orientations. Moreover, we employed randomized zooms to try to account for the varying distances that the animals were photographed from. We decided to limit the zoom factor to a small enough range to guarantee that the images still showed the whole object. Finally, we applied random rotations in the range from $-20^{\circ}$ to $20^{\circ}$ to account for slightly different camera orientations.
 
 \begin{figure}[ht]
   \centering
@@ -363,54 +363,10 @@ Figure \ref{fig:augmentation_affine} shows different affine transformations that
   \label{fig:augmentation_affine}
 \end{figure}
 
-Another possible way of augmenting the data before classification is artificially drawing obstacles over the images. This approach is likely to help the model generalise better, as a significant amount of samples from certain classes is obstructed by metal grids or foliage. However, this would require further investigation into the varying properties of visible light and LWIR images, and their interaction with different types of obstacles. Hence, this approach was omitted.
+Another possible way of augmenting the data before classification is artificially drawing obstacles over the images. This approach could possibly help the model generalise better on the dataset, as a significant amount of samples from certain classes is obstructed by metal grids or foliage. However, this would require further investigation into the varying properties of visible light and LWIR images, and their interaction with different types of obstacles. Hence, this approach was not implemented in this project. Instead, we decided to remove a significant part of obstructed samples from the final dataset and focused on working with higher-quality data. 
 
 
 %----------------------------------------------------------------------------------------------------------------------------------
-
-\section{Classifiers}
-
-As shown in \ref{fig:augmentation_affine}, the spatial and intensity properties of RGB and LWIR images are significantly different. Consequently, we decided to implement four versions of every CNN and evaluate the results separately.
-
-\begin{enumerate}
-  \item A single-branch implementation similar to the default implementation of most networks. The RGB+LWIR channels are stacked into a tensor of shape $({batch_size} \times width \times height \times 4)$. This tensor is then fed into a sequence of hidden layers.
-  \item An RGB-only implementation. This will be used as a baseline.
-  \item A multi-branch implementation with late feature fusion. Here, the RGB and LWIR images are fed into separate branches of hidden layers. Finally, the respective outputs are being flattened, concatenated and fed into the fully-connected layers at the end of the network.
-  \item A multi-branch implementation with voting classifiers. Similarly to the late feature-fusion implementation, the images are run through seperate branches. However, the branches have their own individual fully-connected layers, which produce separate predictions. The final output is the mean of these two predictions. 
-\end{enumerate}
-
-This project will therefore attempt to evaluate the performance of early feature-fusion, late feature-fusion and voting classifiers. 
-
-\subsection{AlexNet}
-
-AlexNet was first introduced by \citet{krizhevsky_imagenet_2012}.
-
-Our implementation of AlexNet diverges slightly from the original in several points.
-
-\begin{figure}[ht]
-  \centering
-  \includegraphics[width=0.9\textwidth]{images/models/alexnet}
-  \caption{Neural network architecture of AlexNet.}
-  \label{fig:alexnet}
-\end{figure}
-
-%----------------------------------------------------------------------------------------------------------------------------------
-
-
-\section{Mobile application}
-
-The mobile application was designed with two primary requirements in mind:
-
-\begin{itemize}
-  \item Enabling the easy capture of combined visible-light and thermal datasets.
-  \item Being able to perform live multi-class classification on multiple species of animals.
-\end{itemize}
-
-
-
-%==================================================================================================================================
-\chapter{Implementation}
-What did you do to implement this idea, and what technical achievements did you make?
 
 \section{Image registration: aligning the RGB and LWIR images}
 \label{image_registration}
@@ -526,9 +482,55 @@ Finally, the mutual information (MI) of the resulting LWIR and RGB images was ca
   MI(A,B) = H(A) + H(B) - H(A,B),
 \end{equation}
 
-where $H(X) = - \sum_{x \in X} p(x) \cdot log_2 p(x)$ is the entropy of $X$ and $H(X,Y)$ represents the joint entropy of $X$ and $Y$.
+where $H(X) = - \sum_{x \in X} p(x) \cdot \log_2 p(x)$ is the entropy of $X$ and $H(X,Y)$ represents the joint entropy of $X$ and $Y$.
 
 %----------------------------------------------------------------------------------------------------------------------------------
+
+\section{Classifiers}
+
+As concluded in \ref{fig:augmentation_affine}, the spatial and intensity properties of RGB and LWIR images are significantly different. Consequently, we decided to implement five versions of every CNN and evaluate the results separately.
+
+\begin{enumerate}
+  \item An RGB-only implementation similar to the default implementation of most networks. This will be used as a baseline.
+  \item An LWIR-only implementation.
+  \item A greyscale implementation. This will calculate the mean across the three colour channels of the RGB image, yielding a single-channel greyscale image. The purpose of this model will be to evaluate the benefits and drawbacks of using all three colour channels.
+  \item A single-branch, stacked-layer implementation. The RGB and LWIR channels are stacked into a tensor of shape $({batch_size} \times width \times height \times 4)$. This tensor is then fed into the network, yielding a prediction.
+  \item A multi-branch implementation with late feature fusion. Here, the RGB and LWIR images are fed into separate branches of hidden layers. Finally, the respective outputs are being flattened, concatenated and fed into the fully-connected layers at the end of the network.
+  \item A multi-branch implementation with voting classifiers. Similarly to the late feature-fusion implementation, the images are run through seperate branches. However, the branches have their own individual fully-connected layers, which produce separate predictions. The final output is the weighted mean of these two predictions. 
+\end{enumerate}
+
+This project will therefore attempt to evaluate the performance of early feature-fusion, late feature-fusion and voting classifiers. We chose the RGB-only networks as a baseline, as most image classification models rely solely on visible light.
+
+\subsection{AlexNet}
+
+AlexNet was first introduced by \citet{krizhevsky_imagenet_2012}.
+
+Our implementation of AlexNet diverges slightly from the original in several points.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.9\textwidth]{images/models/alexnet}
+  \caption{Neural network architecture of AlexNet.}
+  \label{fig:alexnet}
+\end{figure}
+
+%----------------------------------------------------------------------------------------------------------------------------------
+
+
+\section{Mobile application}
+
+The mobile application was designed with two primary requirements in mind:
+
+\begin{itemize}
+  \item Enabling the easy capture of combined visible-light and thermal datasets.
+  \item Being able to perform live multi-class classification on multiple species of animals.
+\end{itemize}
+
+
+
+%==================================================================================================================================
+\chapter{Implementation}
+What did you do to implement this idea, and what technical achievements did you make?
 
 \section{Data augmentation}
 
@@ -652,6 +654,7 @@ How good is your solution? How well did you solve the general problem, and what 
 \subsection{Data augmentation}
 
 \subsection{Training-validation split}
+\label{eval_train_val_split}
 
 Multiple configurations of train/test split were attempted. Splitting the data with stratified sampling and train-test-split of 80-20, all models nearly achieved perfect classification accuracy. Figure \ref{fig:conf_stratified} shows the confusion matrix of the XXX classifier.  
 

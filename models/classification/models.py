@@ -9,7 +9,7 @@ class AbstractModel():
 
     modes = ["rgb", "lwir", "grayscale", "stacked", "voting", "fusion"]
 
-    def __init__(self, mode, num_classes):
+    def __init__(self, mode, num_classes, input_shape=None):
         """
         Params
         ------
@@ -18,6 +18,8 @@ class AbstractModel():
             Can be rgb, lwir, grayscale, stacked, voting or fusion.
         num_classes: int
             Number of classes
+        input_shape: tuple
+            Shape of input tensor
         """
         modes = {
             "rgb": self.rgb,
@@ -29,9 +31,16 @@ class AbstractModel():
         }
         self.method = modes[mode]
         self.num_classes = num_classes
+        self.input_shape = input_shape
         
     def __call__(self, x):
         return self.method(x)
+
+    def get_model(self):
+        input_tensor = K.layers.Input(self.input_shape)
+        output_tensor = self.method(input_tensor)
+        model = K.Model(input_tensor, output_tensor)
+        return model
 
     def net(self, x, fc=True):
         """
@@ -46,12 +55,12 @@ class AbstractModel():
         raise NotImplementedError
 
     def rgb(self, x):
-        x = x[..., 3, None]
+        x = x[..., 0:3]
         x = self.net(x)
         return x
 
     def lwir(self, x):
-        x = x[..., 0:3]
+        x = x[..., 3, None]
         x = self.net(x)
         return x
 
@@ -66,14 +75,14 @@ class AbstractModel():
         return x
 
     def voting(self, x):
-        rgb = self.net(x)
-        lwir = self.net(x)
+        rgb = self.net(x[..., 0:3])
+        lwir = self.net(x[..., 3, None])
         x = K.layers.Add()([rgb, lwir]) * 0.5
         return x
 
     def fusion(self, x):
-        rgb = self.net(x, fc=False)
-        lwir = self.net(x, fc=False)
+        rgb = self.net(x[..., 0:3], fc=False)
+        lwir = self.net(x[..., 3, None], fc=False)
         x = K.layers.Concatenate()([rgb, lwir])
         x = self.fc(x)
         return x
@@ -155,5 +164,27 @@ class ResNet(AbstractModel):
         x = K.layers.Dropout(0.25)(x)
         x = K.layers.Dense(512, activation="relu")(x)
         x = K.layers.Dropout(0.25)(x)
+        x = K.layers.Dense(self.num_classes, activation="softmax")(x)
+        return x
+
+class ResNet152v2(AbstractModel):
+    """
+    Pre-built ResNet 152 V2 from Keras.
+    """
+
+    def net(self, x, fc=True):
+        if x.shape[-1] == 3:
+            tf.print("==> Loading imagenet weights for shape", x.shape)
+            net = K.applications.resnet_v2.ResNet152V2(include_top=False, weights="imagenet", input_shape=x.shape[1:])
+        else:
+            tf.print("==> Loading no weights for shape", x.shape)
+            net = K.applications.resnet.ResNet152(include_top=False, weights=None, input_shape=x.shape[1:])
+        
+        x = net(x)
+        if fc:
+            return self.fc(x)
+        return x
+
+    def fc(self, x):
         x = K.layers.Dense(self.num_classes, activation="softmax")(x)
         return x

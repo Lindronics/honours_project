@@ -7,7 +7,7 @@ import tensorflow.keras as K
 
 from sklearn.metrics import classification_report
 
-from models import AlexNet, ResNet
+from models import AlexNet, ResNet, ResNet152v2
 from dataset import Dataset
 
 def grid_search(train_labels: str, 
@@ -43,7 +43,7 @@ def grid_search(train_labels: str,
 
     print("=> Starting grid search.")
 
-    models = [AlexNet, ResNet]
+    models = [AlexNet, ResNet, ResNet152v2]
 
     # Data
     print("=> Loading data.")
@@ -58,15 +58,19 @@ def grid_search(train_labels: str,
     for model_type in models:
         print(f"\n=> Starting evaluation of {model_type.__name__}.")
 
+        with open(os.path.join(output, model_type.__name__ + "report.txt"), "w") as f:
+            title = f"##### Evaluation results for {model_type.__name__} #####"
+            f.write("#" * len(title) + "\n")
+            f.write(title + "\n")
+            f.write("#" * len(title) + "\n\n")
+
         for mode in model_type.modes:
             print(f"\n=> Evaluating {mode} mode.")
             name_prefix = f"{model_type.__name__}_{mode}_"
 
             # Prepare model
-            net = model_type(mode, num_classes=train.num_classes())
-            input_tensor = K.layers.Input(train.shape())
-            output_tensor = net(input_tensor)
-            model = K.Model(input_tensor, output_tensor)
+            net = model_type(mode, num_classes=train.num_classes(), input_shape=train.shape())
+            model = net.get_model()
 
             model.compile(optimizer="adam",
                           loss="categorical_crossentropy",
@@ -91,11 +95,10 @@ def grid_search(train_labels: str,
 
             # Evaluate
             print("\n=> Starting evaluation")
-            with open(os.path.join(output, name_prefix + "report.txt"), "w") as f:
-                title = f"##### Evaluation results for {model_type.__name__} - {mode} #####"
-                f.write("#" * len(title) + "\n")
-                f.write(title + "\n")
-                f.write("#" * len(title) + "\n\n")
+            with open(os.path.join(output, model_type.__name__ + "report.txt"), "a") as f:
+                title = f"##### Evaluation results for {mode} mode #####"
+                f.write("\n\n" + title + "\n")
+                f.write("-" * len(title) + "\n")
 
                 # Test classification report
                 f.write("\n##### Test #####\n")
@@ -114,8 +117,8 @@ def grid_search(train_labels: str,
                 # f.write(classification_report(y_train_, y_pred, target_names=train.class_labels))
 
                 # Model summary
-                f.write("\n##### Model summary #####\n")
-                model.summary(print_fn=lambda x: f.write(x + "\n"))
+                # f.write("\n##### Model summary #####\n")
+                # model.summary(print_fn=lambda x: f.write(x + "\n"))
 
 
 if __name__ == "__main__":

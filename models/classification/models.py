@@ -186,5 +186,6 @@ class ResNet152v2(AbstractModel):
         return x
 
     def fc(self, x):
+        x = K.layers.Flatten()(x)
         x = K.layers.Dense(self.num_classes, activation="softmax")(x)
         return x

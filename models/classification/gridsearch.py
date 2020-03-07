@@ -72,7 +72,7 @@ def grid_search(train_labels: str,
             net = model_type(mode, num_classes=train.num_classes(), input_shape=train.shape())
             model = net.get_model()
 
-            model.compile(optimizer="adam",
+            model.compile(optimizer="sgd",
                           loss="categorical_crossentropy",
                           metrics=["accuracy"])
 

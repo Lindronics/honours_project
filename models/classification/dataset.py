@@ -167,3 +167,117 @@ class Dataset(K.utils.Sequence):
     def shape(self) -> tuple:
         """ Gets the tensor shape of a sample """
         return self.res[::-1] + tuple([(3 if self.rgb_only else 4)])
+
+
+class FLIRDataset(Dataset):
+    """
+    FLIR data dataset loader for Keras model.
+    """
+
+    def __init__(self, path:str, res:tuple=(120, 160), batch_size:int=16):
+        """
+        Params
+        ------
+        metadata: str
+            Path to directory containing images
+        res: tuple
+            Target resolution of images
+        batch_size: int
+            Batch size
+        """
+
+        self.res = res
+        self.batch_size = batch_size
+        self.path = path
+
+        self.classes = {}
+        self.samples = []
+
+        metadata = os.path.join(path, "thermal_annotations.json")
+        with open(metadata, "r") as f:
+            data = json.load(f)
+
+        self.classes = {c["name"]: c["id"] for c in data["categories"]}
+
+        samples = data["annotations"]
+
+        # Remove too small images
+        def filter_fn(sample):
+            _, _, h, w = tuple([int(x) for x in sample["bbox"]])
+            return h >= 40 and w >= 40
+
+        samples = list(filter(filter_fn, samples))
+
+        random.seed(42)
+        random.shuffle(samples)
+        self.samples = samples
+        self.images = {x["id"]: x["file_name"] for x in data["images"]}
+
+        self.class_dict = {key: val for val, key in self.classes.items()}
+        self.class_labels = [val for key, val in sorted(self.class_dict.items())]
+
+
+    def load(self, path:str, coords:tuple) -> np.ndarray:
+        """
+        Loads an image at a given file path.
+
+        Params
+        ------
+        path: str
+            Path of the image
+        coords: tuple
+            Coordinates of item to crop on
+
+        Returns
+        -------
+        The loaded image as a ndarray
+        """
+        y, x, h, w = coords
+        img = tf.io.read_file(path)
+        img = tf.image.decode_jpeg(img, channels=3)
+        img = tf.image.convert_image_dtype(img, tf.float32).numpy()
+        img = img[x:x+w, y:y+h, :]
+        img = cv2.resize(img, self.res)
+        return img
+
+
+    def __getitem__(self, idx:int) -> tuple:
+        """
+        Loads a batch of data.
+
+        Params
+        ------
+        idx: int
+            Index of the batch
+        
+        Returns
+        -------
+        Tuple containing the batch image tensor and the one-hot labels
+        """
+        if idx < self.__len__():
+            X = []
+            y = []
+            for i in range(self.batch_size):
+                sample = self.samples[idx * self.batch_size + i]
+                lwir_path = self.images[sample["image_id"]]
+                lwir_path = os.path.join(self.path, lwir_path)
+
+                label = sample["category_id"]
+                coords = tuple([int(x) for x in sample["bbox"]])
+
+                one_hot = np.zeros(self.num_classes())
+                one_hot[label] = 1
+                y.append(one_hot)
+
+                lwir = self.load(lwir_path, coords)
+                lwir = np.mean(lwir, -1)[..., None]
+                X.append(lwir)
+
+            return np.array(X), np.array(y)
+        else:
+            raise StopIteration
+
+
+    def shape(self) -> tuple:
+        """ Gets the tensor shape of a sample """
+        return self.res[::-1] + tuple([1])

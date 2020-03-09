@@ -509,7 +509,7 @@ We then averaged the MI scores obtained by all 1-D filter pairs to obtain a sing
 
 \subsection{Mean squared distance}
 
-Since neither intensity-based, nor texture-based approaches produced satisfactory results, we concluded that automatic alignment of the visible light and LWIR images is unfeasible without extensive further research. Therefore, to be able to guarantee an acceptable alignment quality, we resorted to the aforementioned manual approach.
+Since neither intensity-based nor texture-based approaches produced satisfactory results, we concluded that automatic alignment of the visible light and LWIR images is unfeasible without extensive further research. Therefore, to be able to guarantee an acceptable alignment quality, we resorted to the aforementioned manual approach.
 
 XXX reference points in XXX images were recorded and the corresponding transformation matrix was determined. Prior experiments showed that the required transformation matrix seems to be mostly constant across different images. Device orientation seemed to be the only factor with a large impact on the required transformation. To avoid this problem, all images were captured in portrait mode.
 
@@ -519,7 +519,7 @@ The mean squared distance (MSE) across all reference points in the dataset was d
 
 \section{Classifiers}
 
-As concluded in \ref{fig:augmentation_affine}, the spatial and intensity properties of RGB and LWIR images are significantly different. Consequently, we decided to implement five versions of every CNN and evaluate the results separately.
+As concluded in \ref{fig:augmentation_affine}, the spatial and intensity properties of RGB and LWIR images are significantly different. Consequently, we decided to implement six versions of every CNN and evaluate the results separately.
 
 \begin{enumerate}
   \item An RGB-only implementation similar to the default implementation of most networks. This will be used as a baseline.
@@ -530,7 +530,11 @@ As concluded in \ref{fig:augmentation_affine}, the spatial and intensity propert
   \item A multi-branch implementation with voting classifiers. Similarly to the late feature-fusion implementation, the images are run through seperate branches. However, the branches have their own individual fully-connected layers, which produce separate predictions. The final output is the weighted mean of these two predictions. 
 \end{enumerate}
 
-This project will therefore attempt to evaluate the performance of early feature-fusion, late feature-fusion and voting classifiers. We chose the RGB-only networks as a baseline, as most image classification models rely solely on visible light.
+This project therefore aimed to evaluate the performance of early feature-fusion, late feature-fusion and voting classifiers. We chose the RGB-only networks as a baseline, as most image classification models rely solely on visible light.
+
+Furthermore, multiple different CNN designs were evaluated. At first, a custom neural network was designed and implemented. In addition, we implemented modified versions of AlexNet and ResNet, two networks commonly used for image classification tasks.
+
+\subsection{Custom CNN}
 
 \subsection{AlexNet}
 
@@ -545,8 +549,24 @@ Our implementation of AlexNet diverges slightly from the original in several poi
   \label{fig:alexnet}
 \end{figure}
 
+
+\subsection{ResNet}
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.9\textwidth]{images/models/resnet}
+  \caption{Neural network architecture of the residual network.}
+  \label{fig:resnet}
+\end{figure}
+
 %----------------------------------------------------------------------------------------------------------------------------------
 
+
+\section{Transfer learning}
+
+
+
+%----------------------------------------------------------------------------------------------------------------------------------
 
 \section{Mobile application}
 
@@ -589,7 +609,7 @@ After successful training of the network, two images of ponies were retrieved fr
 
 \begin{figure}[ht]
   \centering
-  \includegraphics[width=0.9\textwidth]{images/autoencoder/autoencoder}
+  \includegraphics[width=0.9\textwidth]{images/models/autoencoder}
   \caption{Neural network architecture of the autoencoder.}
   \label{fig:autoencoder_architecture}
 \end{figure}
@@ -604,26 +624,48 @@ Similar to the traditional autoencoder, the U-Net was trained for 100 epochs on 
 
 \begin{figure}[ht]
   \centering
-  \includegraphics[width=0.9\textwidth]{images/unet/unet}
+  \includegraphics[width=0.9\textwidth]{images/models/unet}
   \caption{Neural network architecture of the U-Net.}
   \label{fig:unet_architecture}
 \end{figure}
 
 \begin{figure}[ht]
   \centering
-  \begin{subfigure}[h!]{0.25\textwidth}
-    \includegraphics[width=\textwidth]{images/unet/pony_grayscale.png}
-    % \includegraphics[width=\textwidth]{images/unet/pony_2_grayscale.png}
-    \caption{Original images (cropped)}
+  \begin{subfigure}[h!]{0.22\textwidth}
+    \includegraphics[width=\textwidth]{images/autoencoder/train/gray.png}
+    \caption{Original image}
   \end{subfigure}
-  \begin{subfigure}[h!]{0.25\textwidth}
-    \includegraphics[width=\textwidth]{images/autoencoder/pony_predicted.png}
-    % \includegraphics[width=\textwidth]{images/autoencoder/pony_2_predicted.png}
+  \begin{subfigure}[h!]{0.22\textwidth}
+    \includegraphics[width=\textwidth]{images/autoencoder/train/auto.png}
     \caption{Autoencoder prediction}
   \end{subfigure}
-  \begin{subfigure}[h!]{0.25\textwidth}
-    \includegraphics[width=\textwidth]{images/unet/pony_predicted.png}
-    % \includegraphics[width=\textwidth]{images/unet/pony_2_predicted.png}
+  \begin{subfigure}[h!]{0.22\textwidth}
+    \includegraphics[width=\textwidth]{images/autoencoder/train/unet.png}
+    \caption{U-Net prediction}
+  \end{subfigure}
+  \begin{subfigure}[h!]{0.22\textwidth}
+    \includegraphics[width=\textwidth]{images/autoencoder/train/lwir.png}
+    \caption{Actual LWIR image}
+  \end{subfigure}
+  \caption{Outputs of autoencoder and U-Net on training data.}
+  \label{fig:autoencoder_pony_train}
+\end{figure}
+
+\begin{figure}[ht]
+  \centering
+  \begin{subfigure}[h!]{0.22\textwidth}
+    \includegraphics[width=\textwidth]{images/autoencoder/pony_1/gray.png}
+    \includegraphics[width=\textwidth]{images/autoencoder/pony_2/gray.png}
+    \caption{Original images}
+  \end{subfigure}
+  \begin{subfigure}[h!]{0.22\textwidth}
+    \includegraphics[width=\textwidth]{images/autoencoder/pony_1/auto.png}
+    \includegraphics[width=\textwidth]{images/autoencoder/pony_2/auto.png}
+    \caption{Autoencoder prediction}
+  \end{subfigure}
+  \begin{subfigure}[h!]{0.22\textwidth}
+    \includegraphics[width=\textwidth]{images/autoencoder/pony_1/unet.png}
+    \includegraphics[width=\textwidth]{images/autoencoder/pony_2/unet.png}
     \caption{U-Net prediction}
   \end{subfigure}
   \caption{Predicted LWIR signature of images of shetland ponys. Retrieved from \url{https://commons.wikimedia.org/wiki/File:Sandwick_Shetland_Pony.jpg} and \url{https://commons.wikimedia.org/wiki/File:Shetland_ponies_at_Sandwick.jpg}}

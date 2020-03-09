@@ -363,3 +363,36 @@
 
 * *1.0 hours* Experiments with subsets of dataset (e.g. chickena and alpacas only).
 * *1.0 hours* Evaluated different data augmentation techniques
+* *2.0 hours* Dissertation additions
+
+### 28 Feb 2020
+
+* *0.5 hours* 12th supervisor meeting
+
+### 29 Feb 2020
+
+* *3.0 hours* Captured third animals dataset, as classification accuracy was still too low with the existing data.
+
+### 02 Mar 2020
+
+* *2.0 hours* Created train/validation split from all 3 raw datasets. Started testing classification on Colab.
+
+### 03 Mar 2020
+
+* *1.5 hours* Refactored code for models.
+* *1.5 hour* Created a grid-search script for running 5 different configurations of models.
+
+### 04 Mar 2020
+
+* *1.0 hours* Added custom implementation of a residual network to models file.
+* *3.0 hours* Ran grid search for AlexNet and ResNet. ResNet seems to perform better overall. RGB-only is better than LWIR-only, but combined models are better than both.
+
+### 06 Mar 2020
+
+* *0.5 hours* 13th supervisor meeting
+
+### 07 Mar 2020
+
+* *3.5 hours* Dissertation additions
+* *2.0 hours* Added pre-made ResNet with pre-trained weights to grid search
+* *0.5 hours* Started grid-search on off-the-shelf Resnet

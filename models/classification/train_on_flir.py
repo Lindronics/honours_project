@@ -56,8 +56,8 @@ def grid_search(train_labels: str,
         x = K.layers.Dense(num_classes, activation="softmax")(x)
         return x
 
-    print("\n=> Evaluating model.")
-    input_tensor = K.layers.Input((120, 160, 1))
+    print("\n=> Training model.")
+    input_tensor = K.layers.Input((160, 120, 1))
     output_tensor = net(input_tensor, num_classes=train.num_classes())
     model = K.Model(input_tensor, output_tensor)
 
@@ -80,21 +80,7 @@ def grid_search(train_labels: str,
 
     # Save weights
     model.save_weights(os.path.join(output, "flir_pretrained_weights.h5"))
-
-    # Evaluate
-    print("\n=> Starting evaluation")
-
-    # Test classification report
-    if lazy:
-        y_pred = np.argmax(model.predict(test), axis=1)
-        y_test_ = test.get_labels()[:y_pred.shape[0]]
-    else:
-        y_pred = np.argmax(model.predict(X_test), axis=1)
-        y_test_ = np.argmax(y_test, axis=1)
-    print(classification_report(y_test_, y_pred, target_names=test.class_labels))
     
-
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Train model on FLIR dataset.")
     parser.add_argument("train", help="Directory containing training labels")

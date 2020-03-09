@@ -165,19 +165,21 @@ What is the problem that you want to solve, and how did you arrive at it?
 
 \section{Data generation}
 
-Collecting a multispectral dataset is significantly more challenging than a dataset consisting solely of visible-light images. The majority of image classification tasks use traditional imaging only (XXX citation needed). Consequently, the amount of research and resources available to use is much more limited.
+Collecting a multispectral dataset is significantly more challenging than a dataset consisting solely of visible-light images. The majority of image classification tasks use traditional imaging only. Consequently, the amount of research and resources that are available for use are much more limited.
 
 \subsection{Transfer learning}
 
-A large amount of existing datasets is available for traditional image classification tasks. The ImageNet dataset \citep{deng_imagenet_2009}, which is used as a benchmark for many image classification models, contains over a million images ready to be used. Many successful deep learning models, such as AlexNet \citep{krizhevsky_imagenet_2012} and ResNet \citep{he_deep_2016} have been applied to datasets such as ImageNet.
+A large amount of existing datasets is available for traditional image classification tasks. The ImageNet dataset \citep{deng_imagenet_2009}, which is used as a benchmark for many image classification models, contains over a million labelled images that can be used to train a model. Many successful deep learning models, such as AlexNet \citep{krizhevsky_imagenet_2012} and ResNet \citep{he_deep_2016} have been applied to datasets such as ImageNet.
 
-When creating a new image classifier, it is then possible to incorporate pretrained versions of these networks into a new classifier and perform transfer learning on a new dataset. This strategy makes it feasible to train complex models on smaller amounts of data than usual, as many meaningful weights have already been learned by the pretrained model (XXX citation needed).
+When creating an image classifier for a new application, it is then possible to make use of a model that has been pre-trained on another dataset, such as ImageNet. This model can then be adapted by, for instance, exchanging the final fully-connected layer of that network for one that suits suits the new classification task. Finally, the model can be trained on the new dataset. This strategy is known as transfer learning and was introduced by \citet{thrun_is_1996}.
 
-For multispectral models, this approach becomes more difficult, as much fewer datasets are available to be used off-the-shelf. Datasets for visible light and thermal data, such as the KAIST Pedestrian Detection Benchmark \citep{hwang_multispectral_2015} are available. However, They usually lack the variety and size of traditional computer vision datasets and are therefore less suitable for general tasks.
+Since the features learned by early layers are often generalisable across different classes and images, the network generalises better, as it has been trained on a larger datasets. Therefore, transfer learning makes it feasible to train complex models on smaller amounts of data than usual \citep{kwasniewska_deep_2017}.
+
+For multispectral models, this highly effective approach becomes more difficult, as much fewer datasets are available to be used off-the-shelf. Datasets for visible light and thermal data, such as the KAIST Pedestrian Detection Benchmark \citep{hwang_multispectral_2015} are available. However, They usually lack the amount of classes and general size of traditional computer vision datasets and are therefore less suitable for transfer learning tasks.
 
 Pre-training a multispectral classifier on an VIS-only dataset is not directly possible due to the incompatible input tensor shapes ($h \times w \times 3$ compared to $h \times w \times 4$) and the resulting difference in trainable weights.
 
-However, there are strategies to mitigate this issue. It is possible to divide the model into 2 separate branches of layers that process the VIS and LWIR images individually, and perform late feature fusion by concatenating the respective feature maps and adding at least one fully connected layer after the concatenation. This approach would make it possible to load pretrained weights into the VIS-branch of the model without affecting the LWIR branch. During training, the LWIR-branch of the model would get trained from scratch, whereas transfer learning is simultaneously performed on the VIS-branch.
+However, there are strategies to mitigate this issue. It is possible to divide the model into 2 separate branches of layers that process the VIS and LWIR images individually, and perform late feature fusion by concatenating the respective feature maps and adding at least one fully connected layer after the concatenation. This approach can make it possible to load pretrained weights into the VIS-branch of the model without affecting the LWIR branch. During training, the LWIR-branch of the model gets trained from scratch, whereas transfer learning is simultaneously performed on the VIS-branch.
 
 Another possible approach to enable the usage of existing off-the-shelf datasets is to perform generative image augmentation. In Section \ref{autoencoder_implementation} we explore the application of a primitive generative model for predicting the corresponding LWIR image of a known type of object from a given RGB image. Given sufficient quality of predicted images, it would then be possible to turn RGB-only images into multispectral training data.
 
@@ -191,9 +193,9 @@ Even though thermal cameras have become significantly more affordable in recent 
   \item A thermal sensor with a resolution of $160 \times 120$ px and a spectral range of $8 - 14 \mu m$.
 \end{itemize}
 
-The sensor is therefore able to perceive and record electromagnetic waves in the visible-light (VIS) and long wave infrared (LWIR) bands. Due to technical limitations, several challenges had to be overcome when working with data collected by the sensor.
+The FLIR camera is therefore able to perceive and record electromagnetic waves in the visible-light (VIS) and long wave infrared (LWIR) bands. Due to technical limitations, several challenges had to be overcome when working with data collected by the sensor.
 
-Firstly, the two cameras are not spatially aligned. Furthermore, the "zoom level" or focal length of the sensors does not appear to match. A misalignment of the channels is likely to have an impact on the performance of a convolutional network (XXX citation needed). Therefore, the issue of image registration of the two camera outputs arises. The strategy we introduced to perform robust registration is outlined in Section \ref{image_registration}.
+Firstly, the two cameras are not spatially aligned. Furthermore, the "zoom level" or focal length of the sensors does not appear to match. A misalignment of the channels is likely to have an adverse impact on the performance of a convolutional network \citep{chappelow_improving_2008}. Therefore, the issue of image registration of the two camera outputs arises. The strategy we introduced to perform robust registration is outlined in Section \ref{image_registration}.
 
 Secondly, the vastly different resolutions of the sensors could cause problems, as convolutional filters might struggle detecting edges and other features (XXX).
 

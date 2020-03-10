@@ -173,13 +173,13 @@ A large amount of existing datasets is available for traditional image classific
 
 When creating an image classifier for a new application, it is then possible to make use of a model that has been pre-trained on another dataset, such as ImageNet. This model can then be adapted by, for instance, exchanging the final fully-connected layer of that network for one that suits suits the new classification task. Finally, the model can be trained on the new dataset. This strategy is known as transfer learning and was introduced by \citet{thrun_is_1996}.
 
-Since the features learned by early layers are often generalisable across different classes and images, the network generalises better, as it has been trained on a larger datasets. Therefore, transfer learning makes it feasible to train complex models on smaller amounts of data than usual \citep{kwasniewska_deep_2017}.
+Since the features learned by early layers are often applicable across many classes and images (e.g. edge or texture features), the network generalises better, as it has been trained on an overall larger dataset. Therefore, transfer learning makes it feasible to train complex models on smaller amounts of data than usual \citep{kwasniewska_deep_2017}.
 
 For multispectral models, this highly effective approach becomes more difficult, as much fewer datasets are available to be used off-the-shelf. Datasets for visible light and thermal data, such as the KAIST Pedestrian Detection Benchmark \citep{hwang_multispectral_2015} are available. However, They usually lack the amount of classes and general size of traditional computer vision datasets and are therefore less suitable for transfer learning tasks.
 
 Pre-training a multispectral classifier on an VIS-only dataset is not directly possible due to the incompatible input tensor shapes ($h \times w \times 3$ compared to $h \times w \times 4$) and the resulting difference in trainable weights.
 
-However, there are strategies to mitigate this issue. It is possible to divide the model into 2 separate branches of layers that process the VIS and LWIR images individually, and perform late feature fusion by concatenating the respective feature maps and adding at least one fully connected layer after the concatenation. This approach can make it possible to load pretrained weights into the VIS-branch of the model without affecting the LWIR branch. During training, the LWIR-branch of the model gets trained from scratch, whereas transfer learning is simultaneously performed on the VIS-branch.
+However, there are strategies to mitigate this issue. It is possible to divide the model into 2 separate branches of layers that process the VIS and LWIR images individually, and perform late feature-level fusion \citep{guo_face_2017} by concatenating the respective feature maps and adding at least one fully connected layer after the concatenation. This approach can make it possible to load pretrained weights into the VIS-branch of the model without affecting the LWIR branch. During training, the LWIR-branch of the model gets trained from scratch, whereas transfer learning is simultaneously performed on the VIS-branch.
 
 Another possible approach to enable the usage of existing off-the-shelf datasets is to perform generative image augmentation. In Section \ref{autoencoder_implementation} we explore the application of a primitive generative model for predicting the corresponding LWIR image of a known type of object from a given RGB image. Given sufficient quality of predicted images, it would then be possible to turn RGB-only images into multispectral training data.
 
@@ -190,27 +190,27 @@ Even though thermal cameras have become significantly more affordable in recent 
 
 \begin{itemize}
   \item A conventional camera for visible-light images with a resolution of $1440 \times 1080$ px.
-  \item A thermal sensor with a resolution of $160 \times 120$ px and a spectral range of $8 - 14 \mu m$.
+  \item A thermal sensor with a spatial resolution of $160 \times 120$ px and a spectral range of $8 - 14 \mu m$.
 \end{itemize}
 
 The FLIR camera is therefore able to perceive and record electromagnetic waves in the visible-light (VIS) and long wave infrared (LWIR) bands. Due to technical limitations, several challenges had to be overcome when working with data collected by the sensor.
 
-Firstly, the two cameras are not spatially aligned. Furthermore, the "zoom level" or focal length of the sensors does not appear to match. A misalignment of the channels is likely to have an adverse impact on the performance of a convolutional network \citep{chappelow_improving_2008}. Therefore, the issue of image registration of the two camera outputs arises. The strategy we introduced to perform robust registration is outlined in Section \ref{image_registration}.
+Firstly, the two cameras are not spatially aligned. Furthermore, the "zoom level" or focal length of the sensors does not appear to match. A misalignment of the channels is likely to have an adverse impact on the performance of a convolutional network \citep{chappelow_improving_2008}. Therefore, the issue of image registration of the two camera outputs arises. The strategy we introduced to perform robust registration of the VIS and LWIR images is outlined in Section \ref{image_registration}.
 
-Secondly, the vastly different resolutions of the sensors could cause problems, as convolutional filters might struggle detecting edges and other features (XXX).
+Secondly, the vastly different resolutions of the sensors could cause problems, as convolutional filters might struggle detecting edges and other features consistently across all channels. A possible strategy to avoid this issue is to resize the images to a common resolution. However, this means that valuable information in the VIS image might be lost and overall accuracy might be reduced. It is, therefore, necessary to evaluate the degree of information loss upon size reduction of the visible light image.
 
 %----------------------------------------------------------------------------------------------------------------------------------
 
 \section{Mobile application}
 
-This project aims to deploy the final deep learning model to a mobile edge device. This introduces many challenges related to mobile computing. Contrary to most computers, computational power on mobile devices is highly limited. Furthermore, to provide robust and reliable real-time classification, low latency between image capture and classification will be necessary. Two major strategies can be used to apply image classification on a mobile device:
+This project aims to deploy the final deep learning model to a mobile edge device. This introduces many challenges related to mobile computing. Contrary to most computers, computational power on mobile devices is highly limited. Furthermore, to provide robust and reliable real-time classification, low latency between image capture and classification will be necessary. Two major strategies can be used to perform image classification on a mobile device:
 
 \begin{enumerate}
   \item Deploy the model to a web service, upload captured frames from edge device, and retrieve the prediction.
-  \item Deploy the model to the edge device and perform all computations "offline".
+  \item Deploy the model to the edge device and perform all computations \textit{offline} on the mobile device.
 \end{enumerate}
 
-To minimise latency, the second approach was selected. It will therefore be possible to use the application even in situations with poor connectivity. However, the necessity to perform all computational tasks on the edge-device imposes many problems. The Tensorflow SDK for Java is very limited compared to the Python API. Furthermore, various image pre-processing tasks have to be performed without the standard Python data science stack that was used for training and experimentation. Many image processing libraries do not support multispectral data, further complicating image processing.
+To minimise latency, the second approach was selected. It will therefore be possible to use the application even in situations with poor connectivity. However, the necessity to perform all computational tasks on the edge device imposes many problems. The Tensorflow SDK for Java is very limited compared to the Python API. Furthermore, various image pre-processing tasks have to be performed without the standard Python data science stack that was used for training and experimentation. Many image processing libraries do not support multispectral data, further complicating image processing.
 
 The mobile application will furthermore provide the ability to capture datasets in a convenient way, without the need to seperately extract raw RGB and LWIR images after capture.
 
@@ -225,9 +225,11 @@ How is this problem to be approached, without reference to specific implementati
 \subsection{Classes and samples}
 \label{classes_samples}
 
-Initially, a dataset consisting of 13 classes and 1042 samples was captured using the camera functionality of the mobile application. The app captures images in quick temporal succession, effectively like a video. Thus, many images are relatively similiar, as they were captured within only a few milliseconds difference. To distinguish between different "bursts" of images, images were grouped into distinct subsets, each subset representing a batch of similar images.
+Initially, a dataset consisting of 13 classes and 1042 samples was captured using the camera functionality of the mobile application. The app captures images in quick temporal succession, effectively like a video. Thus, many images are relatively similiar, as they were captured within only a few milliseconds difference. To distinguish between different bursts of images, samples were grouped into distinct subsets, each subset representing a batch of similar images.
 
-Due to the difficulty of obtaining well-framed and unobstructed images, the data contains some noise. Some images contain more than one animal. Furthermore, some animals were housed in closed-off shelters and were only visible behind a metal grid. Therefore, each subset was labeled as either \textit{single}, \textit{multi}, or \textit{obstructed}, to allow greater flexibility when selecting data for training and validation. Moreover, no distinction between genders was made. This primarily impacts the peacock class, as male and female peacocks have a very distinct appearance.
+Due to the difficulty of obtaining well-framed and unobstructed images, the data contains significant noise. Some images contain more than one animal. Furthermore, some animals were housed in closed-off shelters and were only visible behind a metal grid. This is problematic, as a classifier is likely to learn the various obstructions as features of specific classes. This can negatively impact generalisability, as the model might not be able to correctly predict unobstructed images of these classes.
+
+Therefore, each subset was labeled as either \textit{single}, \textit{multi} or \textit{obstructed} to allow greater flexibility when selecting data for training and validation. Moreover, no distinction between genders was made. This primarily impacts the peacock class, as male and female peacocks have a very distinct appearance. Alpacas and chicken are both represented in the dataset with more than colour.
 
 \begin{table}[ht]
   \centering
@@ -252,20 +254,19 @@ Due to the difficulty of obtaining well-framed and unobstructed images, the data
   \label{table:raw_dataset}
 \end{table}
 
-Initially, the separation into training and validation data was performed using a stratified random split of all the data. As demonstrated in Section \ref{eval_train_val_split}, nearly perfect validation accuracy was achieved on this split. This most likely being a result of the aforementioned similarity of many images due to them being captured at similar times, we decided that a second, independent dataset was necessary to achieve representative evaluation results. The classes and samples of both datasets are shown in Table \ref{table:raw_dataset}.
+Initially, the separation into training and validation data was performed using a stratified random split of all the data. As demonstrated in Section \ref{eval_train_val_split}, nearly perfect validation accuracy was achieved on this split. This is most likely a result of the aforementioned similarity of many images due to them being captured at similar times. Hence, we decided that a second independent dataset was necessary to achieve representative evaluation results. Two more datasets were captured on different days to obtain a wider range of lighting situations and background scenarios. The classes and samples of all three datasets are shown in Table \ref{table:raw_dataset}.
 
-Finally, the subsets from both datasets were rearranged into a training dataset and a testing dataset. An attempt was made to obtain a balanced mixture of \textit{single}, \textit{multi}, and \textit{obstructed} subsets in both datasets. Nonetheless, it can be assumed that achieving a perfect, representative split is difficult due to the noise in the dataset and the limited variety of contexts. The train-test-split is shown in Table \ref{table:train_test_dataset}.
-
+Finally, the subsets from the raw datasets were rearranged into a training dataset and a testing dataset. To avoid the issue of fitting and validating on too similar images, each subset was assigned whole to either of the two datasets. An attempt was made to obtain a balanced mixture of \textit{single}, \textit{multi}, and \textit{obstructed} subsets in both datasets. Furtheremore, subsets that were deemed too noisy were omitted. Nonetheless, it can be assumed that achieving a perfect, representative split is difficult due to the noise in the dataset and the limited variety of contexts. The final train-validation-split is shown in Table \ref{table:train_test_dataset}. Overall, 35 subsets were assigned to the training dataset and 19 were allocated to the validation dataset.
 
 \begin{table}[ht]
   \centering
   \begin{tabular}{@{}lll@{}}
     \toprule
-    \textbf{Class}  & \textbf{Train } & \textbf{Test} \\ \midrule
+    \textbf{Class}  & \textbf{Train } & \textbf{Validation} \\ \midrule
     Cat             & 149             & 56 \\
     Pony            & 415             & 58 \\
     Alpaca          & 377             & 87 \\
-    Peacock         & 157             & 79 \\
+    % Peacock         & 157             & 79 \\
     Hamburg chicken & 77              & 59 \\
     Silkie chicken  & 191             & 38 \\
     Muscovy duck    & 206             & 64 \\
@@ -276,7 +277,7 @@ Finally, the subsets from both datasets were rearranged into a training dataset 
   \label{table:train_test_dataset}
 \end{table}
 
-The classes with low support (Pig, Sheep, Ferret, Rabbit) were dropped from the datasets, as it was deemed unlikely that a model would be able to accurately be fit on such small numbers of samples. A problem that remained is the class imbalance in both datasets. Alpacas are over-represented and Hamburg chicken are significantly under-represented.
+The classes with low support (Pig, Sheep, Ferret, Rabbit) were dropped from the datasets, as it was deemed unlikely that a model would be able to accurately be fit on such small numbers of samples. Moreover, it was not possible to capture pictures of peacocks from a sufficient variety of contexts. Instead of training and validating on similar images of peacocks, the class was removed from the datasets. A problem that remained is the class imbalance in both datasets. Alpacas and ponies are over-represented and Hamburg chicken are significantly under-represented.
 
 \begin{figure}[ht]
   \centering
@@ -294,11 +295,6 @@ The classes with low support (Pig, Sheep, Ferret, Rabbit) were dropped from the 
     \includegraphics[width=\textwidth, trim={0cm 6cm 0cm 6cm}, clip]{images/dataset/alpaca/rgb.png}
     \includegraphics[width=\textwidth, trim={0cm 2.5cm 0cm 2.5cm}, clip]{images/dataset/alpaca/lwir.png}
     \caption{Alpaca}
-  \end{subfigure}
-  \begin{subfigure}[h!]{0.18\textwidth}
-    \includegraphics[width=\textwidth, trim={0cm 6cm 0cm 6cm}, clip]{images/dataset/peacock/rgb.png}
-    \includegraphics[width=\textwidth, trim={0cm 2.5cm 0cm 2.5cm}, clip]{images/dataset/peacock/lwir.png}
-    \caption{Peacock}
   \end{subfigure}
   \begin{subfigure}[h!]{0.18\textwidth}
     \includegraphics[width=\textwidth, trim={0cm 6cm 0cm 6cm}, clip]{images/dataset/pretty_chicken/rgb.png}
@@ -329,13 +325,13 @@ The classes with low support (Pig, Sheep, Ferret, Rabbit) were dropped from the 
   \label{fig:dataset_classes}
 \end{figure}
 
-Figure \ref{fig:dataset_classes} shows example RGB and LWIR images from the training dataset. While these examples are sampeled from the "ideal" \textit{single} subsets, they highlight another important caveat. Not all images were captured at the same distance. Consequently, different animals fill different amounts of space within the images, possibly skewing classification results. An attempt was made to mitigate this issue through affine data agumentation.
+Figure \ref{fig:dataset_classes} shows example VIS and LWIR images from the training dataset. While these examples are sampeled from the idealised \textit{single} subsets without obstructions, they highlight another important caveat. Not all images could be captured at the same distance. Consequently, different animals fill different amounts of space within the images, possibly skewing classification results. An attempt was made to mitigate this issue through affine data agumentation.
 
 \subsection{Data augmentation}
 
-Due to the limited amount of time and resources available to the project, generating a dataset with sufficient scope and size is challenging. Since the performance of machine learning models is usually directly tied to the size and quality of the available dataset, an insufficient dataset might make it impossible to train an accurate and robust classifier \citep{fawzi_adaptive_2016}. Therefore, data augmentation will have to be employed to artificially increase the amount of usable training samples.
+Due to the limited amount of time and resources available to the project, generating a dataset with sufficient scope and size is challenging. Since the performance of machine learning models is usually directly tied to the size and quality of the available dataset, an insufficient dataset might make it impossible to train an accurate and robust classifier \citep{fawzi_adaptive_2016}. Therefore, data augmentation was employed to artificially increase the amount of usable training samples.
 
-\citet{mikolajczyk_data_2018} make the distinction between white-box and black-box data augmentation methods. While the latter use a form of deep learning, namely Generative Adversarial Networks (GAN), to synthesise new training samples, white-box methods involve more traditional techniques, such as affine transformations. An affine transformation or affine map can accurately represent a composition of a translation and a linear map (e.g. scaling, rotation and shearing). A transformation $f(\vec{x})$ can be expressed as follows:
+\citet{mikolajczyk_data_2018} make the distinction between white-box and black-box data augmentation methods. While the latter use a form of deep learning known as Generative Adversarial Networks (GAN) to synthesise new training samples, white-box methods involve more traditional techniques, such as affine transformations. An affine transformation or affine map can accurately represent a composition of a translation and a linear map (e.g. scaling, rotation and shearing). A transformation $f(\vec{x})$ can be expressed as follows:
 
 \begin{equation}
   f(\vec{x}) = A \vec{x} + \vec{b},
@@ -344,9 +340,9 @@ Due to the limited amount of time and resources available to the project, genera
 
 where $\vec{x}$ represents the coordinates of a point to be translated, $A$ is a $2 \times 2$ linear map, and $\vec{b}$ is the translation vector. $f(\vec{x})$ can be applied to the coordinates $\vec{x}$ of every pixel, yielding a transformed image. If necessary, interpolation strategies are used to fill in gaps between the new pixels.
 
-After evaluating various methods of data augmentation on a subset of the ImageNet dataset, \citet{perez_effectiveness_2017} conclude that traditional affine transformations alone can be very effective, although GAN-based methods are promising and might yield better results.
+After evaluating various methods of data augmentation on a subset of the ImageNet dataset, \citet{perez_effectiveness_2017} conclude that traditional affine transformations alone can be very effective at improving classification performance, although GAN-based methods are promising and might yield better results.
 
-Due to the relatively easy implementation, this project therefore primarily uses white-box data augmentation. However, the design and implementation of a deep-learning model generating LWIR from visible light images is discussed in Section \ref{autoencoder_implementation}. This model could be used to generate new LWIR data samples from visible light images retrieved from other sources, such as existing computer vision datasets.
+Due to the relatively easy implementation, this project, therefore, primarily uses white-box data augmentation. However, the design and implementation of a deep-learning model generating LWIR from visible light images is discussed in Section \ref{autoencoder_implementation}. This model could be used to generate new LWIR data samples from visible light images retrieved from other sources, such as existing VIS-only computer vision datasets.
 
 Figure \ref{fig:augmentation_affine} shows different affine transformations that were used to augment the captured dataset. The most natural transformation in this scenario is a horizontal flip, as we can assume that the objects to be classified are symmentric along the horizontal axis and the images have all been captured with similar camera orientations. Moreover, we employed randomized zooms to try to account for the varying distances that the animals were photographed from. We decided to limit the zoom factor to a small enough range to guarantee that the images still showed the whole object. Finally, we applied random rotations in the range from $-20^{\circ}$ to $20^{\circ}$ to account for slightly different camera orientations.
 
@@ -372,8 +368,9 @@ Figure \ref{fig:augmentation_affine} shows different affine transformations that
   \label{fig:augmentation_affine}
 \end{figure}
 
-Another possible way of augmenting the data before classification is artificially drawing obstacles over the images. This approach could possibly help the model generalise better on the dataset, as a significant amount of samples from certain classes is obstructed by metal grids or foliage. However, this would require further investigation into the varying properties of visible light and LWIR images, and their interaction with different types of obstacles. Hence, this approach was not implemented in this project. Instead, we decided to remove a significant part of obstructed samples from the final dataset and focused on working with higher-quality data. 
+Another possible way of augmenting the data before classification is artificially drawing obstacles over the images. This approach could possibly help the model generalise better on the dataset, as a significant amount of samples from certain classes is obstructed by metal grids or foliage. However, this would require further investigation into the varying properties of visible light and LWIR images and their interaction with different types of obstacles. Hence, this approach was not implemented in this project. Instead, we decided to remove a significant part of obstructed samples from the final dataset and focused on working with higher-quality data. 
 
+A limitation that remains with all non-generative data augmentation techniques is that the augmented samples are not fully independent from each other. The classifier only learns a very limited amount of new features from augmented samples. White-box data augmentation can, therefore, only mitigate the problem of insufficient independent samples. To achieve better generalisability, obtaining more data is preferable to augmenting existing data.
 
 %----------------------------------------------------------------------------------------------------------------------------------
 
@@ -542,11 +539,11 @@ As concluded in \ref{fig:augmentation_affine}, the spatial and intensity propert
   \item An LWIR-only implementation.
   \item A greyscale implementation. This will calculate the mean across the three colour channels of the RGB image, yielding a single-channel greyscale image. The purpose of this model will be to evaluate the benefits and drawbacks of using all three colour channels.
   \item A single-branch, stacked-layer implementation. The RGB and LWIR channels are stacked into a tensor of shape $({batch_size} \times width \times height \times 4)$. This tensor is then fed into the network, yielding a prediction.
-  \item A multi-branch implementation with late feature fusion. Here, the RGB and LWIR images are fed into separate branches of hidden layers. Finally, the respective outputs are being flattened, concatenated and fed into the fully-connected layers at the end of the network.
-  \item A multi-branch implementation with voting classifiers. Similarly to the late feature-fusion implementation, the images are run through seperate branches. However, the branches have their own individual fully-connected layers, which produce separate predictions. The final output is the weighted mean of these two predictions. 
+  \item A multi-branch implementation with late feature-level fusion. Here, the RGB and LWIR images are fed into separate branches of convolutional layers. Finally, the respective outputs are being flattened, concatenated and fed into the fully-connected layers at the end of the network.
+  \item A multi-branch implementation with voting classifiers. Similarly to the late feature-fusion implementation, the VIS and LWIR images are run through seperate network branches. However, the branches have their own individual fully-connected layers, which produce separate predictions. The final output is the weighted mean of these two predictions. The relative weights of the branches are trainable parameters.
 \end{enumerate}
 
-This project therefore aimed to evaluate the performance of early feature-fusion, late feature-fusion and voting classifiers. We chose the RGB-only networks as a baseline, as most image classification models rely solely on visible light.
+This project therefore aimed to evaluate the performance of pixel-based fusion, feature-level fusion and score-level-based fusion classifiers \citep{guo_face_2017}. We chose the RGB-only networks as a baseline, as most image classification models rely solely on visible light.
 
 Furthermore, multiple different CNN designs were evaluated. At first, a custom neural network was designed and implemented. In addition, we implemented modified versions of AlexNet and ResNet, two networks commonly used for image classification tasks.
 

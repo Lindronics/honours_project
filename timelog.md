@@ -396,3 +396,16 @@
 * *3.5 hours* Dissertation additions
 * *2.0 hours* Added pre-made ResNet with pre-trained weights to grid search
 * *0.5 hours* Started grid-search on off-the-shelf Resnet
+
+### 09 Mar 2020
+
+* *1.5 hours* Miscellaneous additions to dissertation
+* *2.0 hours* Retrieved off-the-shelf dataset from FLIR One and wrote scripts to be able to load it.
+* *3.0 hours* Trained ResNet50 on FLIR One dataset. Prepared transfer-training the model on the custom dataset.
+
+### 10 Mar 2020
+
+* *0.5 hours* Added custom CNN to grid search
+* *1.5 hours* Added script for transfer learning from saved weights
+* *2.0 hours* Determined 95 reference points from the train dataset. Determined a new transformation matrix for registration based on these points.
+* *1.5 hours* Added registration results and evalution to dissertation

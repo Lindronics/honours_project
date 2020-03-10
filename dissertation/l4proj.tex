@@ -380,39 +380,41 @@ Another possible way of augmenting the data before classification is artificiall
 \section{Image registration}
 \label{image_registration}
 
-The images captured by the visible light camera and thermal sensor of the FLIR One Pro are not properly aligned by default. This can have adverse consequences to the classification performance of a machine learning model (XXX citation needed). Thus, an algorithm for aligning the images captured by the conventional camera and LWIR camera had to be developed. The process of transforming data from different sensors into one coordinate system is commonly referred to as image registration.
+The images captured by the visible light camera and thermal sensor of the FLIR One Pro are not properly aligned by default. This can have adverse consequences to the classification performance of a machine learning model \citep{chappelow_improving_2008}. Thus, an algorithm for aligning the images captured by the conventional camera and LWIR camera had to be developed. The process of transforming data from different sensors into one coordinate system is commonly referred to as image registration.
 
-On superficial inspection, it is apparent that the LWIR sensor appears to have a narrower field of view than the RGB camera. Hence, an attempt was made to manually align the LWIR and RGB images by cropping and rescaling the RGB image, effectively zooming in. This approach yielded moderate results, as can be seen in Figure \ref{fig:linear_trans_before_after}.
+To obtain workable reference samples, multiple images of three candles on a table were captured. The flames of the candles are small, bright and hot enough to function as reference points. Figure \ref{fig:linear_trans_before} displays a thresholded combined VIS and LWIR image of the three candle lights. On superficial inspection, it is apparent that the LWIR sensor appears to have a narrower field of view than the RGB camera. Hence, an attempt was made to manually align the LWIR and RGB images by cropping and rescaling the RGB image, effectively zooming in. This approach yielded moderate results, as can be seen in Figure \ref{fig:linear_trans_zoom}.
 
-To obtain a more flexible and generalisable representation, we made use of affine transformations. As demonstrated in Equation \ref{eqn:affine}, an affine transformation can be expressed as a linear function with parameters $A$ and $\vec{b}$. These parameters can be easily trained using a linear regression model. Therefore, the coordinates of about a dozen reference points were manually determined on the RGB and LWIR versions of some test images. These coordinates were used as the inputs and outputs to train the linear regression model. 
+To obtain a more flexible and generalisable representation, we made use of affine transformations. As shown in Equation \ref{eqn:affine}, an affine transformation can be expressed as a linear function with parameters $A$ and $\vec{b}$. These parameters can be easily trained using a linear regression model. Therefore, the coordinates of about a dozen reference points were manually determined on the RGB and LWIR versions of some test images. These coordinates were used as features and labels for training the linear regression model. 
 
 \begin{figure}[ht]
   \centering
   \begin{subfigure}[h!]{0.3\textwidth}
     \includegraphics[width=\textwidth, trim={3.5cm 9cm 3.5cm 4.5cm}, clip, frame]{images/registration/unregistered.png}
     \caption{Before registration. The LWIR and VIS images are visibly misaligned.}
+    \label{fig:linear_trans_before}
   \end{subfigure}
   \begin{subfigure}[h!]{0.3\textwidth}
     \includegraphics[width=\textwidth, trim={3.5cm 9cm 3.5cm 4.5cm}, clip, frame]{images/registration/registered_zoom.png}
     \caption{After zooming in. The images are almost aligned. A slight offset remains.}
+    \label{fig:linear_trans_zoom}
   \end{subfigure}
   \begin{subfigure}[h!]{0.3\textwidth}
     \includegraphics[width=\textwidth, trim={3.5cm 9cm 3.5cm 4.5cm}, clip, frame]{images/registration/registered_affine.png}
     \caption{After registration. The thermal signatures of the candles align with the VIS location.}
+    \label{fig:linear_trans_affine}
   \end{subfigure}
-  \caption{Superimposed LWIR and VIS images before and after registration. All images have been thresholded. Cyan represents the grayscale version of the VIS image and the magenta represents the LWIR image.}
-  \label{fig:linear_trans_before_after}
+  \caption{Superimposed thresholded LWIR and VIS images before and after registration. Cyan represents the grayscale version of the VIS image and the magenta represents the LWIR image.}
 \end{figure}
 
-This approach yielded acceptable results. As can be seen in Figure \ref{fig:linear_trans_before_after}, the candles in the images line up. Note that the images have been thresholded to better show the alignment of the reference points.
+This approach yielded acceptable results. As can be seen in Figure \ref{fig:linear_trans_affine}, the candles in the images line up. Note that the images have been thresholded to better show the alignment of the reference points.
 
-However, defining reference points manually is a time-consuming task and the quality of alignment is dependent on the precision of those points. To quantify the accuracy of the alignment, attempts were made to use various metrics for image similarity. Such metrics could be used as loss functions for a machine learning model to automatically align the channels.
+However, defining reference points manually is a time-consuming task and the quality of alignment is dependent on the precision of those points. To quantify the accuracy of the alignment, attempts were made to use various metrics for image similarity. Such metrics could be used as loss functions for a machine learning model for automatically aligning the channels.
 
 This task is difficult, as the properties of objects are vastly different under visible light and far infrared. Therefore, a simple intensity-based metric is unlikely to be successful in this scenario, as local intensities will vary across different channels even if the registration is perfect \citep{myronenko_intensity-based_2010}.
 
 \subsection{Intensity-based registration metrics}
 
-To mitigate the problem of varying intensities across different channels, \citet{chen_normalized_2018} introduce the Normalized Total Gradient (NTG) metric for multispectral imaging systems, which is defined as follows:
+To mitigate the problem of varying intensities across different channels, \citet{chen_normalized_2018} introduce the normalized total gradient (NTG) metric for multispectral imaging systems, which is defined as follows:
 
 \begin{equation}
   NTG(f, f_R) = \frac{\sum_l |\nabla_l \{f - f_R\}|}{\sum_l | \nabla_l f | + \sum_l | \nabla_l f_R|},
@@ -422,14 +424,27 @@ where $f$ and $f_R$ are the channel images to be compared, $\nabla_l$ represents
 
 In other words, to obtain NTG one computes the sum of the $x$- and $y$-gradients of the difference of the two channels, and normalises the result by dividing over the sum of gradients of the individual channels.
 
-The metric is based on the assumption that the gradient of the channel difference image becomes sparser as the alignment improves. Figure \ref{fig:gradient_distribution} shows that this is hardly the case for images captured by the LWIR camera, as opposed to the baseline of comparing the red and green channels from the RGB camera.
+The metric is based on the assumption that the gradient of the channel difference image becomes sparser as the alignment improves. Figure \ref{fig:gradient_distribution} shows that this is hardly the case for images captured by the LWIR camera, as opposed to the baseline of comparing the red and green channels from the VIS camera.
 
-The resolution of the LWIR images, as output by the FLIR camera, is $640 \times 420$ px, although the actual resolution of the sensor is only $160 \times 120$. Thus, when downsampling the RGB image to $640 \times 420$ px, edges are still much sharper than for the corresponding LWIR image. Downsampling both images to the native resolution of the LWIR camera did not yield better results.
+The resolution of the LWIR image files, as output by the FLIR camera, is $640 \times 420$ px, although the actual resolution of the sensor is only $160 \times 120$. Thus, when downsampling the VIS image to $640 \times 420$ px, edges are still much sharper than for the corresponding LWIR image. However, downsampling both images to the native resolution of the LWIR camera did not yield better results.
 
-Moreover, an attempt at smoothing both images before calculating the NTG was made by applying the Laplacian of Gaussian (LoG) with $\sigma=2$ to both images. As can be seen in Table \ref{table:registration_ntg}, this approach was not successful either. To verify that our implementation of the metric was indeed working correctly, we computed the NTG between the red and green channel of the visible light image before and after applying a random affine transformation to the green channel. It can be seen that the metric is very effective for the red-green-channel baseline. 
+\begin{table}[ht]
+  \centering
+  \begin{tabular}{@{}lll@{}}
+  \toprule
+  \textbf{Test configuration}                             & \textbf{Misaligned} & \textbf{Aligned} \\ \midrule
+  LAB intensity of VIS vs LWIR (640x480)     & 0.9984              & 0.9987           \\
+  LAB intensity of VIS vs LWIR (160x120)    & 0.9974              & 0.9986           \\
+  LAB intensity of VIS vs LWIR (after LoG with $\sigma=2$) & 0.9970              & 0.9973           \\
+  (Baseline) Red vs green channels of RGB (160x120)                  & 0.6245              & 0.0303           \\ \bottomrule
+  \end{tabular}
+  \caption{Normalized Total Gradient before and after channel alignment}
+  \label{table:registration_ntg}
+\end{table}
 
-Considering the results, it can be concluded that NTG is not a suitable metric for this particular problem. 
-Since this is not the case for the baseline, it is possible that the properties of the LWIR and RGB channels are too different for an intensity-based approach.
+Moreover, an attempt at smoothing both images before calculating the NTG was made by applying the Laplacian of Gaussian (LoG) filter with $\sigma=2$ to both images. As can be seen in Table \ref{table:registration_ntg}, this approach was not successful either. To verify that our implementation of the metric was indeed working correctly, we computed the NTG between the red and green channel of the visible light image before and after applying a random affine transformation to the green channel. As shown in Table \ref{table:registration_ntg}, the metric is very effective for the red-green-channel baseline. 
+
+Considering these results, we concluded that NTG does not appear to be a suitable metric for this particular registration problem. Since the algorithm is effective on the baseline, it is possible that the properties of the LWIR and RGB channels are too different for an intensity-based approach.
 
 \begin{figure}[ht]
   \centering
@@ -446,22 +461,6 @@ Since this is not the case for the baseline, it is possible that the properties 
   \caption{Distribution of gradients of the channel difference image before and after alignment using affine transformation.}
 \end{figure}
 
-
-\begin{table}[ht]
-  \centering
-  \begin{tabular}{@{}lll@{}}
-  \toprule
-  \textbf{Test configuration}                             & \textbf{Misaligned} & \textbf{Aligned} \\ \midrule
-  LAB intensity of VIS vs LWIR (640x480)     & 0.9984              & 0.9987           \\
-  LAB intensity of VIS vs LWIR (160x120)    & 0.9974              & 0.9986           \\
-  LAB intensity of VIS vs LWIR (after LoG with $\sigma=2$) & 0.9970              & 0.9973           \\
-  (Baseline) Red vs green channels of RGB (160x120)                  & 0.6245              & 0.0303           \\ \bottomrule
-  \end{tabular}
-  \caption{Normalized Total Gradient before and after channel alignment}
-  \label{table:registration_ntg}
-\end{table}
-
-
 \subsection{Texture-based registration}
 
 Having demonstrated that intensity-based metrics appear to be inadequate to quantify the registration of visible light and LWIR images, an approach based on image texture features, as proposed by \citet{jarc_graz_2007} was tested. 
@@ -472,11 +471,11 @@ After convoluting both the LWIR and RGB images with the filters, the results wer
 
 \begin{figure}[ht]
   \centering
-  \begin{subfigure}[h!]{0.3\textwidth}
+  \begin{subfigure}[h!]{0.25\textwidth}
     \includegraphics[width=\textwidth]{images/registration/filtered_le_rgb.png}
     \caption{VIS}
   \end{subfigure}
-  \begin{subfigure}[h!]{0.3\textwidth}
+  \begin{subfigure}[h!]{0.25\textwidth}
     \includegraphics[width=\textwidth]{images/registration/filtered_le_lwir.png}
     \caption{LWIR}
   \end{subfigure}
@@ -492,8 +491,7 @@ Finally, the mutual information (MI) of the resulting LWIR and RGB images was ca
 
 where $H(X) = - \sum_{x \in X} p(x) \cdot \log_2 p(x)$ is the entropy of $X$ and $H(X,Y)$ represents the joint entropy of $X$ and $Y$.
 
-We then averaged the MI scores obtained by all 1-D filter pairs to obtain a single metric. For the test images, the MI score did not appear to change consistently when aligning the images. Furthermore, none of the MI values for the different filter combinations behaved reliably across all images. 
-
+We then averaged the MI scores obtained by all 1-D filter pairs to obtain a single metric. For the test images, the MI score did not appear to change consistently when aligning the images. Furthermore, none of the individual MI values for the different filter combinations behaved reliably across all images. 
 
 \subsection{Mean distance}
 

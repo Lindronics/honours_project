@@ -137,7 +137,6 @@ class ResNet(AbstractModel):
         x = K.layers.ReLU()(x)
         return x
 
-        
     def net(self, x, fc=True):
         x = K.layers.Conv2D(filters=32, kernel_size=11, strides=2, activation="relu", padding="valid")(x)
         x = K.layers.MaxPool2D(pool_size=2)(x)
@@ -166,6 +165,37 @@ class ResNet(AbstractModel):
         x = K.layers.Dropout(0.25)(x)
         x = K.layers.Dense(self.num_classes, activation="softmax")(x)
         return x
+
+
+def CustomNet(AbstractModel):
+    """
+    Custom-built CNN
+    """
+
+    def net(self, x, fc=True):
+        x = K.layers.Conv2D(filters=16, kernel_size=3, strides=1, padding="same")(x)
+        x = K.layers.Conv2D(filters=16, kernel_size=11, strides=2, padding="valid")(x)
+        x = K.layers.LeakyReLU()(x)
+        x = K.layers.MaxPool2D(pool_size=11, strides=2)(x)
+        x = K.layers.Dropout(0.4)(x)
+
+        x = K.layers.Conv2D(filters=32, kernel_size=3, strides=1, padding="same")(x)
+        x = K.layers.Conv2D(filters=32, kernel_size=7, strides=2, padding="valid")(x)
+        x = K.layers.LeakyReLU()(x)
+        x = K.layers.MaxPool2D(pool_size=5, strides=2)(x)
+        x = K.layers.Dropout(0.4)(x)
+
+        if fc:
+            return self.fc(x)
+        return x
+
+    def fc(self, x):
+        x = K.layers.Flatten()(x)
+        x = K.layers.Dense(64, activation="relu")(x)
+        x = K.layers.Dropout(0.4)(x)
+        x = K.layers.Dense(self.num_classes, activation="softmax")(x)
+        return x
+
 
 class ResNet152v2(AbstractModel):
     """

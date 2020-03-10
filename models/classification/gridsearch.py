@@ -7,7 +7,7 @@ import tensorflow.keras as K
 
 from sklearn.metrics import classification_report
 
-from models import AlexNet, ResNet, ResNet152v2
+from models import AlexNet, ResNet, CustomNet
 from dataset import Dataset
 
 def grid_search(train_labels: str, 
@@ -43,7 +43,7 @@ def grid_search(train_labels: str,
 
     print("=> Starting grid search.")
 
-    models = [AlexNet, ResNet, ResNet152v2]
+    models = [AlexNet, ResNet, CustomNet]
 
     # Data
     print("=> Loading data.")
@@ -109,16 +109,7 @@ def grid_search(train_labels: str,
                     y_pred = np.argmax(model.predict(X_test), axis=1)
                     y_test_ = np.argmax(y_test, axis=1)
                 f.write(classification_report(y_test_, y_pred, target_names=test.class_labels))
-            
-                # # Train classification report
-                # f.write("\n##### Train #####\n")
-                # y_pred = np.argmax(model.predict(train), axis=1)
-                # y_train_ = train.get_labels()[:y_pred.shape[0]]
-                # f.write(classification_report(y_train_, y_pred, target_names=train.class_labels))
 
-                # Model summary
-                # f.write("\n##### Model summary #####\n")
-                # model.summary(print_fn=lambda x: f.write(x + "\n"))
 
 
 if __name__ == "__main__":

@@ -380,23 +380,11 @@ Another possible way of augmenting the data before classification is artificiall
 \section{Image registration}
 \label{image_registration}
 
-The images captured by the visible light camera and thermal sensor of the FLIR One Pro are not properly aligned by default. This can have adverse consequences to the classification performance of a machine learning model (XXX citation needed). Thus, an algorithm for properly aligning the images captured by the conventional camera and LWIR camera had to be developed. The process of transforming data from different sensors into one coordinate system is commonly referred to as image registration.
+The images captured by the visible light camera and thermal sensor of the FLIR One Pro are not properly aligned by default. This can have adverse consequences to the classification performance of a machine learning model (XXX citation needed). Thus, an algorithm for aligning the images captured by the conventional camera and LWIR camera had to be developed. The process of transforming data from different sensors into one coordinate system is commonly referred to as image registration.
 
 On superficial inspection, it is apparent that the LWIR sensor appears to have a narrower field of view than the RGB camera. Hence, an attempt was made to manually align the LWIR and RGB images by cropping and rescaling the RGB image, effectively zooming in. This approach yielded moderate results, as can be seen in Figure \ref{fig:linear_trans_before_after}.
 
-To obtain a more flexible and generalisable representation, we made use of affine transformations. As demonstrated in Equation \ref{eqn:affine}, an affine transformation can be expressed as a linear function with parameters $A$ and $\vec{b}$. These parameters can be easily trained using a linear regression model. Therefore, the coordinates of about a dozen reference points were manually determined on the RGB and LWIR versions of some test images. These coordinates were used as the inputs and outputs to train the aforementioned linear regression model. 
-
-% The effect of applying the resulting transformation to a set of coordinates are shown in Figure \ref{fig:transformation_arrows}.
-
-% \begin{figure}[ht]
-%   \centering
-%   \begin{subfigure}[h!]{0.45\textwidth}
-%     \includegraphics[width=\textwidth]{images/registration/transformation_arrows.png}
-%     \caption{Synthetic image, black on white.}
-%     \label{fig:transformation_arrows}
-%   \end{subfigure}
-%   \caption{}
-% \end{figure}
+To obtain a more flexible and generalisable representation, we made use of affine transformations. As demonstrated in Equation \ref{eqn:affine}, an affine transformation can be expressed as a linear function with parameters $A$ and $\vec{b}$. These parameters can be easily trained using a linear regression model. Therefore, the coordinates of about a dozen reference points were manually determined on the RGB and LWIR versions of some test images. These coordinates were used as the inputs and outputs to train the linear regression model. 
 
 \begin{figure}[ht]
   \centering
@@ -412,11 +400,11 @@ To obtain a more flexible and generalisable representation, we made use of affin
     \includegraphics[width=\textwidth, trim={3.5cm 9cm 3.5cm 4.5cm}, clip, frame]{images/registration/registered_affine.png}
     \caption{After registration. The thermal signatures of the candles align with the VIS location.}
   \end{subfigure}
-  \caption{Superimposed LWIR and VIS images before and after registration. All images have been thresholded.}
+  \caption{Superimposed LWIR and VIS images before and after registration. All images have been thresholded. Cyan represents the grayscale version of the VIS image and the magenta represents the LWIR image.}
   \label{fig:linear_trans_before_after}
 \end{figure}
 
-This approach yielded acceptable results. As can be seen in Figure \ref{fig:linear_trans_before_after}, the candles in the images line up. Note that the images have been thresholded to better show the alignment of the reference points. The cyan channel represents the grayscale version of the visible light image and the magenta channel represents the LWIR image.
+This approach yielded acceptable results. As can be seen in Figure \ref{fig:linear_trans_before_after}, the candles in the images line up. Note that the images have been thresholded to better show the alignment of the reference points.
 
 However, defining reference points manually is a time-consuming task and the quality of alignment is dependent on the precision of those points. To quantify the accuracy of the alignment, attempts were made to use various metrics for image similarity. Such metrics could be used as loss functions for a machine learning model to automatically align the channels.
 
@@ -507,13 +495,43 @@ where $H(X) = - \sum_{x \in X} p(x) \cdot \log_2 p(x)$ is the entropy of $X$ and
 We then averaged the MI scores obtained by all 1-D filter pairs to obtain a single metric. For the test images, the MI score did not appear to change consistently when aligning the images. Furthermore, none of the MI values for the different filter combinations behaved reliably across all images. 
 
 
-\subsection{Mean squared distance}
+\subsection{Mean distance}
 
-Since neither intensity-based nor texture-based approaches produced satisfactory results, we concluded that automatic alignment of the visible light and LWIR images is unfeasible without extensive further research. Therefore, to be able to guarantee an acceptable alignment quality, we resorted to the aforementioned manual approach.
+Since neither intensity-based nor texture-based approaches produced satisfactory results, we concluded that an automatic registration of the visible light and LWIR images was unfeasible without extensive further research. Therefore, to be able to guarantee an acceptable alignment quality across the whole dataset, we resorted back to manual alignment.
 
-XXX reference points in XXX images were recorded and the corresponding transformation matrix was determined. Prior experiments showed that the required transformation matrix seems to be mostly constant across different images. Device orientation seemed to be the only factor with a large impact on the required transformation. To avoid this problem, all images were captured in portrait mode.
+For this purpose, 97 reference points were manually determined from the training data. One image was drawn from each of the 35 subsets, ensuring that all available camera orientations and perspectives were incorporated into the model. The coordinates were rescaled to $120 \times 160$, which is the desired input resolution for the CNNs. Subsequently, by fitting a linear regression model, the transformation parameters were determined to be: 
 
-The mean squared distance (MSE) across all reference points in the dataset was determined to be XXX.
+\begin{equation}
+  A = \begin{pmatrix}
+    1.260 & -0.016  \\
+    0.020 & 1.192
+  \end{pmatrix}, \ 
+  \vec{b} = \begin{pmatrix}
+    -14.619  \\
+    -18.660
+  \end{pmatrix}
+\end{equation}
+
+Prior experiments showed that the required transformation seems to be mostly consistent across different images. Device orientation appears to be the only factor with a large impact on the required transformation. To avoid this problem, all images were captured in portrait mode. Figure \ref{fig:registration_relationship} shows the relationship between the re-scaled visible light and LWIR coordinates across both dimensions. The relationship appears to be linear. However, it can be seen that the gradient for the relationship of horizontal coordinates is slightly steeper than for the vertical coordinates. This supports the necessity to perform an affine transformation, as opposed to just zooming in.
+
+\begin{figure}[ht]
+  \centering
+  \begin{subfigure}[h!]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{images/registration/error.png}
+    \caption{Mean distance between predicted and actual LWIR coordinates.}
+    \label{fig:registration_error}
+  \end{subfigure}
+  \begin{subfigure}[h!]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{images/registration/x_y.png}
+    \caption{Relationship between reference points in VIS and LWIR images.}
+    \label{fig:registration_relationship}
+  \end{subfigure}
+  \caption{Manual alignment results.}
+\end{figure}
+
+To quantitatively evaluate whether the transformation parameters generalise across all images, the mean euclidean distance between the actual LWIR coordinates and the ones predicted by the regression model was computed for every class in the dataset. The results can be seen in Figure \ref{fig:registration_error}. The highest mean distance is around 2, which we consider small considering the image resolution. It is very likely that these errors are due to noise in the manually determined reference points. The mean distance across all reference points in the dataset was determined to be around 1.8.
+
+When using convolutional kernels with a small size, such as $3 \times 3$, this distance could be problematic, as edges and other features might not be picked up consistently across channels. Therefore, an attempt was made to use larger kernels in the initial convolutional layer to mitigate this potential problem.
 
 %----------------------------------------------------------------------------------------------------------------------------------
 

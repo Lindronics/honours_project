@@ -9,7 +9,7 @@ class AbstractModel():
 
     modes = ["rgb", "lwir", "grayscale", "stacked", "voting", "fusion"]
 
-    def __init__(self, mode, num_classes, input_shape=None):
+    def __init__(self, mode, num_classes, input_shape=None, weight_dir=None):
         """
         Params
         ------
@@ -20,6 +20,8 @@ class AbstractModel():
             Number of classes
         input_shape: tuple
             Shape of input tensor
+        weight_dir: str
+            Directory containing weight files
         """
         modes = {
             "rgb": self.rgb,
@@ -32,6 +34,7 @@ class AbstractModel():
         self.method = modes[mode]
         self.num_classes = num_classes
         self.input_shape = input_shape
+        self.weight_dir = weight_dir
         
     def __call__(self, x):
         return self.method(x)
@@ -204,11 +207,18 @@ class ResNet152v2(AbstractModel):
 
     def net(self, x, fc=True):
         if x.shape[-1] == 3:
-            tf.print("==> Loading imagenet weights for shape", x.shape)
-            net = K.applications.resnet_v2.ResNet152V2(include_top=False, weights="imagenet", input_shape=x.shape[1:])
+            if self.weight_dir:
+                tf.print("==> Loading ResNet 152 v2 with imagenet weights for shape", x.shape)
+                net = K.applications.resnet_v2.ResNet152V2(include_top=False, weights="imagenet", input_shape=x.shape[1:])
+            else:
+                tf.print("==> Loading ResNet 152 v2 without weights for shape", x.shape)
+                net = K.applications.resnet_v2.ResNet152V2(include_top=False, weights=None, input_shape=x.shape[1:])
         else:
-            tf.print("==> Loading no weights for shape", x.shape)
-            net = K.applications.resnet.ResNet152(include_top=False, weights=None, input_shape=x.shape[1:])
+            tf.print("==> Loading ResNet 50 v2 for shape", x.shape)
+            net = K.applications.resnet_v2.ResNet50V2(include_top=False, weights=None, input_shape=x.shape[1:])
+            if self.weight_dir:
+                tf.print("==> Loading pretrained weights", x.shape)
+                net.load_weights(os.path.join(self.weight_dir, "flir_pretrained_weights.h5"), by_name=True)
         
         x = net(x)
         if fc:

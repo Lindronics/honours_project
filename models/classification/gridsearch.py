@@ -69,7 +69,7 @@ def grid_search(train_labels: str,
             name_prefix = f"{model_type.__name__}_{mode}_"
 
             # Prepare model
-            net = model_type(mode, num_classes=train.num_classes(), input_shape=train.shape())
+            net = model_type(mode, num_classes=train.num_classes(), input_shape=train.shape(), weight_dir=output)
             model = net.get_model()
 
             model.compile(optimizer="sgd",

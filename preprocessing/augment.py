@@ -7,12 +7,8 @@ from tqdm import tqdm
 import argparse
 
 from generate_labels import generate_labels, write_labels
+from trans_cfg import cfg
 
-
-transformation = np.array([
-    [1.202290, -0.026808, -50.528589],
-    [0.017762, 1.203090, -73.950204],
-])
 
 def save(path:str, name:str, rgb:np.ndarray, lwir:np.ndarray, label:str, extension:str="") -> tuple:
     """
@@ -96,8 +92,8 @@ def augment_dataset(samples: list, augmented_dir:str, multiplier:int=2, register
         rgb = cv2.imread(rgb_path)
 
         if register:
-            rgb = cv2.resize(rgb, (480, 640))
-            rgb = cv2.warpAffine(rgb, transformation, (480, 640))
+            rgb = cv2.resize(rgb, cfg.small.res)
+            rgb = cv2.warpAffine(rgb, cfg.small.matrix, cfg.small.res)
         rgb = cv2.resize(rgb, res)
 
         lwir = cv2.imread(lwir_path)

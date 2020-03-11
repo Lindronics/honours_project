@@ -9,11 +9,8 @@ import tensorflow.keras as K
 import os
 import json
 
+from trans_cfg import cfg
 
-transformation = np.array([
-    [1.202290, -0.026808, -50.528589],
-    [0.017762, 1.203090, -73.950204],
-])
 
 class Dataset(K.utils.Sequence):
     """
@@ -95,8 +92,8 @@ class Dataset(K.utils.Sequence):
         img = tf.image.convert_image_dtype(img, tf.float32).numpy()
         # img = cv2.imread(path) / 255
         if register:
-            img = cv2.resize(img, (480, 640))
-            img = cv2.warpAffine(img, transformation, (480, 640))
+            img = cv2.resize(img, cfg.small.res)
+            img = cv2.warpAffine(img, cfg.small.matrix, cfg.small.res)
         img = cv2.resize(img, self.res)
         return img
 

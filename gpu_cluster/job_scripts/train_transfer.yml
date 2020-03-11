@@ -5,7 +5,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: test-classification
+  name: train-transfer
   namespace: 2265846lproject
 # this is where you define the content of the Job
 spec:
@@ -15,7 +15,7 @@ spec:
   backoffLimit: 0
   template:        
     metadata:
-      name: test-classification
+      name: train-transfer
     spec:
       # in the "containers:" section you define the container(s) that
       # will run inside the Pod itself. Usually you'll just need one. 
@@ -36,7 +36,11 @@ spec:
         
         command: 
           - "python3"
-          - "nfs/honours_project/models/classification/train.py"
+          - "nfs/honours_project/models/classification/transfer_train.py"
+          - "nfs/honours_project_data/animals_train_final/labels.txt"
+          - "nfs/honours_project_data/animals_test_final/labels.txt"
+          - "nfs/out"
+          - "30"
         
         resources:
           # these are the hardware resources the container needs 
@@ -48,10 +52,10 @@ spec:
           requests:
             # the "m" suffix here means "millicores", so 1 physical CPU
             # core = 1000m. this container requests 2000m = 2 physical cores
-            cpu: "2000m" 
+            cpu: "4000m" 
             # memory units are also defined by a suffix. typically this will
             # be "Mi" or "Gi" as appropriate
-            memory: "16Gi"
+            memory: "64Gi"
             # GPUs are slightly different as they're not natively supported
             # by Kubernetes. This indicates that the container requires 1 
             # GPU in order to run
@@ -66,8 +70,8 @@ spec:
           # one GPU, the cluster will only allocate a single GPU to your container, 
           # and the others will not be visible to code inside it
           limits:
-            cpu: "4000m" 
-            memory: "16Gi"
+            cpu: "8000m" 
+            memory: "64Gi"
             nvidia.com/gpu: 1 
         # this says "mount the external volume 'nfs-access' at the location /nfs
         # inside this container"

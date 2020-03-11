@@ -18,7 +18,7 @@ FROM tensorflow/tensorflow:latest-gpu-py3
 RUN apt-get update
 RUN apt-get install -y libsm6 libxext6 libxrender-dev
 
-RUN pip install tqdm scikit-learn opencv-python
+RUN pip install tqdm scikit-learn opencv-python easydict
 
 # CMD defines the command that containers will run when
 # created from this image

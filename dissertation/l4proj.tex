@@ -85,6 +85,9 @@
 
 Why should the reader care about what are you doing and what are you actually doing?
 
+\section{Aims and motivations}
+
+\section{Potential applications}
 
 
 %==================================================================================================================================
@@ -151,16 +154,22 @@ This project focuses on supervised learning.
 
 In supervised learning, one speaks of classification or regression, depending on whether the data labels $y_i$ are discrete classes or continous, real values.
 
+\subsection{The problem of overfitting}
+
+%----------------------------------------------------------------------------------------------------------------------------------
+
+\section{Image classification}
+
 \subsection{Deep learning}
 
+\subsection{Convolutional neural networks}
 
-
-
+\subsection{Evaluation techniques}
 
 
 %==================================================================================================================================
 
-\chapter{Analysis/Requirements}
+\chapter{Problem analysis}
 What is the problem that you want to solve, and how did you arrive at it?
 
 \section{Data generation}
@@ -199,6 +208,8 @@ Firstly, the two cameras are not spatially aligned. Furthermore, the "zoom level
 
 Secondly, the vastly different resolutions of the sensors could cause problems, as convolutional filters might struggle detecting edges and other features consistently across all channels. A possible strategy to avoid this issue is to resize the images to a common resolution. However, this means that valuable information in the VIS image might be lost and overall accuracy might be reduced. It is, therefore, necessary to evaluate the degree of information loss upon size reduction of the visible light image.
 
+\subsection{Capturing images}
+
 %----------------------------------------------------------------------------------------------------------------------------------
 
 \section{Mobile application}
@@ -216,6 +227,7 @@ The mobile application will furthermore provide the ability to capture datasets 
 
 
 %==================================================================================================================================
+
 \chapter{Design}
 How is this problem to be approached, without reference to specific implementation details? 
 
@@ -282,42 +294,42 @@ The classes with low support (Pig, Sheep, Ferret, Rabbit) were dropped from the 
 \begin{figure}[ht]
   \centering
   \begin{subfigure}[h!]{0.18\textwidth}
-    \includegraphics[width=\textwidth, trim={0cm 6cm 0cm 6cm}, clip]{images/dataset/cat/rgb.png}
+    \includegraphics[width=\textwidth, trim={0cm 2.5cm 0cm 2.5cm}, clip]{images/dataset/cat/rgb.png}
     \includegraphics[width=\textwidth, trim={0cm 2.5cm 0cm 2.5cm}, clip]{images/dataset/cat/lwir.png}
     \caption{Cat}
   \end{subfigure}
   \begin{subfigure}[h!]{0.18\textwidth}
-    \includegraphics[width=\textwidth, trim={0cm 6cm 0cm 6cm}, clip]{images/dataset/pony/rgb.png}
+    \includegraphics[width=\textwidth, trim={0cm 2.5cm 0cm 2.5cm}, clip]{images/dataset/pony/rgb.png}
     \includegraphics[width=\textwidth, trim={0cm 2.5cm 0cm 2.5cm}, clip]{images/dataset/pony/lwir.png}
     \caption{Pony}
   \end{subfigure}
   \begin{subfigure}[h!]{0.18\textwidth}
-    \includegraphics[width=\textwidth, trim={0cm 6cm 0cm 6cm}, clip]{images/dataset/alpaca/rgb.png}
+    \includegraphics[width=\textwidth, trim={0cm 2.5cm 0cm 2.5cm}, clip]{images/dataset/alpaca/rgb.png}
     \includegraphics[width=\textwidth, trim={0cm 2.5cm 0cm 2.5cm}, clip]{images/dataset/alpaca/lwir.png}
     \caption{Alpaca}
   \end{subfigure}
   \begin{subfigure}[h!]{0.18\textwidth}
-    \includegraphics[width=\textwidth, trim={0cm 6cm 0cm 6cm}, clip]{images/dataset/pretty_chicken/rgb.png}
+    \includegraphics[width=\textwidth, trim={0cm 2.5cm 0cm 2.5cm}, clip]{images/dataset/pretty_chicken/rgb.png}
     \includegraphics[width=\textwidth, trim={0cm 2.5cm 0cm 2.5cm}, clip]{images/dataset/pretty_chicken/lwir.png}
     \caption{Hamburg chicken}
   \end{subfigure}
   \begin{subfigure}[h!]{0.18\textwidth}
-    \includegraphics[width=\textwidth, trim={0cm 6cm 0cm 6cm}, clip]{images/dataset/evil_chicken/rgb.png}
+    \includegraphics[width=\textwidth, trim={0cm 2.5cm 0cm 2.5cm}, clip]{images/dataset/evil_chicken/rgb.png}
     \includegraphics[width=\textwidth, trim={0cm 2.5cm 0cm 2.5cm}, clip]{images/dataset/evil_chicken/lwir.png}
     \caption{Silkie chicken}
   \end{subfigure}
   \begin{subfigure}[h!]{0.18\textwidth}
-    \includegraphics[width=\textwidth, trim={0cm 6cm 0cm 6cm}, clip]{images/dataset/ugly_duck/rgb.png}
+    \includegraphics[width=\textwidth, trim={0cm 2.5cm 0cm 2.5cm}, clip]{images/dataset/ugly_duck/rgb.png}
     \includegraphics[width=\textwidth, trim={0cm 2.5cm 0cm 2.5cm}, clip]{images/dataset/ugly_duck/lwir.png}
     \caption{Muscovy duck}
   \end{subfigure}
   \begin{subfigure}[h!]{0.18\textwidth}
-    \includegraphics[width=\textwidth, trim={0cm 6cm 0cm 6cm}, clip]{images/dataset/chicken/rgb.png}
+    \includegraphics[width=\textwidth, trim={0cm 2.5cm 0cm 2.5cm}, clip]{images/dataset/chicken/rgb.png}
     \includegraphics[width=\textwidth, trim={0cm 2.5cm 0cm 2.5cm}, clip]{images/dataset/chicken/lwir.png}
     \caption{Chicken}
   \end{subfigure}
   \begin{subfigure}[h!]{0.18\textwidth}
-    \includegraphics[width=\textwidth, trim={0cm 6cm 0cm 6cm}, clip]{images/dataset/goose/rgb.png}
+    \includegraphics[width=\textwidth, trim={0cm 2.5cm 0cm 2.5cm}, clip]{images/dataset/goose/rgb.png}
     \includegraphics[width=\textwidth, trim={0cm 2.5cm 0cm 2.5cm}, clip]{images/dataset/goose/lwir.png}
     \caption{Goose}
   \end{subfigure}
@@ -575,13 +587,13 @@ Our implementation of AlexNet diverges slightly from the original in several poi
 %----------------------------------------------------------------------------------------------------------------------------------
 
 
-\section{Transfer learning}
+\section{Transfer learning using a pre-trained ResNet}
 
 
 
 %----------------------------------------------------------------------------------------------------------------------------------
 
-\section{Mobile application}
+\section{Mobile application design}
 
 The mobile application was designed with two primary requirements in mind:
 
@@ -735,9 +747,7 @@ The mobile application was implemented using Java and Android Studio.
 \chapter{Evaluation} 
 How good is your solution? How well did you solve the general problem, and what evidence do you have to support that?
 
-\section{Methods and hyperparameters}
-
-\subsection{Data augmentation}
+\section{Strategies and hyperparameters}
 
 \subsection{Training-validation split}
 \label{eval_train_val_split}
@@ -763,9 +773,13 @@ This result is most likely due to the similarity of many images as mentioned in 
 
 Fitting the models on the training dataset as defined in Section \ref{classes_samples}, validation scores dropped significantly. This was in accordance with our expectations, as the samples from the training and validation datasets should now be independent. Therefore, the models are not able to overfit on the whole dataset anymore and the validation score is more representative of potential performance on new data.
 
+\subsection{Image resolutions}
+
+\subsection{Data augmentation}
+
 \subsection{Generation of artificial data}
 
-\subsection{VIS only compared to VIS+LWIR}
+\subsection{RGB compared to grayscale}
 
 %----------------------------------------------------------------------------------------------------------------------------------
 
@@ -779,12 +793,33 @@ Fitting the models on the training dataset as defined in Section \ref{classes_sa
 
 %----------------------------------------------------------------------------------------------------------------------------------
 
-\section{Computational performance on mobile device}
+\section{Accuracy at different lighting conditions}
 
+%----------------------------------------------------------------------------------------------------------------------------------
+
+\section{Mobile application deployment}
+
+\subsection{Functionality validation}
+
+\subsection{Performance and latency}
+
+%----------------------------------------------------------------------------------------------------------------------------------
+
+\section{Issues and caveats}
 
 %==================================================================================================================================
 \chapter{Conclusion}    
 Summarise the whole project for a lazy reader who didn't read the rest (e.g. a prize-awarding committee).
+
+%----------------------------------------------------------------------------------------------------------------------------------
+
+\section{Future work}
+
+\subsection{Object detection}
+
+\subsection{Movement segmentation}
+
+\section{Acknowledgements}
 
 %==================================================================================================================================
 %

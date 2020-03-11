@@ -167,7 +167,7 @@ class ResNet(AbstractModel):
         return x
 
 
-def CustomNet(AbstractModel):
+class CustomNet(AbstractModel):
     """
     Custom-built CNN
     """

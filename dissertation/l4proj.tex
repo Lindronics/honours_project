@@ -536,7 +536,7 @@ Prior experiments showed that the required transformation seems to be mostly con
   \caption{Manual alignment results.}
 \end{figure}
 
-To quantitatively evaluate whether the transformation parameters generalise across all images, the mean euclidean distance between the actual LWIR coordinates and the ones predicted by the regression model was computed for every class in the dataset. The results can be seen in Figure \ref{fig:registration_error}. The highest mean distance is around 2, which we consider small considering the image resolution. It is very likely that these errors are due to noise in the manually determined reference points. The mean distance across all reference points in the dataset was determined to be around 1.8.
+To quantitatively evaluate whether the transformation parameters generalise across all images, the mean euclidean distance between the actual LWIR coordinates and the ones predicted by the regression model was computed for every class in the dataset. The results can be seen in Figure \ref{fig:registration_error}. The highest mean distance is around 2, which we consider small considering the image resolution. It is very likely that these errors are due to noise in the manually determined reference points. The mean distance across all reference points in the dataset was determined to be around 1.777 with $\sigma = 0.589$.
 
 When using convolutional kernels with a small size, such as $3 \times 3$, this distance could be problematic, as edges and other features might not be picked up consistently across channels. Therefore, an attempt was made to use larger kernels in the initial convolutional layer to mitigate this potential problem.
 

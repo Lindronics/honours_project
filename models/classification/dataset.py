@@ -309,6 +309,7 @@ class FLIRDataset(Dataset):
         X = np.concatenate(X, 0)
         y = np.concatenate(y, 0)
         print("==> Data shapes:", X.shape, y.shape)
+        return X, y
 
 
     def shape(self) -> tuple:

@@ -291,22 +291,19 @@ class FLIRDataset(Dataset):
         ------
         A tensor (n_samples, height, width, channels) and a tensor (n_samples, n_classes)
         """
-        datagen = ImageDataGenerator(
-            horizontal_flip=True,
-            rotation_range=30,
-            zoom_range=[0.9, 1],
-        )
+        # datagen = ImageDataGenerator(
+        #     horizontal_flip=True,
+        #     rotation_range=30,
+        #     zoom_range=[0.9, 1],
+        # )
 
         X, y = [], []
         for i in range(len(self)):
             X_batch, y_batch = self.__getitem__(i)
+            X.append(X_batch)
+            y.append(y_batch)
             if augment:
-                augmented = datagen.flow(X_batch, y=y_batch, batch_size=4, shuffle=True)
-                for X_, y_ in augmented:
-                    X.append(X_)
-                    y.append(y_)
-            else:
-                X.append(X_batch)
+                X.append(X_batch[:, :, ::-1, :])
                 y.append(y_batch)
 
         X = np.concatenate(X, 0)

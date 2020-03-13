@@ -409,3 +409,17 @@
 * *1.5 hours* Added script for transfer learning from saved weights
 * *2.0 hours* Determined 95 reference points from the train dataset. Determined a new transformation matrix for registration based on these points.
 * *1.5 hours* Added registration results and evalution to dissertation
+
+### 11 Mar 2020
+
+* *2.0 hours* Prepared first incomplete draft of dissertation
+* *0.5 hours* Updated docker image to include easydict dependency
+* *2.0 hours* Added transfer learning to grid search
+
+### 12 Mar 2020
+
+* *0.5 hours* Minor restructuring of directory structure
+
+### 13 Mar 2020
+
+* *0.5 hours* 14th supervisor meeting

@@ -92,8 +92,8 @@ def augment_dataset(samples: list, augmented_dir:str, multiplier:int=2, register
         rgb = cv2.imread(rgb_path)
 
         if register:
-            rgb = cv2.resize(rgb, cfg.small.res)
-            rgb = cv2.warpAffine(rgb, cfg.small.matrix, cfg.small.res)
+            rgb = cv2.resize(rgb, tuple(cfg.small.res))
+            rgb = cv2.warpAffine(rgb, cfg.small.matrix, tuple(cfg.small.res))
         rgb = cv2.resize(rgb, res)
 
         lwir = cv2.imread(lwir_path)

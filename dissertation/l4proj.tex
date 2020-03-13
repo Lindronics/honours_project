@@ -516,7 +516,7 @@ For this purpose, 97 reference points were manually determined from the training
   \vec{b} = \begin{pmatrix}
     -14.619  \\
     -18.660
-  \end{pmatrix}
+  \end{pmatrix}.
 \end{equation}
 
 Prior experiments showed that the required transformation seems to be mostly consistent across different images. Device orientation appears to be the only factor with a large impact on the required transformation. To avoid this problem, all images were captured in portrait mode. Figure \ref{fig:registration_relationship} shows the relationship between the re-scaled visible light and LWIR coordinates across both dimensions. The relationship appears to be linear. However, it can be seen that the gradient for the relationship of horizontal coordinates is slightly steeper than for the vertical coordinates. This supports the necessity to perform an affine transformation, as opposed to just zooming in.
@@ -550,7 +550,7 @@ As concluded in \ref{fig:augmentation_affine}, the spatial and intensity propert
   \item An RGB-only implementation similar to the default implementation of most networks. This will be used as a baseline.
   \item An LWIR-only implementation.
   \item A greyscale implementation. This will calculate the mean across the three colour channels of the RGB image, yielding a single-channel greyscale image. The purpose of this model will be to evaluate the benefits and drawbacks of using all three colour channels.
-  \item A single-branch, stacked-layer implementation. The RGB and LWIR channels are stacked into a tensor of shape $({batch_size} \times width \times height \times 4)$. This tensor is then fed into the network, yielding a prediction.
+  \item A single-branch, stacked-layer implementation. The RGB and LWIR channels are stacked into a tensor of shape $({batch\ size} \times width \times height \times 4)$. This tensor is then fed into the network, yielding a prediction.
   \item A multi-branch implementation with late feature-level fusion. Here, the RGB and LWIR images are fed into separate branches of convolutional layers. Finally, the respective outputs are being flattened, concatenated and fed into the fully-connected layers at the end of the network.
   \item A multi-branch implementation with voting classifiers. Similarly to the late feature-fusion implementation, the VIS and LWIR images are run through seperate network branches. However, the branches have their own individual fully-connected layers, which produce separate predictions. The final output is the weighted mean of these two predictions. The relative weights of the branches are trainable parameters.
 \end{enumerate}

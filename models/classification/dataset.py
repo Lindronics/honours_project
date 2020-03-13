@@ -6,6 +6,7 @@ from collections import defaultdict
 from sklearn.model_selection import train_test_split
 import tensorflow as tf
 import tensorflow.keras as K
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import os
 import json
 
@@ -269,12 +270,48 @@ class FLIRDataset(Dataset):
                 y.append(one_hot)
 
                 lwir = self.load(lwir_path, coords)
-                lwir = np.mean(lwir, -1)[..., None]
+                lwir = np.mean(lwir, -1)[..., None]       
                 X.append(lwir)
 
             return np.array(X), np.array(y)
         else:
             raise StopIteration
+
+
+    def get_all(self, augment:bool=True) -> tuple:
+        """
+        Loads the whole dataset, including .
+
+        Params
+        ------
+        augment: bool
+            Whether to perform data augmentation
+
+        Returns
+        ------
+        A tensor (n_samples, height, width, channels) and a tensor (n_samples, n_classes)
+        """
+        datagen = ImageDataGenerator(
+            horizontal_flip=True,
+            rotation_range=30,
+            zoom_range=[0.9, 1],
+        )
+
+        X, y = [], []
+        for i in range(len(self)):
+            X_batch, y_batch = self.__getitem__(i)
+            if augment:
+                augmented = datagen.flow(X_batch, y=y_batch, batch_size=4, shuffle=True)
+                for X_, y_ in augmented:
+                    X.append(X_)
+                    y.append(y_)
+            else:
+                X.append(X_batch)
+                y.append(y_batch)
+
+        X = np.concatenate(X, 0)
+        y = np.concatenate(y, 0)
+        print("==> Data shapes:", X.shape, y.shape)
 
 
     def shape(self) -> tuple:

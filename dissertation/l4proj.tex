@@ -563,7 +563,7 @@ As concluded in \ref{fig:augmentation_affine}, the spatial and intensity propert
     \caption{Feature-fusion configuration.}
     \label{fig:arch_fusion}
   \end{subfigure}
-  \caption{Implemented neural network configurations.}
+  \caption{Implemented neural network configurations excluding RGB-only, LWIR-only and grayscale.}
   \label{fig:archs}
 \end{figure}
 
@@ -584,11 +584,25 @@ Note that the following architecture diagrams (Figures \ref{fig:alexnet} and \re
 
 \subsection{Custom CNN}
 
+A custom CNN architecture as shown in Figure \ref{fig:customnet} was implemented. The network follows a common design pattern for image classifiers, chaining multiple convolutional and pooling layers with increasing amounts of filters, followed by a small fully-connected part. 
+
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.7\textwidth]{images/models/customnet}
+  \caption{Architecture of custom neural network.}
+  \label{fig:customnet}
+\end{figure}
+
+Our model consists of two multi-layer convolutional blocks. Each block is composed of two convolutional layers, a leaky ReLU activation function, and a max pooling layer. We chose the kernel sizes to be $3 \times 3$ and $11 \times 11$ in the first block, and $3 \times 3$ and $7 \times 7$ in the second block. Following the convolutional blocks, we add a fully connected (FC) layer and an output layer with softmax activation. 
+
+Overall, the model has $117\,592$ trainable weights. This architecture was designed as a low-end model with relatively few parameters that is fast to train and evaluate.
+
 \subsection{AlexNet}
 
 AlexNet was first introduced by \citet{krizhevsky_imagenet_2012}, winning the ImageNet Large Scale Visual Recognition Challenge (ILSVRC). Significantly outperforming the state-of-the-art traditional image classification models of its time, AlexNet is considered a significant breakthrough in computer vision \citep{alom_history_2018}.
 
-The architecture of AlexNet consists of an initial convolutional layer with a relatively large kernel size of $11 \times 11$, followed by a max pooling layer. This is followed by a second block of convolutional and pooling layers. The kernel size of the second convolutional layer is $5 \times 5$. Subsequently, three convolutional layers with $3 \times 3$ kernels are applied, followed by another pooling layer. Finally, the output is fed into two subsequent fully connected (FC) layers, followed by an output layer with a softmax activation function.
+The architecture of AlexNet consists of an initial convolutional layer with a relatively large kernel size of $11 \times 11$, followed by a max pooling layer. This is followed by a second block of convolutional and pooling layers. The kernel size of the second convolutional layer is $5 \times 5$. Subsequently, three convolutional layers with $3 \times 3$ kernels are applied, followed by another pooling layer. Finally, the output is fed into two subsequent fully connected layers, followed by an output layer with a softmax activation function.
 
 We decided to evaluate an implementation of AlexNet due to various factors. Firstly, the model has delivered good results on many image classification tasks. Simultaneously, its architecture can be considered shallow compared to most modern-day networks. This makes it likely that AlexNet will be able to run with low latency on a mobile edge device. Finally, the first convolutional layer of AlexNet has a very large kernel compared to most modern-day networks. This might help mitigate the aforementioned misalignment problem.
 
@@ -605,7 +619,7 @@ Our implementation of AlexNet, as shown in Figure \ref{fig:alexnet} diverges sli
 
 Since the initial introduction of AlexNet, many more CNN-architectures have been developed. \citet{simonyan_very_2015} propose VGG, a neural network with a substantially increased number of convolutional layers. They demonstrate that deeper networks are more likely to perform well on image classification tasks than shallow architectures \citep{alom_history_2018}.
 
-ResNet was developed by \citet{he_deep_2016}. Winning the 2015 ILSVRC, ResNet is considered a state-of-the-art neural network for image classification. It makes heavy use of a novel component known as residual block. 
+ResNet was developed by \citet{he_deep_2016}. Winning the 2015 ILSVRC, ResNet is considered a state-of-the-art neural network for image classification. It makes heavy use of a novel design component known as residual block. 
 
 \begin{figure}[ht]
   \centering
@@ -625,7 +639,7 @@ Figure \ref{fig:res_block} shows an example residual block. The input to the blo
 
 The official paper proposes implementations of ResNet with 50, 101 and 152 layers. Since our dataset is significantly smaller than ImageNet, it is likely that these models would overfit on the training data without adding much benefit over a shallower architecture. Hence, we decided to implement our own version of ResNet with 6 residual blocks and a total of 14 convolutional layers. The architecture can be seen in Figure \ref{fig:resnet}.
 
-The residual blocks are arranged in two groups of three. The convolutional kernels of each block have size $5 \times 5$. Each group of residual blocks is preceded by a single convolutional layer with a max pooling layer to reduce the input resolution. Similarly to AlexNet, we use two FC layers with dropout in the end, followed by a softmax-activated output layer. Despite the much deeper architecture compared to AlexNet, our ResNet implementation has only $4\,034\,312$ trainable parameters.
+The residual blocks are arranged in two groups of three. The convolutional kernels of each block have size $5 \times 5$. Each group of residual blocks is preceded by a single convolutional layer with a max pooling layer to reduce the input resolution. Similarly to AlexNet, we use two FC layers with dropout in the end, followed by a softmax-activated output layer. Despite the much deeper architecture compared to AlexNet, our ResNet implementation has only $4\,033\,160$ trainable parameters.
 
 %----------------------------------------------------------------------------------------------------------------------------------
 

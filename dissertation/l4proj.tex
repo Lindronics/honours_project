@@ -546,16 +546,36 @@ When using convolutional kernels with a small size, such as $3 \times 3$, this d
 
 As concluded in \ref{fig:augmentation_affine}, the spatial and intensity properties of RGB and LWIR images are significantly different. Consequently, we decided to implement six versions of every CNN and evaluate the results separately.
 
+\begin{figure}[ht]
+  \centering
+  \begin{subfigure}[h!]{0.3\textwidth}
+    \includegraphics[width=\textwidth, page={1}, trim={6.5cm 2.2cm 6.5cm 1.5cm}, clip]{images/models/archs}
+    \caption{Stacked configuration.}
+    \label{fig:arch_stacked}
+  \end{subfigure}
+  \begin{subfigure}[h!]{0.3\textwidth}
+    \includegraphics[width=\textwidth, page={2}, trim={6.5cm 2.2cm 6.5cm 1.5cm}, clip]{images/models/archs}
+    \caption{CombSum configuration.}
+    \label{fig:arch_combsum}
+  \end{subfigure}
+  \begin{subfigure}[h!]{0.3\textwidth}
+    \includegraphics[width=\textwidth, page={3}, trim={6.5cm 2.2cm 6.5cm 1.5cm}, clip]{images/models/archs}
+    \caption{Feature-fusion configuration.}
+    \label{fig:arch_fusion}
+  \end{subfigure}
+  \caption{Implemented neural network configurations.}
+\end{figure}
+
 \begin{enumerate}
   \item An RGB-only implementation similar to the default implementation of most networks. This will be used as a baseline.
   \item An LWIR-only implementation.
   \item A greyscale implementation. This will calculate the mean across the three colour channels of the RGB image, yielding a single-channel greyscale image. The purpose of this model will be to evaluate the benefits and drawbacks of using all three colour channels.
-  \item A single-branch, stacked-layer implementation. The RGB and LWIR channels are stacked into a tensor of shape $({batch\ size} \times width \times height \times 4)$. This tensor is then fed into the network, yielding a prediction.
-  \item A multi-branch implementation with late feature-level fusion. Here, the RGB and LWIR images are fed into separate branches of convolutional layers. Finally, the respective outputs are being flattened, concatenated and fed into the fully-connected layers at the end of the network.
-  \item A multi-branch implementation with voting classifiers. Similarly to the late feature-fusion implementation, the VIS and LWIR images are run through seperate network branches. However, the branches have their own individual fully-connected layers, which produce separate predictions. The final output is the weighted mean of these two predictions. The relative weights of the branches are trainable parameters.
+  \item A single-branch, stacked-layer implementation. The RGB and LWIR channels are stacked into a tensor of shape $({batch\ size} \times width \times height \times 4)$. This tensor is then fed into the network, yielding a prediction. This configuration is shown in Figure \ref{fig:arch_stacked}.
+  \item A multi-branch implementation with late feature-level fusion, as shown in Figure \ref{fig:arch_fusion}. Here, the RGB and LWIR images are fed into separate branches of convolutional layers. Finally, the respective outputs are being flattened, concatenated and fed into the fully-connected layers at the end of the network.
+  \item A multi-branch CombSum implementation with voting classifiers. Similarly to the late feature-fusion implementation, the VIS and LWIR images are run through seperate network branches. However, the branches have their own individual fully-connected layers, which produce separate predictions. The final output is the weighted mean of these two predictions. The relative weights of the branches can be treated as trainable parameters. This configuration can be seen in Figure \ref{fig:arch_combsum}.
 \end{enumerate}
 
-This project therefore aimed to evaluate the performance of pixel-based fusion, feature-level fusion and score-level-based fusion classifiers \citep{guo_face_2017}. We chose the RGB-only networks as a baseline, as most image classification models rely solely on visible light.
+This project, therefore, aimed to evaluate the performance of pixel-based fusion, feature-level fusion and score-level-based fusion classifiers \citep{guo_face_2017}. We chose the RGB-only networks as a baseline, as most image classification models rely solely on visible light.
 
 Furthermore, multiple different CNN designs were evaluated. At first, a custom neural network was designed and implemented. In addition, we implemented modified versions of AlexNet and ResNet, two networks commonly used for image classification tasks.
 
@@ -563,7 +583,9 @@ Furthermore, multiple different CNN designs were evaluated. At first, a custom n
 
 \subsection{AlexNet}
 
-AlexNet was first introduced by \citet{krizhevsky_imagenet_2012}.
+AlexNet was first introduced by \citet{krizhevsky_imagenet_2012}, winning the ImageNet Large Scale Visual Recognition Challenge (ILSVRC). Significantly outperforming the state-of-the-art traditional image classification models of its time, AlexNet is considered a significant breakthrough in computer vision \citep{alom_history_2018}.
+
+The architecture of AlexNet 
 
 Our implementation of AlexNet diverges slightly from the original in several points.
 

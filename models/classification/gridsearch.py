@@ -7,7 +7,7 @@ import tensorflow.keras as K
 
 from sklearn.metrics import classification_report
 
-from models import AlexNet, ResNet, CustomNet
+from models import AlexNet, ResNet, CustomNet, ResNet152v2
 from dataset import Dataset
 
 def grid_search(train_labels: str, 
@@ -43,7 +43,7 @@ def grid_search(train_labels: str,
 
     print("=> Starting grid search.")
 
-    models = [AlexNet, ResNet, CustomNet]
+    models = [CustomNet, AlexNet, ResNet, ResNet152v2]
 
     # Data
     print("=> Loading data.")

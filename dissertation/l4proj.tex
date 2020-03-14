@@ -268,7 +268,7 @@ Therefore, each subset was labeled as either \textit{single}, \textit{multi} or 
 
 Initially, the separation into training and validation data was performed using a stratified random split of all the data. As demonstrated in Section \ref{eval_train_val_split}, nearly perfect validation accuracy was achieved on this split. This is most likely a result of the aforementioned similarity of many images due to them being captured at similar times. Hence, we decided that a second independent dataset was necessary to achieve representative evaluation results. Two more datasets were captured on different days to obtain a wider range of lighting situations and background scenarios. The classes and samples of all three datasets are shown in Table \ref{table:raw_dataset}.
 
-Finally, the subsets from the raw datasets were rearranged into a training dataset and a testing dataset. To avoid the issue of fitting and validating on too similar images, each subset was assigned whole to either of the two datasets. An attempt was made to obtain a balanced mixture of \textit{single}, \textit{multi}, and \textit{obstructed} subsets in both datasets. Furtheremore, subsets that were deemed too noisy were omitted. Nonetheless, it can be assumed that achieving a perfect, representative split is difficult due to the noise in the dataset and the limited variety of contexts. The final train-validation-split is shown in Table \ref{table:train_test_dataset}. Overall, 35 subsets were assigned to the training dataset and 19 were allocated to the validation dataset.
+Finally, the subsets from the raw datasets were rearranged into a training dataset and a testing dataset. To avoid the issue of fitting and validating on too similar images, each subset was assigned whole to either of the two datasets. An attempt was made to obtain a balanced mixture of \textit{single}, \textit{multi}, and \textit{obstructed} subsets in both datasets. Furthermore, subsets that were deemed too noisy were omitted. Nonetheless, it can be assumed that achieving a perfect, representative split is difficult due to the noise in the dataset and the limited variety of contexts. The final train-validation-split is shown in Table \ref{table:train_test_dataset}. Overall, 35 subsets were assigned to the training dataset and 19 were allocated to the validation dataset.
 
 \begin{table}[ht]
   \centering
@@ -544,7 +544,7 @@ When using convolutional kernels with a small size, such as $3 \times 3$, this d
 
 \section{Classifiers}
 
-As concluded in \ref{fig:augmentation_affine}, the spatial and intensity properties of RGB and LWIR images are significantly different. Consequently, we decided to implement six versions of every CNN and evaluate the results separately.
+As concluded in \ref{fig:augmentation_affine}, the spatial and intensity properties of RGB and LWIR images are significantly different. Due to the registration problem and the different intensity distributions, a stacked multispectral approach is unlikely to produce satisfactory results. Consequently, we decided to implement six different configurations of every CNN and evaluate the results separately.
 
 \begin{figure}[ht]
   \centering
@@ -585,9 +585,9 @@ Furthermore, multiple different CNN designs were evaluated. At first, a custom n
 
 AlexNet was first introduced by \citet{krizhevsky_imagenet_2012}, winning the ImageNet Large Scale Visual Recognition Challenge (ILSVRC). Significantly outperforming the state-of-the-art traditional image classification models of its time, AlexNet is considered a significant breakthrough in computer vision \citep{alom_history_2018}.
 
-The architecture of AlexNet 
+The architecture of AlexNet consists of an initial convolutional layer with a relatively large kernel size of $11 \times 11$, followed by a max pooling layer. This is followed by a second block of convolutional and pooling layers. The kernel size of the second convolutional layer is $5 \times 5$. Subsequently, three convolutional layers with $3 \times 3$ kernels are applied, followed by another pooling layer. Finally, the output is fed into two subsequent fully connected (FC) layers, followed by an output layer with a softmax activation function.
 
-Our implementation of AlexNet diverges slightly from the original in several points.
+We decided to evaluate an implementation of AlexNet due to various factors. Firstly, the model has delivered good results on many image classification tasks. Simultaneously, its architecture can be considered shallow compared to most modern-day networks. This makes it likely that AlexNet will be able to run with low latency on a mobile edge device. Finally, the first convolutional layer of AlexNet has a very large kernel compared to most modern-day networks. This might help mitigate the aforementioned misalignment problem.
 
 \begin{figure}[ht]
   \centering
@@ -596,6 +596,7 @@ Our implementation of AlexNet diverges slightly from the original in several poi
   \label{fig:alexnet}
 \end{figure}
 
+Our implementation of AlexNet, as shown in Figure \ref{fig:alexnet} diverges slightly from the original. Due to a lower input resolution and a smaller number of resulting parameters, the FC layers at the end of the network only have 1024 instead of 4096 parameters each. Furthermore, we included dropout layers after both FC layers to combat overfitting.
 
 \subsection{ResNet}
 

@@ -681,14 +681,6 @@ The script works by counting the number of samples per class and determining the
 
 A deep convolutional autoencoder was created to predict the LWIR signature of objects from the corresponding visible light image. The architecture of the network is shown in Figure \ref{fig:autoencoder_architecture}. The network consists of an encoder and a decoder that each contain four blocks of layers.
 
-Each encoder block has a convolutional layer, followed by a leaky ReLU activation function and a subsequent max pooling layer for downsampling. The $320 \times 240 \times 1$ input images are thus processed and downsampled to a $20 \times 15 \times 32$ tensor containing a compact, latent representation of the features in the original image.
-
-The output of the decoder is then fed forward into four blocks of deconvolutional layers followed by leaky ReLU activation to attempt a reconstruction the LWIR image. Each deconvolutional layer tries to upsample the input by predicting appropriate pixel values.
-
-For this task, a subset of the animals dataset with 336 images of Shetland ponies was chosen. Mean squared error was selected as the loss function. The network was trained for 100 epochs with a batch size of 16. Training time averaged around 18 minutes on an NVIDIA Tesla P-100 GPU.
-
-After successful training of the network, two images of ponies were retrieved from Wikimedia Commons. They were then fed into the network in an attempt to generate the corresponding LWIR images. The output of the autoencoder can be seen in Figure \ref{fig:autoencoder_pony}.
-
 \begin{figure}[ht]
   \centering
   \includegraphics[width=0.9\textwidth]{images/models/autoencoder}
@@ -696,20 +688,13 @@ After successful training of the network, two images of ponies were retrieved fr
   \label{fig:autoencoder_architecture}
 \end{figure}
 
-\subsubsection{U-Net}
+Each encoder block has a convolutional layer, followed by a leaky ReLU activation function and a subsequent max pooling layer for downsampling. The $320 \times 240 \times 1$ input images are thus processed and downsampled to a $20 \times 15 \times 32$ tensor containing a compact, latent representation of the features in the original image.
 
-U-Net was first introduced by \citet{ronneberger_u-net_2015} to improve performance of biomedical image segmentation systems. Similarly to a conventional autoencoder, it features a contracting path that downsamples or encodes the input, and a symmetric expanding path that upsamples or decodes the input. Additionally, for each deconvolutional layer, the output of the corresponding opposite convolutional layer is concatenated to the layer's input map. These connections can be seen in Figure \ref{fig:unet_architecture}. 
+The output of the decoder is then fed forward into four blocks of deconvolutional layers followed by leaky ReLU activation to attempt a reconstruction the LWIR image. Each deconvolutional layer tries to upsample the input by predicting appropriate pixel values.
 
-Similar to the traditional autoencoder, the U-Net was trained for 100 epochs on the the same dataset. Figure \ref{fig:autoencoder_pony} shows the output of the U-Net and compares it to the autoencoder output.
+Due to the lack of a discriminator, our autoencoder design does not satisfy the requirements of a generative adversarial network. However, autoencoders are commonly used for image processing tasks such as denoising and colorisation. As LWIR images are generally less noisy than visible light images (XXX proof) and both images share rough features such as edges, we deemed an autoencoder architecture to be appropriate for this generative task.
 
-
-
-\begin{figure}[ht]
-  \centering
-  \includegraphics[width=0.9\textwidth]{images/models/unet}
-  \caption{Neural network architecture of the U-Net.}
-  \label{fig:unet_architecture}
-\end{figure}
+A subset of the animals training dataset with 415 images of Shetland ponies was chosen. Mean squared error was selected as the loss function. The network was trained for 100 epochs with a batch size of 16. Training time averaged around 18 minutes on an NVIDIA Tesla P-100 GPU.
 
 \begin{figure}[ht]
   \centering
@@ -720,10 +705,12 @@ Similar to the traditional autoencoder, the U-Net was trained for 100 epochs on 
   \begin{subfigure}[h!]{0.22\textwidth}
     \includegraphics[width=\textwidth]{images/autoencoder/train/auto.png}
     \caption{Autoencoder prediction}
+    \label{fig:autoencoder_pony_train_autoencoder}
   \end{subfigure}
   \begin{subfigure}[h!]{0.22\textwidth}
     \includegraphics[width=\textwidth]{images/autoencoder/train/unet.png}
     \caption{U-Net prediction}
+    \label{fig:autoencoder_pony_train_unet}
   \end{subfigure}
   \begin{subfigure}[h!]{0.22\textwidth}
     \includegraphics[width=\textwidth]{images/autoencoder/train/lwir.png}
@@ -732,6 +719,27 @@ Similar to the traditional autoencoder, the U-Net was trained for 100 epochs on 
   \caption{Outputs of autoencoder and U-Net on training data.}
   \label{fig:autoencoder_pony_train}
 \end{figure}
+
+As can be seen in Figure \ref{fig:autoencoder_pony_train_autoencoder}, the network correctly identifies the pony from the training dataset and determines that it should have a higher local intensity in the LWIR waveband. However, when comparing the predicted to the actual LWIR image, it is apparent that the autoencoder lacks the ability to generate the fine textural details of the animal. This is very likely due to the denoising property caused by the encoder's bottleneck.
+
+\subsubsection{U-Net}
+
+U-Net was first introduced by \citet{ronneberger_u-net_2015} to improve performance of biomedical image segmentation systems. Similarly to a conventional autoencoder, it features a contracting path that downsamples or encodes the input, and a symmetric expanding path that upsamples or decodes the input. Additionally, for each deconvolutional layer, the output of the corresponding opposite convolutional layer is concatenated to the layer's input map. These connections can be seen in Figure \ref{fig:unet_architecture}, which visualises our custom U-Net implementation. 
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.9\textwidth]{images/models/unet}
+  \caption{Neural network architecture of the U-Net.}
+  \label{fig:unet_architecture}
+\end{figure}
+
+We chose to evaluate this architecture because it combines the denoising features of a traditional autoencoder with the ability to generate finer textures due to its skip connections. Similar to the traditional autoencoder, the U-Net was trained for 100 epochs on the the same dataset. 
+
+Figure \ref{fig:autoencoder_pony_train_unet} displays the predicted LWIR image for the pony from the training dataset. Unlike the autoencoder, the U-Net is able to accurately represent the texture of the animal in the LWIR waveband.
+
+\subsubsection{Results on unknown data}
+
+After successful training of the networks, two images of ponies were retrieved from Wikimedia Commons. They were then fed into the network in an attempt to generate the corresponding LWIR images. The respective outputs can be seen in Figure \ref{fig:autoencoder_pony}.
 
 \begin{figure}[ht]
   \centering
@@ -750,10 +758,13 @@ Similar to the traditional autoencoder, the U-Net was trained for 100 epochs on 
     \includegraphics[width=\textwidth]{images/autoencoder/pony_2/unet.png}
     \caption{U-Net prediction}
   \end{subfigure}
-  \caption{Predicted LWIR signature of images of shetland ponys. Retrieved from \url{https://commons.wikimedia.org/wiki/File:Sandwick_Shetland_Pony.jpg} and \url{https://commons.wikimedia.org/wiki/File:Shetland_ponies_at_Sandwick.jpg}}
+  \caption{Predicted LWIR signature of images of shetland ponies. Retrieved from \url{https://commons.wikimedia.org/wiki/File:Sandwick_Shetland_Pony.jpg} and \url{https://commons.wikimedia.org/wiki/File:Shetland_ponies_at_Sandwick.jpg}}
   \label{fig:autoencoder_pony}
 \end{figure}
 
+It appears as if the traditional autoencoder is more successful at generating LWIR images with plausible shapes than the U-Net. Various artifacts can be spotted in the U-Net image. Overall, the shape of the pony is not accurately represented. It is likely that the U-Net is more likely to overfit on the training data.
+
+Upon inspection of the bottom image, it can be seen that the white patch of the pony is also apparent in the autoencoder prediction. We conclude that the model is overfit on dark ponies and is, therefore, unable to detect the patch as a normal part of the animal. Nonetheless, it seems possible that the autoencoder prediction might be accurate enough to be able to generate additional training data for a classifier.
 
 
 

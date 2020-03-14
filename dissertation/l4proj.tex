@@ -564,6 +564,7 @@ As concluded in \ref{fig:augmentation_affine}, the spatial and intensity propert
     \label{fig:arch_fusion}
   \end{subfigure}
   \caption{Implemented neural network configurations.}
+  \label{fig:archs}
 \end{figure}
 
 \begin{enumerate}
@@ -577,7 +578,9 @@ As concluded in \ref{fig:augmentation_affine}, the spatial and intensity propert
 
 This project, therefore, aimed to evaluate the performance of pixel-based fusion, feature-level fusion and score-level-based fusion classifiers \citep{guo_face_2017}. We chose the RGB-only networks as a baseline, as most image classification models rely solely on visible light.
 
-Furthermore, multiple different CNN designs were evaluated. At first, a custom neural network was designed and implemented. In addition, we implemented modified versions of AlexNet and ResNet, two networks commonly used for image classification tasks.
+Furthermore, multiple different CNN designs were evaluated. At first, a custom neural network was designed and implemented. In addition, we implemented modified versions of AlexNet and ResNet, two networks commonly used for image classification tasks. 
+
+Note that the following architecture diagrams (Figures \ref{fig:alexnet} and \ref{fig:resnet}) show the RGB-only configurations. The other configurations can be derived from these and the architectural visualisation in Figure \ref{fig:archs}.
 
 \subsection{Custom CNN}
 
@@ -596,9 +599,22 @@ We decided to evaluate an implementation of AlexNet due to various factors. Firs
   \label{fig:alexnet}
 \end{figure}
 
-Our implementation of AlexNet, as shown in Figure \ref{fig:alexnet} diverges slightly from the original. Due to a lower input resolution and a smaller number of resulting parameters, the FC layers at the end of the network only have 1024 instead of 4096 parameters each. Furthermore, we included dropout layers after both FC layers to combat overfitting.
+Our implementation of AlexNet, as shown in Figure \ref{fig:alexnet} diverges slightly from the original. Due to a lower input resolution and a smaller number of resulting parameters, the FC layers at the end of the network only have 1024 instead of 4096 parameters each. Furthermore, we included dropout layers after both FC layers to combat overfitting. In total, our AlexNet implementation has $7\,951\,752$ trainable parameters in the RGB-only configuration.
 
 \subsection{ResNet}
+
+Since the initial introduction of AlexNet, many more CNN-architectures have been developed. \citet{simonyan_very_2015} propose VGG, a neural network with a substantially increased number of convolutional layers. They demonstrate that deeper networks are more likely to perform well on image classification tasks than shallow architectures \citep{alom_history_2018}.
+
+ResNet was developed by \citet{he_deep_2016}. Winning the 2015 ILSVRC, ResNet is considered a state-of-the-art neural network for image classification. It makes heavy use of a novel component known as residual block. 
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.45\textwidth, trim={7cm 4.8cm 7cm 6cm}, clip]{images/models/res_block}
+  \caption{Schematic of a residual block with 2 convolutional layers.}
+  \label{fig:res_block}
+\end{figure}
+
+Figure \ref{fig:res_block} shows an example residual block. The input to the block is fed into multiple subsequent convolutional layers with ReLU activation functions. The outputs of the last convolutional layer $F(x)$ are then added to the identity of the initial input $x$. This architecture allows the propagation of earlier features into later layers and helps avoid the problem of vanishing gradients that most predecessor architectures encountered \citep{alom_history_2018}. As a result, significantly deeper network designs can be created, most likely outperforming existing shallower architectures.
 
 \begin{figure}[ht]
   \centering
@@ -606,6 +622,10 @@ Our implementation of AlexNet, as shown in Figure \ref{fig:alexnet} diverges sli
   \caption{Neural network architecture of the residual network.}
   \label{fig:resnet}
 \end{figure}
+
+The official paper proposes implementations of ResNet with 50, 101 and 152 layers. Since our dataset is significantly smaller than ImageNet, it is likely that these models would overfit on the training data without adding much benefit over a shallower architecture. Hence, we decided to implement our own version of ResNet with 6 residual blocks and a total of 14 convolutional layers. The architecture can be seen in Figure \ref{fig:resnet}.
+
+The residual blocks are arranged in two groups of three. The convolutional kernels of each block have size $5 \times 5$. Each group of residual blocks is preceded by a single convolutional layer with a max pooling layer to reduce the input resolution. Similarly to AlexNet, we use two FC layers with dropout in the end, followed by a softmax-activated output layer. Despite the much deeper architecture compared to AlexNet, our ResNet implementation has only $4\,034\,312$ trainable parameters.
 
 %----------------------------------------------------------------------------------------------------------------------------------
 

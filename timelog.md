@@ -423,3 +423,13 @@
 ### 13 Mar 2020
 
 * *0.5 hours* 14th supervisor meeting
+* *2.0 hours* Added data augmentation to FLIR One dataset loader. Re-trained model on FLIR One dataset.
+* *2.0 hours* Various fixes
+
+### 14 Mar 2020
+
+* *5.0 hours* Dissertation additions (classifiers and autoencoder)
+
+### 15 Mar 2020
+
+* *4.0 hours* Prepared various visualisations for the dissertation

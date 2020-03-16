@@ -58,17 +58,17 @@ class AbstractModel():
         raise NotImplementedError
 
     def rgb(self, x):
-        x = x[..., 0:3]
+        x = x[:, :, :, 0:3]
         x = self.net(x)
         return x
 
     def lwir(self, x):
-        x = x[..., 3, None]
+        x = x[:, :, :, 3, None]
         x = self.net(x)
         return x
 
     def grayscale(self, x):
-        x = x[..., 0:3]
+        x = x[:, :, :, 0:3]
         x = tf.math.reduce_mean(x, axis=-1, keepdims=True)
         x = self.net(x)
         return x
@@ -78,14 +78,14 @@ class AbstractModel():
         return x
 
     def voting(self, x):
-        rgb = self.net(x[..., 0:3])
-        lwir = self.net(x[..., 3, None])
+        rgb = self.net(x[:, :, :, 0:3])
+        lwir = self.net(x[:, :, :, 3, None])
         x = K.layers.Add()([rgb, lwir]) * 0.5
         return x
 
     def fusion(self, x):
-        rgb = self.net(x[..., 0:3], fc=False)
-        lwir = self.net(x[..., 3, None], fc=False)
+        rgb = self.net(x[:, :, :, 0:3], fc=False)
+        lwir = self.net(x[:, :, :, 3, None], fc=False)
         x = K.layers.Concatenate()([rgb, lwir])
         x = self.fc(x)
         return x

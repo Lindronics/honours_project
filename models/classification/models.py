@@ -1,3 +1,4 @@
+import numpy as np
 import tensorflow as tf
 import tensorflow.keras as K
 import os
@@ -40,6 +41,10 @@ class AbstractModel():
         return self.method(x)
 
     def get_model(self):
+        # Fix random state
+        tf.random.set_seed(42)
+        np.random.seed(42)
+        
         input_tensor = K.layers.Input(self.input_shape)
         output_tensor = self.method(input_tensor)
         model = K.Model(input_tensor, output_tensor)

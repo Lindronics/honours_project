@@ -56,9 +56,13 @@ def grid_search(train_labels: str,
 
     # Models
     for model_type in models:
-        print(f"\n=> Starting evaluation of {model_type.__name__}.")
+        print(f"\n=> ### Starting evaluation of {model_type.__name__}. ###")
 
-        with open(os.path.join(output, model_type.__name__ + "report.txt"), "w") as f:
+        sub_path = os.path.join(output, model_type.__name__)
+        if not os.path.isdir(sub_path):
+            os.mkdir(sub_path)
+
+        with open(os.path.join(sub_path, "report.txt"), "w") as f:
             title = f"##### Evaluation results for {model_type.__name__} #####"
             f.write("#" * len(title) + "\n")
             f.write(title + "\n")
@@ -78,24 +82,29 @@ def grid_search(train_labels: str,
 
             # Train model
             if lazy:
-                model.fit(x=train, 
-                          epochs=epochs, 
-                          validation_data=train, 
-                          verbose=2)
+                hist = model.fit(x=train, 
+                                 epochs=epochs, 
+                                 validation_data=train, 
+                                 verbose=2)
             else:
-                model.fit(x=X_train, 
-                          y=y_train, 
-                          epochs=epochs, 
-                          batch_size=batch_size, 
-                          validation_data=(X_test, y_test), 
-                          verbose=2)
+                hist = model.fit(x=X_train, 
+                                 y=y_train, 
+                                 epochs=epochs, 
+                                 batch_size=batch_size, 
+                                 validation_data=(X_test, y_test), 
+                                 verbose=2)
 
+            print("\n=> Saving weights and training history")
             # Save weights
-            model.save_weights(os.path.join(output, name_prefix + "weights.h5"))
+            model.save_weights(os.path.join(sub_path, name_prefix + "weights.h5"))
+
+            # Save history
+            with open(os.path.join(sub_path, name_prefix + "history.pickle"), "wb") as f:
+                pickle.dump(hist.history, f)
 
             # Evaluate
             print("\n=> Starting evaluation")
-            with open(os.path.join(output, model_type.__name__ + "report.txt"), "a") as f:
+            with open(os.path.join(sub_path, "report.txt"), "a") as f:
                 title = f"##### Evaluation results for {mode} mode #####"
                 f.write("\n\n" + title + "\n")
                 f.write("-" * len(title) + "\n")
@@ -118,6 +127,7 @@ if __name__ == "__main__":
     parser.add_argument("test", help="Labels file of validation data")
     parser.add_argument("out", help="Output directory for results")
     parser.add_argument("epochs", help="Number of epochs")
+    parser.add_argument("batchsize", help="Batch size to use for training")
     parser.add_argument("-l", "--lazy", dest="lazy", help="Load data lazily", action="store_true")
     parser.add_argument("-s", "--small", dest="small", help="Use 160x120 resolution", action="store_true")
     parser.add_argument("-r", "--register", dest="register", help="Attempt to register images", action="store_true")
@@ -131,6 +141,7 @@ if __name__ == "__main__":
                 res=res, 
                 lazy=bool(args["lazy"]), 
                 epochs=int(args["epochs"]), 
-                register=bool(args["register"]))
+                register=bool(args["register"]),
+                batch_size=int(args["batchsize"]))
     
     print("\n=> Finished.")

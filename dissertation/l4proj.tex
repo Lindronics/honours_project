@@ -98,7 +98,7 @@ What did other people do, and how is it relevant to what you want to do?
 
 \subsection{Electromagnetic radiation}
 
-Visible light and infrared are forms of electromagnetic radiation. Visible light (VIS) has wavelengths roughly between $400$ and $700 nm$. The hue of visible light is determined by its wavelength. Colours as perceived by human vision are the result of a spectral distribution of wavelengths of the light than enters the eye. 
+Visible light and infrared are forms of electromagnetic radiation. Visible light (VIS) has wavelengths roughly between $400$ and $700 nm$. The hue of visible light is determined by its wavelength. Colours as perceived by human vision are the result of a spectral distribution of wavelengths of the light that enters the eye. 
 
 Infrared light (IR), with wavelengths between $700 nm$ and $1 mm$, is generally invisible to humans. It is commonly subdivided into near infrared (NIR), short-wavelength infrared (SWIR), medium-wavelength infrared (MWIR), long-wavelength infrared (LWIR), and far infrared (FIR) \citep[p. 28]{byrnes_unexploded_2008}, as can be seen in Figure \ref{fig:em_spectrum}.
 
@@ -188,7 +188,7 @@ For multispectral models, this highly effective approach becomes more difficult,
 
 Pre-training a multispectral classifier on an VIS-only dataset is not directly possible due to the incompatible input tensor shapes ($h \times w \times 3$ compared to $h \times w \times 4$) and the resulting difference in trainable weights.
 
-However, there are strategies to mitigate this issue. It is possible to divide the model into 2 separate branches of layers that process the VIS and LWIR images individually, and perform late feature-level fusion \citep{guo_face_2017} by concatenating the respective feature maps and adding at least one fully connected layer after the concatenation. This approach can make it possible to load pretrained weights into the VIS-branch of the model without affecting the LWIR branch. During training, the LWIR-branch of the model gets trained from scratch, whereas transfer learning is simultaneously performed on the VIS-branch.
+However, there are strategies to mitigate this issue. It is possible to divide the model into two separate branches of layers that process the VIS and LWIR images individually, and perform late feature-level fusion \citep{guo_face_2017} by concatenating the respective feature maps and adding at least one fully connected layer after the concatenation. This approach can make it possible to load pretrained weights into the VIS-branch of the model without affecting the LWIR branch. During training, the LWIR-branch of the model gets trained from scratch, whereas transfer learning is simultaneously performed on the VIS-branch.
 
 Another possible approach to enable the usage of existing off-the-shelf datasets is to perform generative image augmentation. In Section \ref{autoencoder_implementation} we explore the application of a primitive generative model for predicting the corresponding LWIR image of a known type of object from a given RGB image. Given sufficient quality of predicted images, it would then be possible to turn RGB-only images into multispectral training data.
 
@@ -337,7 +337,7 @@ The classes with low support (Pig, Sheep, Ferret, Rabbit) were dropped from the 
   \label{fig:dataset_classes}
 \end{figure}
 
-Figure \ref{fig:dataset_classes} shows example VIS and LWIR images from the training dataset. While these examples are sampeled from the idealised \textit{single} subsets without obstructions, they highlight another important caveat. Not all images could be captured at the same distance. Consequently, different animals fill different amounts of space within the images, possibly skewing classification results. An attempt was made to mitigate this issue through affine data agumentation.
+Figure \ref{fig:dataset_classes} shows example VIS and LWIR images from the training dataset. While these examples are sampeled from the idealised \textit{single} subsets without obstructions, they highlight another important caveat. Not all images could be captured at the same distance. Consequently, different animals fill different amounts of space within the images, possibly skewing classification results. An attempt was made to mitigate this issue through affine data augmentation.
 
 \subsection{Data augmentation}
 
@@ -500,7 +500,7 @@ Finally, the mutual information (MI) of the resulting LWIR and RGB images was ca
 
 where $H(X) = - \sum_{x \in X} p(x) \cdot \log_2 p(x)$ is the entropy of $X$ and $H(X,Y)$ represents the joint entropy of $X$ and $Y$.
 
-We then averaged the MI scores obtained by all 1-D filter pairs to obtain a single metric. For the test images, the MI score did not appear to change consistently when aligning the images. Furthermore, none of the individual MI values for the different filter combinations behaved reliably across all images. 
+We then averaged the MI scores obtained by all 1-D filter pairs to obtain a single metric. For the test images, the MI score did not appear to change consistently when aligning the images. Furthermore, none of the individual MI values for the different filter combinations behaved reliably across all images. Hence, we concluded that this strategy is not suitable for this registration problem.
 
 \subsection{Mean distance}
 

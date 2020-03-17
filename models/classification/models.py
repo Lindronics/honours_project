@@ -175,6 +175,66 @@ class ResNet(AbstractModel):
         return x
 
 
+class ResNetDeep(AbstractModel):
+    """
+    Custom network with residual blocks.
+    """
+
+    def residual_block(self, x, kernel_size):
+        """
+        Custom residual block implementation
+        """
+        x_shortcut = x
+        x = K.layers.Conv2D(filters=x.shape[-1], kernel_size=kernel_size, strides=1, padding="same")(x)
+        x = K.layers.BatchNormalization()(x)
+        x = K.layers.ReLU()(x)
+        x = K.layers.Conv2D(filters=x.shape[-1], kernel_size=kernel_size, strides=1, padding="same")(x)
+        x = K.layers.BatchNormalization()(x)
+        x = K.layers.Add()([x_shortcut, x])
+        x = K.layers.ReLU()(x)
+        return x
+
+    def net(self, x, fc=True):
+        x = K.layers.Conv2D(filters=64, kernel_size=5, strides=2, activation="relu", padding="valid")(x)
+        x = K.layers.MaxPool2D(pool_size=2)(x)
+
+        x = self.residual_block(x, kernel_size=3)
+        x = self.residual_block(x, kernel_size=3)
+        x = self.residual_block(x, kernel_size=3)
+
+        x = K.layers.Conv2D(filters=128, kernel_size=5, strides=1, activation="relu", padding="valid")(x)
+        x = K.layers.MaxPool2D(pool_size=2)(x)
+
+        x = self.residual_block(x, kernel_size=3)
+        x = self.residual_block(x, kernel_size=3)
+        x = self.residual_block(x, kernel_size=3)
+
+        x = K.layers.Conv2D(filters=256, kernel_size=5, strides=1, activation="relu", padding="valid")(x)
+        x = K.layers.MaxPool2D(pool_size=2)(x)
+
+        x = self.residual_block(x, kernel_size=3)
+        x = self.residual_block(x, kernel_size=3)
+        x = self.residual_block(x, kernel_size=3)
+        x = self.residual_block(x, kernel_size=3)
+        x = self.residual_block(x, kernel_size=3)
+
+        x = K.layers.MaxPool2D(pool_size=2)(x)
+        x = K.layers.Dropout(0.5)(x)
+
+        x = K.layers.Flatten()(x)
+
+        if fc:
+            return self.fc(x)
+        return x
+
+    def fc(self, x):
+        # x = K.layers.Dense(512, activation="relu")(x)
+        # x = K.layers.Dropout(0.5)(x)
+        # x = K.layers.Dense(128, activation="relu")(x)
+        # x = K.layers.Dropout(0.5)(x)
+        x = K.layers.Dense(self.num_classes, activation="softmax")(x)
+        return x
+
 class CustomNet(AbstractModel):
     """
     Custom-built CNN

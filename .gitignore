@@ -255,3 +255,5 @@ TSWLatexianTemp*
 .DS_Store
 models/yolo/__pycache__
 __pycache__
+
+asdf.py

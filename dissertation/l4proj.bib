@@ -897,3 +897,63 @@ version: 1},
 	pages = {826--833},
 	file = {Tetko et al. - 1995 - Neural network studies. 1. Comparison of overfitti.pdf:/Users/lindronics/Zotero/storage/H7NFAQ2G/Tetko et al. - 1995 - Neural network studies. 1. Comparison of overfitti.pdf:application/pdf}
 }
+
+@article{radiuk_impact_2017,
+	title = {Impact of {Training} {Set} {Batch} {Size} on the {Performance} of {Convolutional} {Neural} {Networks} for {Diverse} {Datasets}},
+	volume = {20},
+	url = {https://www.degruyter.com/dg/viewarticle/j$002fitms.2017.20.issue-1$002fitms-2017-0003$002fitms-2017-0003.xml},
+	doi = {10.1515/itms-2017-0003},
+	abstract = {A problem of improving the performance of convolutional neural networks is considered. A parameter of the training set is investigated. The parameter is the batch size. The goal is to find an impact of training set batch size on the performance. To get consistent results, diverse datasets are used. They areMNIST and CIFAR-10. Simplicity of the MNIST dataset stands against complexity of the CIFAR-10 dataset, although the simpler dataset has 10 classes as well as the more complicated one. To achieve acceptable testing results, various convolutional neural network architectures are selected for the MNIST and CIFAR-10 datasets, with two and five convolutional layers, respectively. The assumption about the dependence of the recognition accuracy on the batch size value is confirmed: the larger the batch size value, the higher the recognition accuracy. Another assumption about the impact of the type of the batch size value on the CNN performance is not confirmed.},
+	number = {1},
+	urldate = {2020-03-18},
+	journal = {Information Technology and Management Science},
+	author = {Radiuk, Pavlo M.},
+	year = {2017},
+	keywords = {Batch size, convolutional neural network, dataset, testing accuracy},
+	pages = {20--24},
+	file = {Full Text PDF:/Users/lindronics/Zotero/storage/6SFZQNWB/Radiuk - 2017 - Impact of Training Set Batch Size on the Performan.pdf:application/pdf}
+}
+
+@article{ioffe_batch_2015,
+	title = {Batch {Normalization}: {Accelerating} {Deep} {Network} {Training} by {Reducing} {Internal} {Covariate} {Shift}},
+	shorttitle = {Batch {Normalization}},
+	url = {http://arxiv.org/abs/1502.03167},
+	abstract = {Training Deep Neural Networks is complicated by the fact that the distribution of each layer's inputs changes during training, as the parameters of the previous layers change. This slows down the training by requiring lower learning rates and careful parameter initialization, and makes it notoriously hard to train models with saturating nonlinearities. We refer to this phenomenon as internal covariate shift, and address the problem by normalizing layer inputs. Our method draws its strength from making normalization a part of the model architecture and performing the normalization for each training mini-batch. Batch Normalization allows us to use much higher learning rates and be less careful about initialization. It also acts as a regularizer, in some cases eliminating the need for Dropout. Applied to a state-of-the-art image classification model, Batch Normalization achieves the same accuracy with 14 times fewer training steps, and beats the original model by a significant margin. Using an ensemble of batch-normalized networks, we improve upon the best published result on ImageNet classification: reaching 4.9\% top-5 validation error (and 4.8\% test error), exceeding the accuracy of human raters.},
+	urldate = {2020-03-18},
+	journal = {arXiv:1502.03167 [cs]},
+	author = {Ioffe, Sergey and Szegedy, Christian},
+	month = mar,
+	year = {2015},
+	note = {arXiv: 1502.03167},
+	keywords = {Computer Science - Machine Learning},
+	file = {arXiv Fulltext PDF:/Users/lindronics/Zotero/storage/QJSNXMH6/Ioffe and Szegedy - 2015 - Batch Normalization Accelerating Deep Network Tra.pdf:application/pdf;arXiv.org Snapshot:/Users/lindronics/Zotero/storage/FDEF3SCL/1502.html:text/html}
+}
+
+@article{devarakonda_adabatch_2018,
+	title = {{AdaBatch}: {Adaptive} {Batch} {Sizes} for {Training} {Deep} {Neural} {Networks}},
+	shorttitle = {{AdaBatch}},
+	url = {http://arxiv.org/abs/1712.02029},
+	abstract = {Training deep neural networks with Stochastic Gradient Descent, or its variants, requires careful choice of both learning rate and batch size. While smaller batch sizes generally converge in fewer training epochs, larger batch sizes offer more parallelism and hence better computational efficiency. We have developed a new training approach that, rather than statically choosing a single batch size for all epochs, adaptively increases the batch size during the training process. Our method delivers the convergence rate of small batch sizes while achieving performance similar to large batch sizes. We analyse our approach using the standard AlexNet, ResNet, and VGG networks operating on the popular CIFAR-10, CIFAR-100, and ImageNet datasets. Our results demonstrate that learning with adaptive batch sizes can improve performance by factors of up to 6.25 on 4 NVIDIA Tesla P100 GPUs while changing accuracy by less than 1\% relative to training with fixed batch sizes.},
+	urldate = {2020-03-18},
+	journal = {arXiv:1712.02029 [cs, stat]},
+	author = {Devarakonda, Aditya and Naumov, Maxim and Garland, Michael},
+	month = feb,
+	year = {2018},
+	note = {arXiv: 1712.02029},
+	keywords = {68T05,, Computer Science - Computer Vision and Pattern Recognition, Computer Science - Distributed, Parallel, and Cluster Computing, Computer Science - Machine Learning, I.2.6, I.5.0, Statistics - Machine Learning},
+	file = {arXiv Fulltext PDF:/Users/lindronics/Zotero/storage/V5844TKC/Devarakonda et al. - 2018 - AdaBatch Adaptive Batch Sizes for Training Deep N.pdf:application/pdf;arXiv.org Snapshot:/Users/lindronics/Zotero/storage/UGVP38LT/1712.html:text/html}
+}
+
+@article{smith_dont_2018,
+	title = {Don't {Decay} the {Learning} {Rate}, {Increase} the {Batch} {Size}},
+	url = {http://arxiv.org/abs/1711.00489},
+	abstract = {It is common practice to decay the learning rate. Here we show one can usually obtain the same learning curve on both training and test sets by instead increasing the batch size during training. This procedure is successful for stochastic gradient descent (SGD), SGD with momentum, Nesterov momentum, and Adam. It reaches equivalent test accuracies after the same number of training epochs, but with fewer parameter updates, leading to greater parallelism and shorter training times. We can further reduce the number of parameter updates by increasing the learning rate \${\textbackslash}epsilon\$ and scaling the batch size \$B {\textbackslash}propto {\textbackslash}epsilon\$. Finally, one can increase the momentum coefficient \$m\$ and scale \$B {\textbackslash}propto 1/(1-m)\$, although this tends to slightly reduce the test accuracy. Crucially, our techniques allow us to repurpose existing training schedules for large batch training with no hyper-parameter tuning. We train ResNet-50 on ImageNet to \$76.1{\textbackslash}\%\$ validation accuracy in under 30 minutes.},
+	urldate = {2020-03-18},
+	journal = {arXiv:1711.00489 [cs, stat]},
+	author = {Smith, Samuel L. and Kindermans, Pieter-Jan and Ying, Chris and Le, Quoc V.},
+	month = feb,
+	year = {2018},
+	note = {arXiv: 1711.00489},
+	keywords = {Computer Science - Computer Vision and Pattern Recognition, Computer Science - Distributed, Parallel, and Cluster Computing, Computer Science - Machine Learning, Statistics - Machine Learning},
+	file = {arXiv Fulltext PDF:/Users/lindronics/Zotero/storage/IMWDIUYZ/Smith et al. - 2018 - Don't Decay the Learning Rate, Increase the Batch .pdf:application/pdf;arXiv.org Snapshot:/Users/lindronics/Zotero/storage/U3VRWKA6/1711.html:text/html}
+}

@@ -163,7 +163,7 @@ In supervised learning, one speaks of classification or regression, depending on
 
 \subsection{Convolutional neural networks}
 
-\subsection{The problem of overfitting}
+\subsection{Overfitting and regularisation}
 
 When developing a machine learning model, the goal is to create an algorithm than yields not only good performance on the training data. The model must also be able to deliver accurate and robust predictions on previously unseen inputs. An algorithm is deemded generalisable if it is able to correctly predict samples that it has not been trained on. 
 
@@ -189,11 +189,9 @@ Figure \ref{fig:fitting} shows the effect of overfitting and underfitting in a b
   \label{fig:fitting}
 \end{figure}
 
-Due to the ability of neural networks with sufficient depth to approximate any multidimensional function, they are naturally susceptible to overfitting \citep{tetko_neural_1995}. It is, therefore, necessary to reduce the validation error of a deep learning model by employing strategies to combat overfitting. Such strategies are known as regularisation techniques.
+Due to the ability of neural networks with sufficient depth to approximate any multidimensional function, they are naturally susceptible to overfitting \citep{tetko_neural_1995}. It is, therefore, necessary to reduce the generalisation error of a deep learning model by employing strategies to combat overfitting. \citet{goodfellow_deep_2016} define regularisation as "any modification we make to alearning algorithm that is intended to reduce its generalization error but not itstraining error."
 
-\subsubsection{Regularisation}
-
-
+\subsubsection{Parameter Regularisation}
 
 \subsubsection{Dropout}
 
@@ -924,6 +922,24 @@ Fitting the models on the training dataset as defined in Section \ref{classes_sa
 \subsection{Image resolutions}
 
 \subsection{Data augmentation}
+
+\subsection{Batch size}
+
+An influential hyperparameter for training neural networks is batch size \citep{ioffe_batch_2015}. The batch size during training determines how many samples are used for each step. Generally, smaller batch sizes result in the training loss converging in fewer epochs, while larger batch sizes offer better computational efficiency due to parallelisability \cite{devarakonda_adabatch_2018}.
+
+\citet{smith_dont_2018} suggest that increasing the batch size can help the optimisation algorithm converge on a global minimum, instead of bouncing around the optimum. \citet{radiuk_impact_2017} conclude that SGD performs better with larger batch sizes on the MNIST and CIFAR-10 datasets.
+
+To evaluate the effect of different batch sizes on the validation accuracy of our model, we trained our implementation of ResNet with batch sizes of 2, 8, 32, 64, 128 and 512. We chose the Adam optimizer with a learning rate of $10^{-5}$.
+
+The results can be seen in Figure \ref{fig:batch_size}. As expected, smaller batches converge faster.
+
+\begin{figure}[ht]
+  \centering
+  % \includegraphics[width=0.7\textwidth]{images/evaluation/kernels/alexnet_color.png}
+  \caption{Training and validation loss and accuracy with varying batch sizes.}
+  \label{fig:batch_size}
+\end{figure}
+
 
 \subsection{Generation of artificial data}
 

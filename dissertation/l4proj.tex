@@ -952,16 +952,16 @@ An influential hyperparameter for training neural networks is batch size \citep{
 
 \citet{smith_dont_2018} suggest that increasing the batch size can help the optimisation algorithm converge on a global minimum, instead of bouncing around the optimum. \citet{radiuk_impact_2017} conclude that SGD performs better with larger batch sizes on the MNIST and CIFAR-10 datasets.
 
-To evaluate the effect of different batch sizes on the validation accuracy of our model, we trained our implementation of ResNet with batch sizes of 2, 8, 32, 64, 128 and 512. We chose the Adam optimizer with a learning rate of $10^{-5}$.
-
-The results can be seen in Figure \ref{fig:batch_size}. As expected, when training with smaller batch sizes, we can observe much faster convergence.
+To evaluate the effect of different batch sizes on the validation accuracy of our model, we trained our implementation of ResNet with batch sizes of 2, 8, 32, 64, 128 and 512. We chose the Adam optimizer with a learning rate of $10^{-5}$. The results can be seen in Figure \ref{fig:batch_size}.
 
 \begin{figure}[ht]
   \centering
-  % \includegraphics[width=0.7\textwidth]{images/evaluation/kernels/alexnet_color.png}
+  \includegraphics[width=0.8\textwidth]{images/evaluation/batch_size/history.png}
   \caption{Training and validation loss and accuracy with varying batch sizes.}
   \label{fig:batch_size}
 \end{figure}
+
+As expected, when training with smaller batch sizes, we can observe a much faster convergence of loss and accuracy. Furthermore, the validation accuracy with the lower batch sizes appears to be higher than that of higher batch sizes. However, higher batch sizes seem to achieve a lower validation loss. This discrepancy between loss and performance metric is likely a result of the differences between cross-entropy and accuracy. It is possible that, although the large-batch models do not achieve as many correct predictions, they have a higher confidence in the correct predictions.
 
 
 \subsection{Generation of artificial data}

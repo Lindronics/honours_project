@@ -116,7 +116,6 @@ if __name__ == "__main__":
                 args["test"], 
                 args["out"], 
                 res=(120, 160), 
-                lazy=bool(args["lazy"]), 
                 epochs=int(args["epochs"]), 
                 register=bool(args["register"]))
     

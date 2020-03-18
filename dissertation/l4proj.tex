@@ -154,15 +154,54 @@ This project focuses on supervised learning.
 
 In supervised learning, one speaks of classification or regression, depending on whether the data labels $y_i$ are discrete classes or continous, real values.
 
-\subsection{The problem of overfitting}
 
 %----------------------------------------------------------------------------------------------------------------------------------
 
-\section{Image classification}
 
-\subsection{Deep learning}
+\section{Deep learning}
+
 
 \subsection{Convolutional neural networks}
+
+\subsection{The problem of overfitting}
+
+When developing a machine learning model, the goal is to create an algorithm than yields not only good performance on the training data. The model must also be able to deliver accurate and robust predictions on previously unseen inputs. An algorithm is deemded generalisable if it is able to correctly predict samples that it has not been trained on. 
+
+In practice, many models are very good at correctly predicting training samples, but produce frequent errors when attempting to predict unknown samples. This property is called overfitting. Conversely, if the model performs poorly on both training and validation data, one speask of underfitting. If a model is underfitted or overfitted, it is generally deemed to have low generalisability \citep{burkov_hundred-page_2019}. 
+
+Figure \ref{fig:fitting} shows the effect of overfitting and underfitting in a binary classification scenario. Overfitting usually occurs when a model is too complex and has too many trainable parameters. This means that the algorithm has essentially memorised all training points without having learnt the inherent similarities and diffrences between the samples. Underfitting is usually the result of a model with too few parameters. 
+
+\begin{figure}[ht]
+  \centering
+  \begin{subfigure}[h!]{0.3\textwidth}
+    \includegraphics[width=\textwidth, page={1}, trim={6.5cm 4cm 6.5cm 4cm}, clip]{images/Overfitting}
+    \caption{Appropriate fitting.}
+  \end{subfigure}
+  \begin{subfigure}[h!]{0.3\textwidth}
+    \includegraphics[width=\textwidth, page={2}, trim={6.5cm 4cm 6.5cm 4cm}, clip]{images/Overfitting}
+    \caption{Underfitting.}
+  \end{subfigure}
+  \begin{subfigure}[h!]{0.3\textwidth}
+    \includegraphics[width=\textwidth, page={3}, trim={6.5cm 4cm 6.5cm 4cm}, clip]{images/Overfitting}
+    \caption{Overfitting.}
+  \end{subfigure}
+  \caption{Visualisation of overfitting and underfitting in binary classification. When underfitted, the model is too simple to explain the variance in the data, yielding a high error on the training data. When overfitted, the model has memorized all training points, including outliers and produces a high error on valiation data.}
+  \label{fig:fitting}
+\end{figure}
+
+Due to the ability of neural networks with sufficient depth to approximate any multidimensional function, they are naturally susceptible to overfitting \citep{tetko_neural_1995}. It is, therefore, necessary to reduce the validation error of a deep learning model by employing strategies to combat overfitting. Such strategies are known as regularisation techniques.
+
+\subsubsection{Regularisation}
+
+
+
+\subsubsection{Dropout}
+
+Dropout is a technique to addressing the problem of overfitting in neural networks that was introduced by \citet{srivastava_dropout_2014}. It attempts reducing interdependent learning amongst neurons in a network. This is achieved by, for each iteration during the training phase, ignoring a random fraction of inputs to a given layer. An input is ignored (dropped out) by setting it to 0.
+
+Since nodes cannot overfit on specific inputs due to them being disabled during many training iterations, the network is forced to learn reduncancies. The model is able to learn more independent features, making it more robust. During the validation and prediction phase, no dropout is applied. Therefore, nodes are able to use all inputs for predictions.
+
+Research has shown dropout to be highly effective for the regularisation of deep neural networks with fully-connected layers \citep{wu_towards_2015}. However, the effect of dropout on convolutional layers is still subject to active research. \citet{cai_effective_2019} state that traditional dropout is mostly ineffective on convolutional layers, creating training instability. They propose four alternative dropout methods (drop-neuron, drop-channel, drop-path and drop-layer) that have been specifically designed for convolutional networks, reporting an increase in performance from all methods. 
 
 \subsection{Evaluation techniques}
 

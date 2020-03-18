@@ -433,3 +433,18 @@
 ### 15 Mar 2020
 
 * *4.0 hours* Prepared various visualisations for the dissertation
+
+### 16 Mar 2020
+
+* *2.0 hours* Successfully deployed RGB-only ResNet to mobile device. It seems to work (tested on pictures). Deployment of other modes should be trivial, although evaluation will be more difficult.
+* *2.5 hours* Various dissertation additions
+
+### 17 Mar 2020
+
+* *1.5 hours* Plotted loss and accuracy of grid search results. All metrics are very unstable and hardly interpretable. 
+* *3.5 hours* Experimented with different batch sizes and learning rates to fix the problem mentioned above. Reducing learning rates and increasing batch sizes seems to help a lot.
+
+### 18 Mar 2020
+
+* *2.0 hours* Dissertation section on overfitting and regularisation
+* *2.0 hours* Batch size evaluation (including dissertation)

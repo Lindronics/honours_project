@@ -160,6 +160,29 @@ In supervised learning, one speaks of classification or regression, depending on
 
 \section{Deep learning}
 
+Deep learning is a branch of machine learning based upon the concept of artificial neural networks (ANN). ANNs leverage the concept of artificial neurons, which are an abstract model derived from biological neurons. 
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.5\textwidth, page={1}, trim={3.5cm 5cm 3.5cm 5cm}, clip]{images/Artificial_Neuron}
+  \caption{Model of an artificial neuron.}
+  \label{fig:neuron}
+\end{figure}
+
+A model of an artifical neuron is shown in Figure \ref{fig:neuron}. It consists of an input vector $\vec{x}$, a vector of weights $\vec{w}$, an optional bias $b$, an activation function $\varphi$, and an output scalar $y$. The input vector is multiplied with the weights element-wise. The sum of the result is computed and passed into the activation function, yielding the output. The output of an artificial neuron can, therefore, be computed as follows:
+
+\begin{equation}
+  y_j = \varphi (\sum_{i=0}^n x_i w_{ij}),
+\end{equation}
+
+where the bias $b$ can be treated as the first element of the input vector $\vec{x}$. A special case of the artificial neuron is the perceptron, where the activation function is a binary threshold, making the neuron output either 0 or 1 depending on the input.
+
+In ANNs, neurons are usually grouped into fully-connected layers. For each neuron in layer $j$, $\vec{x}$ represents the outputs of all neurons of the previous layer $j-1$. A traditional feed-forward neural network thus consists of an input layer, a sequence of multiple so-called hidden layers of artificial neurons, and an output layer.
+
+As proven by the universal approximation theorem \citep{csaji_approximation_2001}, feed-forward neural networks can act as universal function approximators. By setting the right weights, an ANN with a sufficient amount of parameters can, therefore, be used as a machine learning estimator.
+
+
+
 
 \subsection{Convolutional neural networks}
 
@@ -931,7 +954,7 @@ An influential hyperparameter for training neural networks is batch size \citep{
 
 To evaluate the effect of different batch sizes on the validation accuracy of our model, we trained our implementation of ResNet with batch sizes of 2, 8, 32, 64, 128 and 512. We chose the Adam optimizer with a learning rate of $10^{-5}$.
 
-The results can be seen in Figure \ref{fig:batch_size}. As expected, smaller batches converge faster.
+The results can be seen in Figure \ref{fig:batch_size}. As expected, when training with smaller batch sizes, we can observe much faster convergence.
 
 \begin{figure}[ht]
   \centering

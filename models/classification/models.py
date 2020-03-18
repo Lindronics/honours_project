@@ -3,6 +3,7 @@ import tensorflow as tf
 import tensorflow.keras as K
 import os
 
+
 class AbstractModel():
     """ 
     Abstract model class. Provides an interface for all models.
@@ -195,21 +196,21 @@ class ResNetDeep(AbstractModel):
         return x
 
     def net(self, x, fc=True):
-        x = K.layers.Conv2D(filters=64, kernel_size=5, strides=2, activation="relu", padding="valid")(x)
+        x = K.layers.Conv2D(filters=16, kernel_size=5, strides=2, activation="relu", padding="valid")(x)
         x = K.layers.MaxPool2D(pool_size=2)(x)
 
         x = self.residual_block(x, kernel_size=3)
         x = self.residual_block(x, kernel_size=3)
         x = self.residual_block(x, kernel_size=3)
 
-        x = K.layers.Conv2D(filters=128, kernel_size=5, strides=1, activation="relu", padding="valid")(x)
+        x = K.layers.Conv2D(filters=32, kernel_size=5, strides=1, activation="relu", padding="valid")(x)
         x = K.layers.MaxPool2D(pool_size=2)(x)
 
         x = self.residual_block(x, kernel_size=3)
         x = self.residual_block(x, kernel_size=3)
         x = self.residual_block(x, kernel_size=3)
 
-        x = K.layers.Conv2D(filters=256, kernel_size=5, strides=1, activation="relu", padding="valid")(x)
+        x = K.layers.Conv2D(filters=64, kernel_size=5, strides=1, activation="relu", padding="valid")(x)
         x = K.layers.MaxPool2D(pool_size=2)(x)
 
         x = self.residual_block(x, kernel_size=3)
@@ -228,12 +229,13 @@ class ResNetDeep(AbstractModel):
         return x
 
     def fc(self, x):
-        # x = K.layers.Dense(512, activation="relu")(x)
-        # x = K.layers.Dropout(0.5)(x)
-        # x = K.layers.Dense(128, activation="relu")(x)
-        # x = K.layers.Dropout(0.5)(x)
+        x = K.layers.Dense(256, activation="relu")(x)
+        x = K.layers.Dropout(0.5)(x)
+        x = K.layers.Dense(128, activation="relu")(x)
+        x = K.layers.Dropout(0.5)(x)
         x = K.layers.Dense(self.num_classes, activation="softmax")(x)
         return x
+
 
 class CustomNet(AbstractModel):
     """

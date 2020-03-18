@@ -66,7 +66,7 @@ def grid_search(train_labels: str,
         net = ResNet("fusion", num_classes=train.num_classes(), input_shape=train.shape(), weight_dir=output)
         model = net.get_model()
 
-        optimizer = K.optimizers.Adam(learning_rate=0.00001, epsilon=0.005)
+        optimizer = K.optimizers.Adam(learning_rate=0.000001, epsilon=0.005)
         model.compile(optimizer=optimizer,
                       loss="categorical_crossentropy",
                       metrics=["accuracy"])

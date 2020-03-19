@@ -921,26 +921,28 @@ How good is your solution? How well did you solve the general problem, and what 
 \subsection{Training-validation split}
 \label{eval_train_val_split}
 
-Multiple configurations of train/test split were attempted. Splitting the data with stratified sampling and train-test-split of 80-20, all models nearly achieved perfect classification accuracy. Figure \ref{fig:conf_stratified} shows the confusion matrix of the XXX classifier.  
+Multiple configurations of train/test split were attempted. Splitting the data with stratified sampling and train-validation-split of 80-20, the custom ResNet in fusion mode achieved perfect training and validation accuray, as can be seen in Figure \ref{fig:acc_stratified}.  
 
 \begin{figure}[ht]
   \centering
-  \begin{subfigure}[h!]{0.4\textwidth}
-    \includegraphics[width=\textwidth]{images/evaluation/confusion/vis_fir_confusion.png}
-    \caption{Stratified sampling}
-    \label{fig:conf_stratified}
+  \begin{subfigure}[h!]{0.42\textwidth}
+    \includegraphics[width=\textwidth, trim={0cm 0cm 0cm 0.7cm}, clip=true]{images/evaluation/stratified/accuracy.png}
+    \caption{Accuracy over training epochs.}
+    \label{fig:acc_stratified}
   \end{subfigure}
   \begin{subfigure}[h!]{0.4\textwidth}
-    \includegraphics[width=\textwidth]{images/evaluation/confusion/vis_fir_confusion.png}
-    \caption{Manual split (Section \ref{classes_samples})}
-    \label{fig:conf_stratified}
+    \includegraphics[width=\textwidth]{images/evaluation/stratified/heatmaps.png}
+    \caption{Example class activation heatmaps.}
+    \label{fig:heatmap_stratified}
   \end{subfigure}
-  \caption{Confusion matrices for differnt train-validation splits.}
+  \caption{Evaluation results of the custom ResNet with stratified train-validation split.}
 \end{figure}
 
-This result is most likely due to the similarity of many images as mentioned in Section XXX. Since train and test samples are drawn from the same raw dataset, we conclude that it is very likely that the models are significantly overfitted on the captured data. It is unlikely that they would perform as well on chaotic new data as indicated by the validation accuracy.
+This result is most likely due to the similarity of many images as mentioned in Section \ref{classes_samples}. Since training and validation samples are drawn from the same raw dataset, we conclude that it is very likely that the models are significantly overfitted on the captured data. It is unlikely that they would perform as well on chaotic new data as indicated by the validation accuracy. 
 
-Fitting the models on the training dataset as defined in Section \ref{classes_samples}, validation scores dropped significantly. This was in accordance with our expectations, as the samples from the training and validation datasets should now be independent. Therefore, the models are not able to overfit on the whole dataset anymore and the validation score is more representative of potential performance on new data.
+Figure \ref{fig:heatmap_stratified} shows two example class activation heatmaps for the trained model. In these two images, the focus of the classifier appears to be on many environmental features instead of the animals, supporting our theory.
+
+Fitting the models on the training dataset as defined in Section \ref{classes_samples}, validation scores dropped significantly. This was in accordance with our expectations, as the samples from the training and validation datasets are mostly independent. Therefore, the models are not able to overfit on the whole dataset anymore and the validation score is more representative of potential performance on new data.
 
 \subsection{Image resolutions}
 
@@ -1002,6 +1004,13 @@ As expected, when training with smaller batch sizes, we can observe a much faste
 %----------------------------------------------------------------------------------------------------------------------------------
 
 \section{Issues and caveats}
+
+\begin{enumerate}
+  \item Cross-validation
+  \item Better dataset
+  \item GAN
+  \item Evaluation of low-light scenarios
+\end{enumerate}
 
 %==================================================================================================================================
 \chapter{Conclusion}    

@@ -954,7 +954,7 @@ An influential hyperparameter for training neural networks is batch size \citep{
 
 \citet{smith_dont_2018} suggest that increasing the batch size can help the optimisation algorithm converge on a global minimum, instead of bouncing around the optimum. \citet{radiuk_impact_2017} conclude that SGD performs better with larger batch sizes on the MNIST and CIFAR-10 datasets.
 
-To evaluate the effect of different batch sizes on the validation accuracy of our model, we trained our implementation of ResNet with batch sizes of 2, 8, 32, 64, 128 and 512. We chose the Adam optimizer with a learning rate of $10^{-5}$. The results can be seen in Figure \ref{fig:batch_size}.
+To evaluate the effect of different batch sizes on the validation accuracy of our model, we trained our implementation of ResNet with batch sizes of 2, 8, 32, and 128. We chose the Adam optimizer with an initial learning rate of $10^{-6}$. The results can be seen in Figure \ref{fig:batch_size}.
 
 \begin{figure}[ht]
   \centering
@@ -967,6 +967,7 @@ As expected, when training with smaller batch sizes, we can observe a much faste
 
 
 \subsection{Generation of artificial data}
+
 
 \subsection{RGB compared to grayscale}
 

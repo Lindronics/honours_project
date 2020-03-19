@@ -69,7 +69,8 @@ class AbstractModel():
         return x
 
     def lwir(self, x):
-        x = x[:, :, :, 3, None]
+        x = x[:, :, :, 3]
+        x = tf.expand_dims(x, -1)
         x = self.net(x)
         return x
 
@@ -85,13 +86,15 @@ class AbstractModel():
 
     def voting(self, x):
         rgb = self.net(x[:, :, :, 0:3])
-        lwir = self.net(x[:, :, :, 3, None])
+        lwir = tf.expand_dims(x[:, :, :, 3], -1)
+        lwir = self.net(lwir)
         x = K.layers.Add()([rgb, lwir]) * 0.5
         return x
 
     def fusion(self, x):
         rgb = self.net(x[:, :, :, 0:3], fc=False)
-        lwir = self.net(x[:, :, :, 3, None], fc=False)
+        lwir = tf.expand_dims(x[:, :, :, 3], -1)
+        lwir = self.net(lwir, fc=False)
         x = K.layers.Concatenate()([rgb, lwir])
         x = self.fc(x)
         return x

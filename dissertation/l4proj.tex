@@ -1000,7 +1000,30 @@ As expected, when training with smaller batch sizes, we can observe a much faste
 
 \subsection{Functionality validation}
 
+To validate whether the deployment of the model to the mobile application is functional, a live evaluation on the actual animals was planned. The intention was to point the phone and camera at the objects and evaluate the quality of the predictions. Since unforseen circumstances emerged as a result of the COVID-19 epidemic, this evaluation could not be performed.
+
+Instead, we qualitatively evaluated the final model by pointing the phone and sensor at pictures from the existing dataset. Figure \ref{fig:app_screenshots} shows screenshots of the mobile application during this evaluation. As the top predictions are correct for all example images, it can be concluded that the classifier is working correctly.
+
+\begin{figure}[ht]
+  \centering
+  \begin{subfigure}[h!]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{images/app/screenshot_0.jpg}
+  \end{subfigure}
+  \begin{subfigure}[h!]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{images/app/screenshot_1.jpg}
+  \end{subfigure}
+  \begin{subfigure}[h!]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{images/app/screenshot_2.jpg}
+  \end{subfigure}
+  \caption{Screenshots of the mobile application's predictions with the feature-fusion model. Due to exceptional circumstances, only pictures of animals could be evaluated.}
+  \label{fig:app_screenshots}
+\end{figure}
+
 \subsection{Performance and latency}
+
+The application was installed on a flagship Android device to evaluate the latency of real-time classification. TensorFlow Lite was configured to use the device's GPU for predictions to guarantee the best possible performance. The RGB-only and feature-level fusion configurations of the custom ResNet were evaluated by running the application in classification mode. The application displays the mean time for a single prediction over the course of the last ten frames. 
+
+Whereas the RGB-only model took an average of $41 ms$ for a single prediction, the feature-fusion model performed a prediction every $68 ms$, with minimal deviation. This equates to $14.7$ predictions per second, which is significantly higher than the sensor frame rate of $8.7 Hz$. Thus, we conclude that the the multispectral model is suitable for real-time classification tasks on edge devices.
 
 %----------------------------------------------------------------------------------------------------------------------------------
 

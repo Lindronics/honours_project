@@ -242,21 +242,27 @@ where TP is the number of true positives, FP is the number of false positives, T
 
 %----------------------------------------------------------------------------------------------------------------------------------
 
-\section{Developments in thermal multispectral image classification}
+\section{Recent developments and related work}
 
 \subsection{Applications}
 
 \subsubsection{Pedestrian detection}
 
-One of the most actively researched applications for deep learning and thermal imaging is pedestrian detection. Autonomous systems such as self-driving cars need to be provided with accurate environmental information to guarantee safe operation. Traditional VIS-only models are often not able to provide this accuracy \citet{zhang_how_2016}, especially under challenging conditions such as insufficient illumination, partial object occlusion or weak contrasts between objects and background in the visible light spectrum. 
+One of the most actively researched applications for deep learning and thermal imaging is pedestrian detection. Autonomous systems such as self-driving cars need to be provided with accurate environmental information to guarantee safe operation. Traditional VIS-only models are often not able to provide this accuracy \citep{zhang_how_2016}, especially under challenging conditions such as insufficient illumination, partial object occlusion or weak contrasts between objects and background in the visible light spectrum. 
 
-The KAIST Pedestrian Detection Benchmark \citep{hwang_multispectral_2015} was introduced to provide a prediction benchmark for thermal multispectral detection models.
+The KAIST Pedestrian Detection Benchmark \citep{hwang_multispectral_2015} was introduced to provide a prediction benchmark for thermal multispectral detection models. In recent years, many novel models and methodologies have been proposed, continuously improving the state of the art \citep{konig_fully_2017}.
 
 \subsubsection{Material recognition}
 
+\citet{cho_deep_2018} introduce a novel technique for material type recognition using thermal imaging and deep learning. Their models is able to distinguish between 32 materials.
 
+\subsubsection{Facial recognition}
 
-\subsubsection{Food quality and safety assessment}
+(XXX TODO)
+
+\subsubsection{Agriculture and food industry}
+
+Furthermore, there are many applications of thermal imaging in agriculture and the food industry \citep{vadivambal_applications_2011}. Tasks such as food quality assessment and maturity evaluation can be automated using thermal imaging. For instance, \citet{gowen_applications_2010} report the possibility to automatically detect bruised tissue on fruit and vegetables using thermal imaging. Based upon a deep learning approach, \citet{ibarra_combined_2000} propose a noninvasive method for the estimation of the internal temperature of just-cooked meat. 
 
 
 \subsection{Architectures and techniques}

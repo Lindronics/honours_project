@@ -885,7 +885,7 @@ Figure \ref{fig:autoencoder_pony_train_unet} displays the predicted LWIR image f
 
 \subsubsection{Results on unknown data}
 
-After successful training of the networks, two images of ponies were retrieved from Wikimedia Commons. They were then fed into the network in an attempt to generate the corresponding LWIR images. The respective outputs can be seen in Figure \ref{fig:autoencoder_pony}.
+After successful training of the networks, two images of ponies were retrieved from Wikimedia Commons \footnote{\url{https://commons.wikimedia.org/wiki/File:Sandwick_Shetland_Pony.jpg}} \footnote{\url{https://commons.wikimedia.org/wiki/File:Shetland_ponies_at_Sandwick.jpg}}. They were then fed into the network in an attempt to generate the corresponding LWIR images. The respective outputs can be seen in Figure \ref{fig:autoencoder_pony}.
 
 \begin{figure}[ht]
   \centering
@@ -904,7 +904,7 @@ After successful training of the networks, two images of ponies were retrieved f
     \includegraphics[width=\textwidth]{images/autoencoder/pony_2/unet.png}
     \caption{U-Net prediction}
   \end{subfigure}
-  \caption{Predicted LWIR signature of images of shetland ponies. Retrieved from \url{https://commons.wikimedia.org/wiki/File:Sandwick_Shetland_Pony.jpg} and \url{https://commons.wikimedia.org/wiki/File:Shetland_ponies_at_Sandwick.jpg}}
+  \caption{Predicted LWIR signature of images of shetland ponies.}
   \label{fig:autoencoder_pony}
 \end{figure}
 
@@ -912,34 +912,26 @@ It appears as if the traditional autoencoder is more successful at generating LW
 
 Upon inspection of the bottom image, it can be seen that the white patch of the pony is also apparent in the autoencoder prediction. We conclude that the model is overfit on dark ponies and is, therefore, unable to detect the patch as a normal part of the animal. Nonetheless, it seems possible that the autoencoder prediction might be accurate enough to be able to generate additional training data for a classifier.
 
-
-
-% \begin{figure}[ht]
-  %   \centering
-  %   \begin{subfigure}[h!]{0.3\textwidth}
-    %     \includegraphics[width=\textwidth]{images/autoencoder/mirror/grayscale.png}
-    %     \caption{Grayscale of visible light}
-    %     \label{fig:gradient_distribution}
-  %   \end{subfigure}
-  %   \begin{subfigure}[h!]{0.3\textwidth}
-    %     \includegraphics[width=\textwidth]{images/autoencoder/mirror/pred_fir.png}
-    %     \caption{Predicted LWIR}
-    %     \label{fig:gradient_distribution_red_green}
-  %   \end{subfigure}
-  %   \begin{subfigure}[h!]{0.3\textwidth}
-    %     \includegraphics[width=\textwidth]{images/autoencoder/mirror/actual_fir.png}
-    %     \caption{Actual LWIR}
-    %     \label{fig:gradient_distribution_red_green}
-  %   \end{subfigure}
-  %   \caption{Autoencoder prediction of LWIR image from grayscale.}
-% \end{figure}
-
 %----------------------------------------------------------------------------------------------------------------------------------
 
 
 \section{Mobile application}
 
-The mobile application was implemented using Java and Android Studio. 
+Figure \ref{fig:app_uml} shows the architecture of the mobile application. The required components were implemented in a modular, extendable framework. The \lstinline{MainActivity} displays a list of all discovered FLIR cameras, including emulators. Each list item is represented by an instance of \lstinline{CameraArrayAdapter} and allows the user to start a \lstinline{CameraActivity} or \lstinline{ClassifierActivity} for the given sensor. 
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.8\textwidth, trim={2.5cm 4.5cm 2.5cm 4.5cm}, clip=true]{images/app/App_UML}
+  \caption{Simplified UML class diagram of the mobile application.}
+  \label{fig:app_uml}
+\end{figure}
+
+Both activities share common functionality by extending \lstinline{AbstractCameraActivity}. This includes the \lstinline{CameraHandler}, which is responsible for communicating with the FLIR device and receiving a stream of images from the sensor. Furthermore, the \lstinline{AffineTransformer} initialises the OpenCV backend and provides functionality to perform affine transformations on images.
+
+The \lstinline{CameraActivity} is designed to enable users to capture multispectral datasets. It contains a button for starting and stopping a recording. In addition, it uses an instance of the \lstinline{ImageWriter} class to save the captured frames to device storage and add them to the gallery.
+
+Finally, the \lstinline{ClassifierActivity} initialises an instance of \lstinline{ModelHandler}. This class loads the TensorFlow Lite model and the class labels and performs real-time predictions on the images provided by the \lstinline{CameraHandler}.
+
 
 
 %==================================================================================================================================

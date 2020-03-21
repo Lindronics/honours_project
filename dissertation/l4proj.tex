@@ -384,7 +384,6 @@ Finally, the subsets from the raw datasets were rearranged into a training datas
     Cat             & 149             & 56 \\
     Pony            & 415             & 58 \\
     Alpaca          & 377             & 87 \\
-    % Peacock         & 157             & 79 \\
     Hamburg chicken & 77              & 59 \\
     Silkie chicken  & 191             & 38 \\
     Muscovy duck    & 206             & 64 \\
@@ -419,6 +418,7 @@ The classes with low support (Pig, Sheep, Ferret, Rabbit) were dropped from the 
     \includegraphics[width=\textwidth, trim={0cm 2.5cm 0cm 2.5cm}, clip]{images/dataset/pretty_chicken/lwir.png}
     \caption{Hamburg chicken}
   \end{subfigure}
+  \\
   \begin{subfigure}[h!]{0.18\textwidth}
     \includegraphics[width=\textwidth, trim={0cm 2.5cm 0cm 2.5cm}, clip]{images/dataset/evil_chicken/rgb.png}
     \includegraphics[width=\textwidth, trim={0cm 2.5cm 0cm 2.5cm}, clip]{images/dataset/evil_chicken/lwir.png}
@@ -773,64 +773,49 @@ What did you do to implement this idea, and what technical achievements did you 
 
 \section{Frameworks and tools}
 
-\subsection{Image processing}
+\subsection{Mobile application development}
 
-To perform the various image processing tasks required for this project, we made use of scikit-image \citep{van_der_walt_scikit-image_2014} and the Python implementation of OpenCV \citep{bradski_opencv_2000}.
+The mobile application was developed using Android Studio and the Java programming language. To communicate with the FLIR sensor, we used the FLIR Thermal SDK for Android. A continuous delivery (CD) build pipeline was set up using GitHub Actions to verify that changes to the application do not include build-breaking issues. To achieve this, the pipeline automatically downloads software dependencies, such as the FLIR SDK, compiles the application and provides a downloadable and installable APK file.
 
-Furthermore, a Java implementation of OpenCV was used for the Android application.
+\subsection{Deep learning and image processing}
 
+All neural networks were implemented using the TensorFlow deep learning framework \citep{abadi_TensorFlow_2016}. TensorFlow was chosen over alternatives such as PyTorch due to its built-in Keras API and due to its compatiblity with TensorFlow Lite. Keras is a high-level neural networks API that was developed by \citet{chollet_keras_2015} to enable fast experimentation. Keras was used in conjunction with other modules provided by the TensorFlow library. 
 
-\subsection{Deep learning}
+TensorFlow Lite is a set of tools aimed towards running deep learning models on mobile and internet of things (IoT) devices. It provides a Java API that can be used for Android application development and was, therefore, selected for the deployment of the model onto a mobile device.
 
-All deep learning models were implemented using the TensorFlow deep learning framework \citep{abadi_TensorFlow_2016}. TensorFlow was chosen over alternatives such as PyTorch due to its built-in Keras API and TensorFlow Lite.
+To perform the various image processing tasks required for this project, we made use of scikit-image \citep{van_der_walt_scikit-image_2014} and the Python implementation of OpenCV \citep{bradski_opencv_2000}. Furthermore, the Java implementation of OpenCV was used for the Android application, making it possible to perform affine transformations on captured images on the edge device.
 
-Keras is a high-level neural networks API that was developed by \citet{chollet_keras_2015} to enable fast experimentation. Keras was used in conjunction with other modules provided by the TensorFlow library. 
-
-TensorFlow Lite is a set of tools aimed towards running deep learning models on mobile and internet of things (IoT) devices. It provides a Java API that can be used for Android application development and was, therefore, selected for the deployment of the model.
-
-%----------------------------------------------------------------------------------------------------------------------------------
-
-\section{Hardware and environment}
+\subsection{Hardware and environment}
 
 Training a deep neural network is a time-consuming process. However, many of the operations that get executed when fitting and evaluating a deep learning model benefit from hardware-accelerated vectorised computation. Therefore, training and evaluation of a neural network can be several orders of magnitude faster on a GPU than on a CPU due to the GPU's ability for parallelised computations \citep{shi_benchmarking_2016}. 
 
-\subsection{Google Colaboratory}
-
-Hence, Google Colab was used for the majority of the experimentation process and design of models. Colab is a cloud-hosted service that allows the execution of Jupyter Notebooks on free-to-use GPU runtimes. Therefore, we were able to leverage the power of a Nvidia Tesla P4 GPU with 8 GB of VRAM.
-
-\subsection{School of Computing Science IDA cluster}
+Hence, Google Colaboratory (Colab) was used for the majority of the experimentation process and design of models. Colab is a cloud-hosted service that allows the execution of Jupyter Notebooks on free-to-use GPU runtimes. Therefore, we were able to leverage the power of a Nvidia Tesla P4 GPU with 8 GB of VRAM.
 
 For more computationally expensive tasks, we made use of the GPU cluster provided by the faculty's Information, Data \& Analysis research section. The cluster provides access to nodes with more powerful resources than Colab, including 512 GB of RAM and multiple Nvidia GeForce RTX 2080 Ti GPUs with 24 GB of VRAM.
 
-The cluster uses Openshift and the Kubernetes container management framework to assign resources to jobs. To be able to run computations on the cluster, we created a custom Docker container with all our software requirements, including TensorFlow and OpenCV.
+The cluster uses Openshift and the Kubernetes container management framework to assign resources to jobs. To be able to run computations on the cluster, we created a custom Docker image with all our software requirements, including TensorFlow and OpenCV. When scheduling a job, a container instance is created from this image that executes the supplied training script.
 
 %----------------------------------------------------------------------------------------------------------------------------------
 
-
-\section{Architecture}
+\section{Architecture and implementation details}
 
 \subsection{Data loading}
 
-Due to the limited amount of memory that Colab provides, it was impossible to pre-load the entire training dataset into memory for training. For this reason, a data loader class was implemented that supported lazy loading of data batches. When constructing the loader, a batch size can be specified, in addition to whether image samples shall be registered, and the target image resolution. 
+Due to the limited amount of memory that Colab provides, it is impossible to pre-load the entire training dataset into memory for training. For this reason, a data loader class was implemented that supported lazy loading of data batches. When constructing the loader, a batch size can be specified, in addition to whether image samples shall be registered, and the target image resolution. 
 
-Since the data loader extends Keras' Sequence class, it fully integrates with the Model training API. When constructed, it loads a list of all samples, containing image paths and class labels. It then enumerates the classes.
+Since the data loader extends Keras' \lstinline{Sequence} class, it fully integrates with the \lstinline{Model} training API. When constructed, it loads a list of all samples, containing image paths and class labels. It then enumerates the classes.
 
-When \lstinline{model.fit()} is called with the data loader as data source, Keras will call the \lstinline{__getitem__()} function repeatedly to lazily load batches of data into memory. The data loader will load the images in a batch, register them if demanded, and convert them into a tensor of shape $(batch size \times height \times width \times channels)$. Finally, it will return a tuple containing the image tensor and the one-hot representation of the numeric class labels.
+When \lstinline{model.fit()} is called with the data loader as data source, Keras will use the \lstinline{__getitem__()} function of the data loader repeatedly to lazily load batches of images into memory. The data loader will register images if specified and convert them into a tensor of shape $(batch\_size \times height \times width \times 4)$. Finally, it will return a tuple containing the image tensor and the one-hot representation of the numeric class labels.
 
-While this approach was necessary to fit the model on the whole training dataset, we found that it noticably slowed down training speeds. This is most likely due to slow I/O bottlenecking the loading speed. Instead of having to load the dataset into memory once in the beginning, loading has to be performed for every training epoch. An attempt was made to use TensorFlow's data API instead of OpenCV for loading and pre-processing to load the data directly into VRAM. However, the performance improvement was negligible.
-
+While this approach was necessary to fit the model on the whole training dataset, we found that it noticably slowed down training speeds. This is most likely due to slow I/O bottlenecking the loading speed. Instead of having to load the dataset into memory once in the beginning, loading has to be performed for every training epoch. An attempt was made to use TensorFlow's data API instead of OpenCV for loading and pre-processing to load the data directly into VRAM. However, the performance improvement was negligible. Therefore, when running evaluations on the GPU cluster, we resorted to pre-loading all batches into memory, using our data loader class.
 
 \subsection{Grid search}
 
-To evaluate the performance of the four different models and the six configurations, a grid search was run over all 24 possible combinations. For this purpose, we derived all models from a custom-made abstract superclass, to ensure that they provided a common API. This enabled us to iterate over all models and all configurations, training and evaluating every combination.
-
-%----------------------------------------------------------------------------------------------------------------------------------
-
-\section{Data augmentation}
+To evaluate the performance of the four different models and the six configurations, a grid search was run over all 24 possible combinations. For this purpose, we derived all models from a custom-built superclass \lstinline{AbstractModel}, to ensure that they implement a common API. This enabled us to iterate over all models and all configurations, training and evaluating every combination.
 
 \subsection{Affine data augmentation}
 
-Various libraries and tools are available to perform real-time data augmentation as part of the training pipeline. However, to achieve the highest possible level of control, a custom data augmentation function was designed. It leverages TensorFlow's ImageDataGenerator to apply random affine transformations to images in the dataset.
+Various tools are available to perform real-time data augmentation as part of the training pipeline. However, to achieve the highest possible level of control, a custom data augmentation function was designed. The function accepts a multiplication factor $n$ and leverages TensorFlow's \lstinline{ImageDataGenerator} to apply random affine transformations to images in the dataset.
 
 The script works by counting the number of samples per class and determining the class with the highest support. Each sample in that class is then augmented $n$ times. Finally, all remaining classes are being augmented until their sample size reaches that of the max class. The aim of this algorithm is to provide an even dataset without class imbalances.
 

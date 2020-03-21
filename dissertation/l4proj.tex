@@ -181,10 +181,9 @@ In ANNs, neurons are usually grouped into fully-connected layers. For each neuro
 
 As proven by the universal approximation theorem \citep{csaji_approximation_2001}, feed-forward neural networks can act as universal function approximators. By setting the right weights, an ANN with a sufficient amount of parameters can, therefore, be used as a machine learning estimator.
 
-
-
-
 \subsection{Convolutional neural networks}
+
+
 
 \subsection{Overfitting and regularisation}
 
@@ -212,7 +211,7 @@ Figure \ref{fig:fitting} shows the effect of overfitting and underfitting in a b
   \label{fig:fitting}
 \end{figure}
 
-Due to the ability of neural networks with sufficient depth to approximate any multidimensional function, they are naturally susceptible to overfitting \citep{tetko_neural_1995}. It is, therefore, necessary to reduce the generalisation error of a deep learning model by employing strategies to combat overfitting. \citet{goodfellow_deep_2016} define regularisation as "any modification we make to alearning algorithm that is intended to reduce its generalization error but not itstraining error."
+Due to the ability of neural networks with sufficient depth to approximate any multidimensional function, they are naturally susceptible to overfitting \citep{tetko_neural_1995}. It is, therefore, necessary to reduce the generalisation error of a deep learning model by employing strategies to combat overfitting. Such strategies are known as regularisation techniques \citep{goodfellow_deep_2016}.
 
 \subsubsection{Parameter Regularisation}
 
@@ -225,6 +224,46 @@ Since nodes cannot overfit on specific inputs due to them being disabled during 
 Research has shown dropout to be highly effective for the regularisation of deep neural networks with fully-connected layers \citep{wu_towards_2015}. However, the effect of dropout on convolutional layers is still subject to active research. \citet{cai_effective_2019} state that traditional dropout is mostly ineffective on convolutional layers, creating training instability. They propose four alternative dropout methods (drop-neuron, drop-channel, drop-path and drop-layer) that have been specifically designed for convolutional networks, reporting an increase in performance from all methods. 
 
 \subsection{Evaluation techniques}
+
+\subsubsection{Performance metrics}
+
+Some of the most common performance metrics used to evaluate machine learning models are accuracy, precision, recall, and f1-score, which are defined as follows:
+
+\begin{align}
+  accuracy  &= \frac {TP + TN} {TP + TN + FP + FN}, \\
+  precision &= \frac {TP} {TP + FP}, \\
+  recall    &= \frac {TP} {TP + FN}, \\
+  f1        &= \frac {2 \cdot precision \cdot recall} {precision + recall},
+\end{align}
+
+where TP is the number of true positives, FP is the number of false positives, TN is the number of true negatives and FN is the number of false negatives.
+
+\subsubsection{Confusion matrix}
+
+%----------------------------------------------------------------------------------------------------------------------------------
+
+\section{Developments in thermal multispectral image classification}
+
+\subsection{Applications}
+
+\subsubsection{Pedestrian detection}
+
+One of the most actively researched applications for deep learning and thermal imaging is pedestrian detection. 
+
+The KAIST Pedestrian Detection Benchmark \citep{hwang_multispectral_2015}.
+
+\subsubsection{Material recognition}
+
+
+
+\subsubsection{Food quality and safety assessment}
+
+
+\subsection{Architecture}
+
+\citet{dollar_fast_2014} propose a novel object detector based on aggregated channel features (ACF), achieving good object detection performance on visible light images. This approach has been adapted to multispectral data, additionally incorporating the thermal channel T, and histograms of oriented gradients (HOG) features \citep{dalal_histograms_2005} extracted from the thermal channel. This model serves as a baseline for the KAIST dataset.
+
+\citet{wagner_multispectral_2016} evaluate early and late feature fusion methods for thermal multispectral pedestrian detection. The early fusion approach involves stacking the RGB and T channels pixel-wise into a tensor of depth 4 and feeding the result into a CaffeNet \citep{jia_caffe_2014} convolutional network. The late fusion approach feeds the RGB image and LWIR image into separate convolutional networks respectively, and merging the outputs using fully-connected layers. They conclude that, unlike the early fusion approach, the late fusion model significantly outperforms the state of the art ACF+T+HOG baseline.
 
 
 %==================================================================================================================================

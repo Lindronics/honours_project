@@ -248,9 +248,9 @@ where TP is the number of true positives, FP is the number of false positives, T
 
 \subsubsection{Pedestrian detection}
 
-One of the most actively researched applications for deep learning and thermal imaging is pedestrian detection. 
+One of the most actively researched applications for deep learning and thermal imaging is pedestrian detection. Autonomous systems such as self-driving cars need to be provided with accurate environmental information to guarantee safe operation. Traditional VIS-only models are often not able to provide this accuracy \citet{zhang_how_2016}, especially under challenging conditions such as insufficient illumination, partial object occlusion or weak contrasts between objects and background in the visible light spectrum. 
 
-The KAIST Pedestrian Detection Benchmark \citep{hwang_multispectral_2015}.
+The KAIST Pedestrian Detection Benchmark \citep{hwang_multispectral_2015} was introduced to provide a prediction benchmark for thermal multispectral detection models.
 
 \subsubsection{Material recognition}
 
@@ -259,12 +259,13 @@ The KAIST Pedestrian Detection Benchmark \citep{hwang_multispectral_2015}.
 \subsubsection{Food quality and safety assessment}
 
 
-\subsection{Architecture}
+\subsection{Architectures and techniques}
 
 \citet{dollar_fast_2014} propose a novel object detector based on aggregated channel features (ACF), achieving good object detection performance on visible light images. This approach has been adapted to multispectral data, additionally incorporating the thermal channel T, and histograms of oriented gradients (HOG) features \citep{dalal_histograms_2005} extracted from the thermal channel. This model serves as a baseline for the KAIST dataset.
 
-\citet{wagner_multispectral_2016} evaluate early and late feature fusion methods for thermal multispectral pedestrian detection. The early fusion approach involves stacking the RGB and T channels pixel-wise into a tensor of depth 4 and feeding the result into a CaffeNet \citep{jia_caffe_2014} convolutional network. The late fusion approach feeds the RGB image and LWIR image into separate convolutional networks respectively, and merging the outputs using fully-connected layers. They conclude that, unlike the early fusion approach, the late fusion model significantly outperforms the state of the art ACF+T+HOG baseline.
+\citet{wagner_multispectral_2016} evaluate early and late feature fusion methods for thermal multispectral pedestrian detection. The early fusion approach involves stacking the RGB and T channels pixel-wise into a tensor of depth 4 and feeding the result into a CaffeNet \citep{jia_caffe_2014} convolutional network. The late fusion approach feeds the RGB image and LWIR image into separate convolutional networks respectively, and merging the outputs using fully-connected layers. They conclude that, unlike the early fusion approach, the late fusion model significantly outperforms the previous state of the art ACF+T+HOG baseline.
 
+Expanding upon the late feature fusion network introduced by \citet{wagner_multispectral_2016}, \citet{guan_fusion_2019} propose an illumination-aware approach to multispectral deep learning models. This approach is based on two-stream networks, as introduced by (XXX). After the outputs of the RGB and LWIR networks are fused, they are fed into separate networks for daytime and nighttime images. The respective predictions are then merged using illumination-aware weights. This approach achieved state-of-the-art performance on the KAIST benchmark.
 
 %==================================================================================================================================
 

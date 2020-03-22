@@ -37,10 +37,10 @@ spec:
         command: 
           - "python3"
           - "nfs/honours_project/models/classification/gridsearch_batchsize.py"
-          - "nfs/honours_project_data/animals_train_final/labels.txt"
-          - "nfs/honours_project_data/animals_test_final/labels.txt"
+          - "nfs/train.txt"
+          - "nfs/test.txt"
           - "nfs/out"
-          - "80"
+          - "100"
         
         resources:
           # these are the hardware resources the container needs 
@@ -55,7 +55,7 @@ spec:
             cpu: "4000m" 
             # memory units are also defined by a suffix. typically this will
             # be "Mi" or "Gi" as appropriate
-            memory: "64Gi"
+            memory: "32Gi"
             # GPUs are slightly different as they're not natively supported
             # by Kubernetes. This indicates that the container requires 1 
             # GPU in order to run
@@ -71,7 +71,7 @@ spec:
           # and the others will not be visible to code inside it
           limits:
             cpu: "8000m" 
-            memory: "64Gi"
+            memory: "32Gi"
             nvidia.com/gpu: 1 
         # this says "mount the external volume 'nfs-access' at the location /nfs
         # inside this container"

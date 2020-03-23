@@ -44,7 +44,7 @@ def grid_search(train_labels: str,
 
     print("=> Starting grid search.")
 
-    models = [CustomNet, AlexNet, ResNet, ResNet152v2]
+    models = [CustomNet, AlexNet, ResNet]
 
     # Data
     print("=> Loading data.")
@@ -77,7 +77,8 @@ def grid_search(train_labels: str,
             net = model_type(mode, num_classes=train.num_classes(), input_shape=train.shape(), weight_dir=output)
             model = net.get_model()
 
-            model.compile(optimizer="sgd",
+            optimizer = K.optimizers.Adam(learning_rate=0.000001, epsilon=0.005)
+            model.compile(optimizer=optimizer,
                           loss="categorical_crossentropy",
                           metrics=["accuracy"])
 

@@ -283,6 +283,7 @@ What is the problem that you want to solve, and how did you arrive at it?
 Collecting a multispectral dataset is significantly more challenging than a dataset consisting solely of visible-light images. The majority of image classification tasks use traditional imaging only. Consequently, the amount of research and resources that are available for use are much more limited.
 
 \subsection{Transfer learning}
+\label{transfer_learning_analysis}
 
 A large amount of existing datasets is available for traditional image classification tasks. The ImageNet dataset \citep{deng_imagenet_2009}, which is used as a benchmark for many image classification models, contains over a million labelled images that can be used to train a model. Many successful deep learning models, such as AlexNet \citep{krizhevsky_imagenet_2012} and ResNet \citep{he_deep_2016} have been applied to datasets such as ImageNet.
 
@@ -656,17 +657,17 @@ As concluded in \ref{fig:augmentation_affine}, the spatial and intensity propert
   \centering
   \begin{subfigure}[h!]{0.3\textwidth}
     \includegraphics[width=\textwidth, page={1}, trim={6.5cm 2.2cm 6.5cm 1.5cm}, clip]{images/models/archs}
-    \caption{Stacked configuration.}
+    \caption{Pixel fusion configuration.}
     \label{fig:arch_stacked}
   \end{subfigure}
   \begin{subfigure}[h!]{0.3\textwidth}
     \includegraphics[width=\textwidth, page={2}, trim={6.5cm 2.2cm 6.5cm 1.5cm}, clip]{images/models/archs}
-    \caption{CombSum configuration.}
+    \caption{Score fusion configuration.}
     \label{fig:arch_combsum}
   \end{subfigure}
   \begin{subfigure}[h!]{0.3\textwidth}
     \includegraphics[width=\textwidth, page={3}, trim={6.5cm 2.2cm 6.5cm 1.5cm}, clip]{images/models/archs}
-    \caption{Feature-fusion configuration.}
+    \caption{Late feature fusion configuration.}
     \label{fig:arch_fusion}
   \end{subfigure}
   \caption{Implemented neural network configurations excluding RGB-only, LWIR-only and grayscale.}
@@ -677,12 +678,12 @@ As concluded in \ref{fig:augmentation_affine}, the spatial and intensity propert
   \item An RGB-only implementation similar to the default implementation of most networks. This will be used as a baseline.
   \item An LWIR-only implementation.
   \item A greyscale implementation. This will calculate the mean across the three colour channels of the RGB image, yielding a single-channel greyscale image. The purpose of this model will be to evaluate the benefits and drawbacks of using all three colour channels.
-  \item A single-branch, stacked-layer implementation. The RGB and LWIR channels are stacked into a tensor of shape $({batch\ size} \times width \times height \times 4)$. This tensor is then fed into the network, yielding a prediction. This configuration is shown in Figure \ref{fig:arch_stacked}.
-  \item A multi-branch implementation with late feature-level fusion, as shown in Figure \ref{fig:arch_fusion}. Here, the RGB and LWIR images are fed into separate branches of convolutional layers. Finally, the respective outputs are being flattened, concatenated and fed into the fully-connected layers at the end of the network.
-  \item A multi-branch CombSum implementation with voting classifiers. Similarly to the late feature-fusion implementation, the VIS and LWIR images are run through seperate network branches. However, the branches have their own individual fully-connected layers, which produce separate predictions. The final output is the weighted mean of these two predictions. The relative weights of the branches can be treated as trainable parameters. This configuration can be seen in Figure \ref{fig:arch_combsum}.
+  \item A single-branch, pixel fusion implementation. The RGB and LWIR channels are stacked into a tensor of shape $({batch\ size} \times width \times height \times 4)$. This tensor is then fed into the network, yielding a prediction. This configuration is shown in Figure \ref{fig:arch_stacked}.
+  \item A multi-branch implementation with late feature-level fusion, as shown in Figure \ref{fig:arch_fusion}. Here, the RGB and LWIR images are fed into separate branches of convolutional layers. Finally, the respective outputs are flattened, concatenated and fed into the fully-connected layers at the end of the network.
+  \item A multi-branch score-level fusion implementation with voting classifiers. Similarly to the late feature-fusion implementation, the VIS and LWIR images are run through seperate network branches. However, the branches have their own individual fully-connected layers, which produce separate predictions. The final output is the weighted mean of these two predictions. The relative weights of the branches can be treated as trainable parameters. This configuration can be seen in Figure \ref{fig:arch_combsum}.
 \end{enumerate}
 
-This project, therefore, aimed to evaluate the performance of pixel-based fusion, feature-level fusion and score-level-based fusion classifiers \citep{guo_face_2017}. We chose the RGB-only networks as a baseline, as most image classification models rely solely on visible light.
+Following the conclusion of \citet{wagner_multispectral_2016} about early and late feature fusion, this project aims to evaluate the performance of pixel-based fusion, feature-level fusion and score-level-based fusion classifiers \citep{guo_face_2017}. We chose the RGB-only networks as a baseline, as most image classification models rely solely on visible light.
 
 Furthermore, multiple different CNN designs were evaluated. At first, a custom neural network was designed and implemented. In addition, we implemented modified versions of AlexNet and ResNet, two networks commonly used for image classification tasks. 
 
@@ -690,8 +691,7 @@ Note that the following architecture diagrams (Figures \ref{fig:alexnet} and \re
 
 \subsection{Custom CNN}
 
-A custom CNN architecture as shown in Figure \ref{fig:customnet} was implemented. The network follows a common design pattern for image classifiers, chaining multiple convolutional and pooling layers with increasing amounts of filters, followed by a small fully-connected part. 
-
+A custom CNN architecture as shown in Figure \ref{fig:customnet} was implemented. The network follows a common design pattern for image classifiers, chaining multiple convolutional and pooling layers with increasing amounts of filters, followed by one or more fully-connected layers. 
 
 \begin{figure}[ht]
   \centering
@@ -700,7 +700,7 @@ A custom CNN architecture as shown in Figure \ref{fig:customnet} was implemented
   \label{fig:customnet}
 \end{figure}
 
-Our model consists of two multi-layer convolutional blocks. Each block is composed of two convolutional layers, a leaky ReLU activation function, and a max pooling layer. We chose the kernel sizes to be $3 \times 3$ and $11 \times 11$ in the first block, and $3 \times 3$ and $7 \times 7$ in the second block. Following the convolutional blocks, we add a fully connected (FC) layer and an output layer with softmax activation. 
+Our model consists of two multi-layer blocks. Each block is composed of two convolutional layers, a leaky ReLU activation function, and a max pooling layer. We chose the kernel sizes to be $3 \times 3$ and $11 \times 11$ in the first block, and $3 \times 3$ and $7 \times 7$ in the second block. Following the convolutional blocks, we add a fully connected (FC) layer and an output layer with softmax activation. 
 
 Overall, the model has $117\,592$ trainable weights. This architecture was designed as a low-end model with relatively few parameters that is fast to train and evaluate.
 
@@ -752,7 +752,15 @@ The residual blocks are arranged in two groups of three. The convolutional kerne
 
 \section{Transfer learning using a pre-trained ResNet}
 
+An attempt was made to make use of transfer learning. We decided to evaluate an RGB-only, LWIR-only and feature fusion configuration of a pretrained network. 
 
+Obtaining an RGB-only network with pretrained weights is easy. We used an implementation of ResNet 152 v2 \citep{he_identity_2016} with weights that were previously trained on the ImageNet dataset. Since ImageNet has 1000 classes, we had to replace the output layer of the network with our own custom layer, to make labels and outputs match.
+
+As discussed in Section \ref{transfer_learning_analysis}, limited resources are available for transfer learning of thermal images. After some review, an annotated thermal dataset provided by FLIR was found \footnote{\url{https://www.flir.com/oem/adas/adas-dataset-form/}}. This dataset was deemed suitable because it was captured by another FLIR camera, minimising the sensor difference. Nonetheless, at $640 \times 512$, the thermal infrared resolution of the FLIR Tau 2 is significantly higher than that of the FLIR One Pro ($160 \times 120$) used for this project. The dataset contains a total of $10\,228$ frames with bounding box annotations for five classes: \textit{person}, \textit{car}, \textit{bicycle}, \textit{dog} and \textit{other vehicle}.
+
+To use the bounding box annotations for our classification problem, we treated each bounding box as an individual sample, cropping the images appropriately. To reduce noise, we removed samples with a resolution below $40 \times 40$. Only thermal images were used. We then trained an off-the-shelf implementation of ResNet 50 v2 on this dataset. We chose this shallower version of ResNet due to the limited amount of available data and time. It was deemed unlikely that using a more complex, such as ResNet 152 v2 model would benefit performance significantly.
+
+The feature fusion configuration of our transfer learning model, therefore, uses a ResNet 152 v2 for the RGB path, and a ResNet 52 v2 for the LWIR path.
 
 %----------------------------------------------------------------------------------------------------------------------------------
 
@@ -1013,6 +1021,27 @@ As expected, when training with smaller batch sizes, we can observe a much faste
 \subsection{ResNet}
 
 %----------------------------------------------------------------------------------------------------------------------------------
+
+\section{Final classifier}
+
+\begin{table}[]
+  \centering
+  \begin{tabular}{@{}lllll@{}}
+  \toprule
+                        & \textbf{precision} & \textbf{recall} & \textbf{f1-score} &  \\ \midrule
+  Cat                   & 0.91               & 0.98            & 0.94              &  \\
+  Pony                  & 0.77               & 0.62            & 0.69              &  \\
+  Hamburg chicken       & 0.95               & 0.83            & 0.89              &  \\
+  Alpaca                & 0.95               & 0.61            & 0.74              &  \\
+  Muscovy Duck          & 0.68               & 0.77            & 0.72              &  \\
+  Chicken               & 0.47               & 0.71            & 0.57              &  \\
+  Silkie Chicken        & 0.88               & 0.85            & 0.86              &  \\
+  Goose                 & 0.99               & 1.00            & 0.99              &  \\
+  \textbf{Weighted avg} & \textbf{0.83}      & \textbf{0.80}   & \textbf{0.80}     &  \\ \bottomrule
+  \end{tabular}
+  \caption{Precision, recall and f1-score of the final late feature fusion ResNet model.}
+  \label{table:final_classifier_scores}
+\end{table}
 
 \section{Accuracy at different lighting conditions}
 

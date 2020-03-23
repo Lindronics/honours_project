@@ -106,10 +106,11 @@ def augment_dataset(samples: list, augmented_dir:str, multiplier:int=2, register
         augmented_samples.append(save(out_path, name, rgb, lwir, label, extension=""))
 
         # Flipped
-        rgb_t = datagen.apply_transform(rgb, {"flip_horizontal": True})
-        lwir_t = datagen.apply_transform(lwir, {"flip_horizontal": True})
+        if multiplier > 1:
+            rgb_t = datagen.apply_transform(rgb, {"flip_horizontal": True})
+            lwir_t = datagen.apply_transform(lwir, {"flip_horizontal": True})
 
-        augmented_samples.append(save(out_path, name, rgb_t, lwir_t, label, extension=0))
+            augmented_samples.append(save(out_path, name, rgb_t, lwir_t, label, extension=0))
 
         # Random transformations
         remainder = 1 if class_remainders[label] > 0 else 0

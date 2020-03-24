@@ -261,6 +261,7 @@ The KAIST Pedestrian Detection Benchmark \citep{hwang_multispectral_2015} was in
 
 (XXX TODO)
 \citep{choi_thermal_2012}
+\citep{sarfraz_deep_2017}
 
 \subsubsection{Agriculture and food industry}
 
@@ -278,58 +279,40 @@ Expanding upon the late feature fusion network introduced by \citet{wagner_multi
 %==================================================================================================================================
 
 \chapter{Problem analysis}
-What is the problem that you want to solve, and how did you arrive at it?
 
 \section{Data acquisition}
 
-Collecting a multispectral dataset is significantly more challenging than a dataset consisting solely of visible-light images. The majority of image classification tasks use traditional imaging only. Consequently, the amount of research and resources that are available for use are much more limited.
+Collecting a multispectral dataset of sufficient quality is significantly more challenging than a dataset consisting solely of visible-light images. Specialised equipment is needed to obtain images. Using two sensors to capture LWIR and visible light introduces problems such as channel misalignment and inability to perform an optical zoom. This makes it harder to properly frame the objects of interest.
 
-\subsection{Transfer learning}
-\label{transfer_learning_analysis}
-
-A large amount of existing datasets is available for traditional image classification tasks. The ImageNet dataset \citep{deng_imagenet_2009}, which is used as a benchmark for many image classification models, contains over a million labelled images that can be used to train a model. Many successful deep learning models, such as AlexNet \citep{krizhevsky_imagenet_2012} and ResNet \citep{he_deep_2016} have been applied to datasets such as ImageNet.
-
-When creating an image classifier for a new application, it is then possible to make use of a model that has been pre-trained on another dataset, such as ImageNet. This model can then be adapted by, for instance, exchanging the final fully-connected layer of that network for one that suits suits the new classification task. Finally, the model can be trained on the new dataset. This strategy is known as transfer learning and was introduced by \citet{thrun_is_1996}.
-
-Since the features learned by early layers are often applicable across many classes and images (e.g. edge or texture features), the network generalises better, as it has been trained on an overall larger dataset. Therefore, transfer learning makes it feasible to train complex models on smaller amounts of data than usual \citep{kwasniewska_deep_2017}.
-
-For multispectral models, this highly effective approach becomes more difficult, as much fewer datasets are available to be used off-the-shelf. Datasets for visible light and thermal data, such as the KAIST Pedestrian Detection Benchmark \citep{hwang_multispectral_2015} are available. However, They usually lack the amount of classes and general size of traditional computer vision datasets and are therefore less suitable for transfer learning tasks.
-
-Pre-training a multispectral classifier on an VIS-only dataset is not directly possible due to the incompatible input tensor shapes ($h \times w \times 3$ compared to $h \times w \times 4$) and the resulting difference in trainable weights.
-
-However, there are strategies to mitigate this issue. It is possible to divide the model into two separate branches of layers that process the VIS and LWIR images individually, and perform late feature-level fusion \citep{guo_face_2017} by concatenating the respective feature maps and adding at least one fully connected layer after the concatenation. This approach can make it possible to load pretrained weights into the VIS-branch of the model without affecting the LWIR branch. During training, the LWIR-branch of the model gets trained from scratch, whereas transfer learning is simultaneously performed on the VIS-branch.
-
-Another possible approach to enable the usage of existing off-the-shelf datasets is to perform generative image augmentation. In Section \ref{autoencoder_implementation} we explore the application of a primitive generative model for predicting the corresponding LWIR image of a known type of object from a given RGB image. Given sufficient quality of predicted images, it would then be possible to turn RGB-only images into multispectral training data.
-
+Furthermore, the majority of image classification tasks use traditional visible light imaging only. As a result, the research and resources that are available for use are much more limited.
 
 \subsection{Sensory equipment}
 
-Even though thermal cameras have become significantly more affordable in recent years, their resolution remains much lower than that of conventional visible-light cameras. The FLIR One Pro, which was used for this project, is composed of two sensors:
+Even though thermal cameras have become significantly more affordable in recent years, their resolution remains much lower than that of conventional visible-light cameras. The FLIR One Pro \footnote{\url{https://www.flir.com/products/flir-one-pro/}}, which was used for this project, is composed of two sensors:
 
 \begin{itemize}
   \item A conventional camera for visible-light images with a resolution of $1440 \times 1080$ px.
   \item A thermal sensor with a spatial resolution of $160 \times 120$ px and a spectral range of $8 - 14 \mu m$.
 \end{itemize}
 
-The FLIR camera is therefore able to perceive and record electromagnetic waves in the visible-light (VIS) and long wave infrared (LWIR) bands. Due to technical limitations, several challenges had to be overcome when working with data collected by the sensor.
+The FLIR camera is, therefore, able to perceive and record electromagnetic waves in the visible-light (VIS) and long-wave infrared (LWIR) bands. Furthermore, images can be captured at a frequency of $8.7 Hz$, enabling real-time vision. Due to technical limitations, several challenges had to be overcome when working with data collected by the sensor.
 
 Firstly, the two cameras are not spatially aligned. Furthermore, the "zoom level" or focal length of the sensors does not appear to match. A misalignment of the channels is likely to have an adverse impact on the performance of a convolutional network \citep{chappelow_improving_2008}. Therefore, the issue of image registration of the two camera outputs arises. The strategy we introduced to perform robust registration of the VIS and LWIR images is outlined in Section \ref{image_registration}.
 
-Secondly, the vastly different resolutions of the sensors could cause problems, as convolutional filters might struggle detecting edges and other features consistently across all channels. A possible strategy to avoid this issue is to resize the images to a common resolution. However, this means that valuable information in the VIS image might be lost and overall accuracy might be reduced. It is, therefore, necessary to evaluate the degree of information loss upon size reduction of the visible light image.
-
-\subsection{Capturing images}
+Secondly, the vastly different resolutions of the sensors could cause problems too, as convolutional filters might struggle detecting edges and other features consistently across all channels. A possible strategy to avoid this issue is to resize the images to a common resolution. However, this means that valuable information in the VIS image might be lost and overall accuracy might be reduced. It is, therefore, necessary to evaluate the degree of information loss upon size reduction of the visible light image.
 
 %----------------------------------------------------------------------------------------------------------------------------------
 
-\section{Differences between LWIR and VIS images}
+\section{Modality gap between LWIR and VIS images}
+\label{modality}
 
-As outlined in Section \ref{imaging}, LWIR and visible light are both forms of electromagnetic radiation. However, the properties of LWIR and VIS images differ significantly. \citet{choi_thermal_2012} refer to the modality gap resulting from the wavelength difference of LWIR and visible light as a challenging problem for computer vision algorithms.
+As outlined in Section \ref{imaging}, LWIR and visible light are both forms of electromagnetic radiation. However, the properties of LWIR and VIS images differ significantly. \citet{sarfraz_deep_2017} refer to visible light as reflection dominant and LWIR as emission dominant radiation, resulting in a modality gap between the two corresponding sensing techniques. \citet{choi_thermal_2012} consider this modality gap a challenging problem for computer vision algorithms.
 
-\citet{davis_background-subtraction_2007} state that thermal cameras are especially effective compared to VIS cameras in low-light settings. Conversely, given sufficient illumination, visible light cameras perform better than thermal sensors if the thermal properties of objects are similar to its background. Furthermore, they state a low signal-to-noise ratio and white-black polarity calibration issues as common problems of thermal cameras.
+\citet{davis_background-subtraction_2007} state that thermal cameras are especially effective for object detection tasks compared to VIS cameras in low-light settings. Conversely, given sufficient illumination, visible light cameras perform better than thermal sensors if the thermal properties of objects are similar to its background. Furthermore, they state a low signal-to-noise ratio and white-black polarity calibration issues as common problems of thermal cameras.
 
 \subsection{Noisiness}
 
-To evaluate the relative noisiness of thermal and visible light images, an image was taken in an indoor setting. The LWIR channel and the greyscale representation of the RBG channels can be seen in Figures \ref{fig:fourier_lwir_spatial} and \ref{fig:fourier_vis_spatial}. The greyscale image has been downsampled to the same resolution as the LWIR imageIt is apparent that the greyscale image contains more textural details than the LWIR image. For instance, the painting above the fireplace appears as a simple gradient in the thermal band.
+To evaluate the relative noisiness of thermal and visible light images, a test image was taken in an indoor setting. The LWIR channel and the greyscale representation of the RBG channels can be seen in Figures \ref{fig:fourier_lwir_spatial} and \ref{fig:fourier_vis_spatial}. It is apparent that the greyscale image contains more textural details than the LWIR image. For instance, the painting above the fireplace appears as a simple gradient in the thermal band.
 
 \begin{figure}[ht]
   \centering
@@ -357,17 +340,38 @@ To evaluate the relative noisiness of thermal and visible light images, an image
   \label{fig:fourier}
 \end{figure}
 
-We applied a fast fourier transform \citep{cooley_fast_1969} to both images. Fourier transforms are a method for decomposing a signal into its sinusoidal components. The original image is considered to be in the spatial domain, whereas the transformed signal represents the same information in the frequency domain. It consists of the two complex components magnitude and phase. For images, translating into the frequency domain allows the analysis and modification of the geometric structure. 
+We applied a fast fourier transform \citep{cooley_fast_1969} to both images. Fourier transforms are a method for decomposing a signal into its sinusoidal components. The original image is considered to be in the spatial domain, whereas the transformed signal represents the same information in the frequency domain. It consists of the two complex components magnitude and phase. In this case, translating into the frequency domain allows the analysis and modification of the image's geometric structure. 
 
-Figures \ref{fig:fourier_lwir_freq} and \ref{fig:fourier_vis_freq} show the frequency magnitude of the aforementioned image in the frequency domain. The centre has been shifted to represent the image mean. The distance of a point to the centre represents its frequency and the intensity its magnitude. It can be seen that the visible light image has a significantly higher portion of high-frequency components than its LWIR counterpart. Hence, the VIS image can be considered to be noisier than the LWIR image.
+Figures \ref{fig:fourier_lwir_freq} and \ref{fig:fourier_vis_freq} show the magnitude component of the aforementioned image in the frequency domain. The centre has been shifted to represent the zero frequency of the image. The distance of a point to the centre represents its frequency and the intensity its magnitude. 
+
+It can be seen that the visible light image has a significantly higher portion of high-frequency components than its LWIR counterpart. Hence, the VIS image can be considered to be noisier than the LWIR image. This effect does not change significantly when downsampling the VIS image to the resolution of $160 \times 120$. The difference in noisiness might have an impact on the effects of convolutional filters on the LWIR and VIS images.
 
 \subsection{Environmental conditions}
 
 Figure \ref{fig:fourier}, furthermore, demonstrates the strengths and weaknesses of both types of sensors. Due to insufficient lighting, the whole fireplace appears as a single almost completely black surface in the VIS image. The LWIR image clearly shows two objects standing in front of the fireplace. On the other hand, the thermal image does not capture many details visible in the VIS image, such as the texture of the painting.
 
-Hence, a benefit of LWIR cameras compared to visible light can be achieved mainly in scenarios with a high thermal contrast and bad lighting conditions. Hence, it can be concluded that the classification of animals could be significantly improved using a thermal multispectral sensing technique. Most mammals and avian species actively regulate their internal temperature \citep{prinzinger_body_1991} and can be picked up easily by a thermal camera.
+Hence, it appears as if a benefit of LWIR cameras compared to visible light can be achieved mainly in scenarios with a high thermal contrast and bad lighting conditions. Most mammals and avian species actively regulate their internal temperature \citep{prinzinger_body_1991} and can be picked up easily by a thermal camera. Therefore, it can be theorised that the classification of animals could be significantly improved using a thermal multispectral sensing technique.
 
-Due to limited access to the animals, a robust evaluation of the relative performance of a multispectral model in different lighting conditions will not be part of this project.
+Due to limited access to the animals, a robust evaluation of the relative performance of a multispectral model in different lighting conditions was not performed as part of this project.
+
+%----------------------------------------------------------------------------------------------------------------------------------
+
+\section{Transfer learning}
+\label{transfer_learning_analysis}
+
+A large amount of existing datasets is available for traditional image classification tasks. The ImageNet dataset \citep{deng_imagenet_2009}, which is used as a benchmark for many image classification models, contains over a million labelled images that can be used to train a model. Many successful deep learning models, such as AlexNet \citep{krizhevsky_imagenet_2012} and ResNet \citep{he_deep_2016} have been applied to datasets such as ImageNet.
+
+When creating an image classifier for a new application, it is then possible to make use of a model that has been pre-trained on another dataset, such as ImageNet. This model can then be adapted by, for instance, exchanging the final fully-connected layer of that network for one that suits suits the new classification task. Finally, the model can be trained on the new dataset. This strategy is known as transfer learning and was introduced by \citet{thrun_is_1996}.
+
+Since the features learned by early layers are often applicable across many classes and images (e.g. edge or texture features), the network generalises better, as it has been trained on an overall larger dataset. Therefore, transfer learning makes it feasible to train complex models on smaller amounts of data than usual \citep{kwasniewska_deep_2017}.
+
+For multispectral models, this highly effective approach becomes more difficult, as much fewer datasets are available to be used off-the-shelf. Datasets for visible light and thermal data, such as the KAIST Pedestrian Detection Benchmark \citep{hwang_multispectral_2015} are available. However, They usually lack the amount of classes and general size of traditional computer vision datasets and are therefore less suitable for transfer learning tasks.
+
+Pre-training a multispectral classifier on an VIS-only dataset is not directly possible due to the incompatible input tensor shapes ($h \times w \times 3$ compared to $h \times w \times 4$) and the resulting difference in trainable weights. Moreover, the modality gap outlined in Section \ref{modality} makes it likely that this approach would be unfeasible even if the tensor shapes were compatible.
+
+However, there are strategies to mitigate this issue. It is possible to divide the model into two separate branches of layers that process the VIS and LWIR images individually, and perform late feature-level fusion \citep{guo_face_2017} by concatenating the respective feature maps and adding at least one fully connected layer after the concatenation. This approach can make it possible to load pretrained weights into the VIS-branch of the model without affecting the LWIR branch. During training, the LWIR-branch of the model gets trained from scratch, whereas transfer learning is simultaneously performed on the VIS-branch.
+
+Another possible approach to enable the usage of existing off-the-shelf datasets is to perform generative image augmentation. In Section \ref{autoencoder_implementation} we explore the application of a primitive generative model for predicting the corresponding LWIR image of a known type of object from a given RGB image. Given sufficient quality of predicted images, it would then be possible to turn RGB-only images into multispectral training data.
 
 %----------------------------------------------------------------------------------------------------------------------------------
 

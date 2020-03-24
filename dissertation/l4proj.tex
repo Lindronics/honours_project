@@ -874,6 +874,7 @@ When \lstinline{model.fit()} is called with the data loader as data source, Kera
 While this approach was necessary to fit the model on the whole training dataset, we found that it noticably slowed down training speeds. This is most likely due to slow I/O bottlenecking the loading speed. Instead of having to load the dataset into memory once in the beginning, loading has to be performed for every training epoch. An attempt was made to use TensorFlow's data API instead of OpenCV for loading and pre-processing to load the data directly into VRAM. However, the performance improvement was negligible. Therefore, when running evaluations on the GPU cluster, we resorted to pre-loading all batches into memory, using our data loader class.
 
 \subsection{Grid search}
+\label{gridsearch_impl}
 
 To evaluate the performance of the four different models and the six configurations, a grid search was run over all 24 possible combinations. For this purpose, we derived all models from a custom-built superclass \lstinline{AbstractModel}, to ensure that they implement a common API. This enabled us to iterate over all models and all configurations, training and evaluating every combination.
 
@@ -1061,34 +1062,20 @@ As expected, when training with smaller batch sizes, we can observe a much faste
 
 %----------------------------------------------------------------------------------------------------------------------------------
 
-\section{Different network designs}
+\section{Network architecture and configuration}
 
-\subsection{Custom CNN}
+To determine the configuration with the best performance out of all proposed models, we ran a grid search as described in Section \ref{gridsearch_impl}. All models were trained for 80 epochs with a batch size of 32 samples. We chose Adam as the optimiser with a learning rate of $10^{-6}$. 
 
-\begin{figure}[ht]
-  \centering
-  \includegraphics[width=0.8\textwidth]{images/evaluation/gridsearch/customnet.png}
-  \caption{Training and validation loss and accuracy of different configurations of the custom net.}
-  \label{fig:customnet_configs}
-\end{figure}
+The complete loss and accuracy history of all models and configurations are shown in Appendix \ref{appendix_grid_search}. Overall, the custom CNN yielded the lowest performance out of the three models. This is unsurprising, given the small number of trainable parameters compared to the other two models.
 
-\subsection{AlexNet}
 
-\begin{figure}[ht]
-  \centering
-  \includegraphics[width=0.8\textwidth]{images/evaluation/gridsearch/alexnet.png}
-  \caption{Training and validation loss and accuracy of different configurations of the AlexNet implementation.}
-  \label{fig:alexnet_configs}
-\end{figure}
 
-\begin{figure}[ht]
-  \centering
-  \includegraphics[width=0.6\textwidth]{images/evaluation/kernels/alexnet_color.png}
-  \caption{First 91 kernels of the first convolutional layer $(3 \rightarrow 96)$ of AlexNet in RGB-only configuration.}
-  \label{fig:kernels_alexnet}
-\end{figure}
-
-\subsection{ResNet}
+% \begin{figure}[ht]
+%   \centering
+%   \includegraphics[width=0.6\textwidth]{images/evaluation/kernels/alexnet_color.png}
+%   \caption{First 91 kernels of the first convolutional layer $(3 \rightarrow 96)$ of AlexNet in RGB-only configuration.}
+%   \label{fig:kernels_alexnet}
+% \end{figure}
 
 \begin{figure}[ht]
   \centering
@@ -1097,11 +1084,20 @@ As expected, when training with smaller batch sizes, we can observe a much faste
   \label{fig:resnet_configs}
 \end{figure}
 
+Out of the three models, our ResNet implementation performed best. The results for this model can be seen in Figure \ref{fig:resnet_configs}. For all configurations some overfitting can be observed, as the training losses and accuracies converge at near perfect values.
+
+The LWIR-only configuration appears to be the least effective overall. 
+
+(XXX)
+
+Among all configurations, the late feature fusion model achieved the highest accuracy. Furthermore, cross-entropy loss is comparatively low. This result confirms our theory that late feature fusion based approach proposed by \citet{wagner_multispectral_2016} can be applied to our multi-class classification problem. Thus, we selected this configuration as our final classifier. 
+
+
 %----------------------------------------------------------------------------------------------------------------------------------
 
 \section{Final classifier}
 
-\begin{table}[]
+\begin{table}[ht]
   \centering
   \begin{tabular}{@{}lllll@{}}
   \toprule
@@ -1187,6 +1183,30 @@ Summarise the whole project for a lazy reader who didn't read the rest (e.g. a p
 %  APPENDICES  
 
 \begin{appendices}
+
+\chapter{Grid search results}
+\label{appendix_grid_search}
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.8\textwidth]{images/evaluation/gridsearch/customnet.png}
+  \caption{Training and validation loss and accuracy of different configurations of the custom net.}
+  \label{fig:customnet_configs}
+\end{figure}
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.8\textwidth]{images/evaluation/gridsearch/alexnet.png}
+  \caption{Training and validation loss and accuracy of different configurations of the AlexNet implementation.}
+  \label{fig:alexnet_configs}
+\end{figure}
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.8\textwidth]{images/evaluation/gridsearch/resnet.png}
+  \caption{Training and validation loss and accuracy of different configurations of the ResNet implementation.}
+  \label{fig:resnet_configs_app}
+\end{figure}
 
 \chapter{Appendices}
 

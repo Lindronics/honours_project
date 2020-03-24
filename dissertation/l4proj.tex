@@ -95,6 +95,7 @@ Why should the reader care about what are you doing and what are you actually do
 What did other people do, and how is it relevant to what you want to do?
 
 \section{Imaging}
+\label{imaging}
 
 \subsection{Electromagnetic radiation}
 
@@ -259,6 +260,7 @@ The KAIST Pedestrian Detection Benchmark \citep{hwang_multispectral_2015} was in
 \subsubsection{Facial recognition}
 
 (XXX TODO)
+\citep{choi_thermal_2012}
 
 \subsubsection{Agriculture and food industry}
 
@@ -278,31 +280,7 @@ Expanding upon the late feature fusion network introduced by \citet{wagner_multi
 \chapter{Problem analysis}
 What is the problem that you want to solve, and how did you arrive at it?
 
-\section{Differences between LWIR and VIS images}
-
-\begin{figure}[ht]
-  \centering
-  \begin{subfigure}[h!]{0.4\textwidth}
-    \includegraphics[width=\textwidth]{images/fourier/lwir_spatial}
-    \caption{LWIR spatial domain}
-  \end{subfigure}
-  \begin{subfigure}[h!]{0.4\textwidth}
-    \includegraphics[width=\textwidth]{images/fourier/gray_spatial}
-    \caption{VIS spatial domain}
-  \end{subfigure}
-  \begin{subfigure}[h!]{0.4\textwidth}
-    \includegraphics[width=\textwidth]{images/fourier/lwir_freq}
-    \caption{LWIR frequency domain magnitude}
-  \end{subfigure}
-  \begin{subfigure}[h!]{0.4\textwidth}
-      \includegraphics[width=\textwidth]{images/fourier/gray_freq}
-      \caption{VIS frequency domain magnitude}
-    \end{subfigure}
-  \caption{Fast discrete fourier transform of an example LWIR and VIS image.}
-  \label{fig:fourier}
-\end{figure}
-
-\section{Data generation}
+\section{Data acquisition}
 
 Collecting a multispectral dataset is significantly more challenging than a dataset consisting solely of visible-light images. The majority of image classification tasks use traditional imaging only. Consequently, the amount of research and resources that are available for use are much more limited.
 
@@ -340,6 +318,56 @@ Firstly, the two cameras are not spatially aligned. Furthermore, the "zoom level
 Secondly, the vastly different resolutions of the sensors could cause problems, as convolutional filters might struggle detecting edges and other features consistently across all channels. A possible strategy to avoid this issue is to resize the images to a common resolution. However, this means that valuable information in the VIS image might be lost and overall accuracy might be reduced. It is, therefore, necessary to evaluate the degree of information loss upon size reduction of the visible light image.
 
 \subsection{Capturing images}
+
+%----------------------------------------------------------------------------------------------------------------------------------
+
+\section{Differences between LWIR and VIS images}
+
+As outlined in Section \ref{imaging}, LWIR and visible light are both forms of electromagnetic radiation. However, the properties of LWIR and VIS images differ significantly. \citet{choi_thermal_2012} refer to the modality gap resulting from the wavelength difference of LWIR and visible light as a challenging problem for computer vision algorithms.
+
+\citet{davis_background-subtraction_2007} state that thermal cameras are especially effective compared to VIS cameras in low-light settings. Conversely, given sufficient illumination, visible light cameras perform better than thermal sensors if the thermal properties of objects are similar to its background. Furthermore, they state a low signal-to-noise ratio and white-black polarity calibration issues as common problems of thermal cameras.
+
+\subsection{Noisiness}
+
+To evaluate the relative noisiness of thermal and visible light images, an image was taken in an indoor setting. The LWIR channel and the greyscale representation of the RBG channels can be seen in Figures \ref{fig:fourier_lwir_spatial} and \ref{fig:fourier_vis_spatial}. The greyscale image has been downsampled to the same resolution as the LWIR imageIt is apparent that the greyscale image contains more textural details than the LWIR image. For instance, the painting above the fireplace appears as a simple gradient in the thermal band.
+
+\begin{figure}[ht]
+  \centering
+  \begin{subfigure}[h!]{0.4\textwidth}
+    \includegraphics[width=\textwidth]{images/fourier/lwir_spatial}
+    \caption{LWIR spatial domain}
+    \label{fig:fourier_lwir_spatial}
+  \end{subfigure}
+  \begin{subfigure}[h!]{0.4\textwidth}
+    \includegraphics[width=\textwidth]{images/fourier/gray_spatial}
+    \caption{VIS spatial domain}
+    \label{fig:fourier_vis_spatial}
+  \end{subfigure}
+  \begin{subfigure}[h!]{0.4\textwidth}
+    \includegraphics[width=\textwidth]{images/fourier/lwir_freq}
+    \caption{LWIR frequency domain magnitude}
+    \label{fig:fourier_lwir_freq}
+  \end{subfigure}
+  \begin{subfigure}[h!]{0.4\textwidth}
+      \includegraphics[width=\textwidth]{images/fourier/gray_freq}
+      \caption{VIS frequency domain magnitude}
+      \label{fig:fourier_vis_freq}
+    \end{subfigure}
+  \caption{Fast discrete fourier transform of an example LWIR and VIS image. The VIS image contains more detailed textural information, making it \textit{noisier}, as can be seen in the frequency domain.}
+  \label{fig:fourier}
+\end{figure}
+
+We applied a fast fourier transform \citep{cooley_fast_1969} to both images. Fourier transforms are a method for decomposing a signal into its sinusoidal components. The original image is considered to be in the spatial domain, whereas the transformed signal represents the same information in the frequency domain. It consists of the two complex components magnitude and phase. For images, translating into the frequency domain allows the analysis and modification of the geometric structure. 
+
+Figures \ref{fig:fourier_lwir_freq} and \ref{fig:fourier_vis_freq} show the frequency magnitude of the aforementioned image in the frequency domain. The centre has been shifted to represent the image mean. The distance of a point to the centre represents its frequency and the intensity its magnitude. It can be seen that the visible light image has a significantly higher portion of high-frequency components than its LWIR counterpart. Hence, the VIS image can be considered to be noisier than the LWIR image.
+
+\subsection{Environmental conditions}
+
+Figure \ref{fig:fourier}, furthermore, demonstrates the strengths and weaknesses of both types of sensors. Due to insufficient lighting, the whole fireplace appears as a single almost completely black surface in the VIS image. The LWIR image clearly shows two objects standing in front of the fireplace. On the other hand, the thermal image does not capture many details visible in the VIS image, such as the texture of the painting.
+
+Hence, a benefit of LWIR cameras compared to visible light can be achieved mainly in scenarios with a high thermal contrast and bad lighting conditions. Hence, it can be concluded that the classification of animals could be significantly improved using a thermal multispectral sensing technique. Most mammals and avian species actively regulate their internal temperature \citep{prinzinger_body_1991} and can be picked up easily by a thermal camera.
+
+Due to limited access to the animals, a robust evaluation of the relative performance of a multispectral model in different lighting conditions will not be part of this project.
 
 %----------------------------------------------------------------------------------------------------------------------------------
 

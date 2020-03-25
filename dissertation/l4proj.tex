@@ -1095,60 +1095,74 @@ As expected, when training with smaller batch sizes, we can observe a much faste
 
 \section{Final classifier}
 
-Table \ref{table:final_classifier_scores} shows the precision, recall and f1-score of each class. The classes with the highest f1-score are \textit{Goose}, \textit{Cat} and \textit{Hamburg chicken}. 
+Table \ref{table:final_classifier_scores} shows the precision, recall and f1-score of each class. The classes with the highest f1-score are \textit{goose}, \textit{cat} and \textit{hamburg chicken}. 
 
 \begin{table}[ht]
   \centering
   \begin{tabular}{@{}lllll@{}}
   \toprule
                         & \textbf{precision} & \textbf{recall} & \textbf{f1-score} &  \\ \midrule
-  Cat                   & 0.91               & 0.98            & 0.94              &  \\
-  Pony                  & 0.77               & 0.62            & 0.69              &  \\
-  Hamburg chicken       & 0.95               & 0.83            & 0.89              &  \\
-  Alpaca                & 0.95               & 0.61            & 0.74              &  \\
-  Muscovy Duck          & 0.68               & 0.77            & 0.72              &  \\
-  Chicken               & 0.47               & 0.71            & 0.57              &  \\
-  Silkie Chicken        & 0.88               & 0.85            & 0.86              &  \\
-  Goose                 & 0.99               & 1.00            & 0.99              &  \\
-  \textbf{Weighted avg} & \textbf{0.83}      & \textbf{0.80}   & \textbf{0.80}     &  \\ \bottomrule
+  Cat                   & 0.84               & 1.00            & 0.91              &  \\
+  Pony                  & 0.76               & 0.49            & 0.60              &  \\
+  Hamburg chicken       & 0.91               & 0.88            & 0.90              &  \\
+  Alpaca                & 0.98               & 0.63            & 0.77              &  \\
+  Muscovy Duck          & 0.60               & 0.89            & 0.72              &  \\
+  Chicken               & 0.65               & 0.86            & 0.74              &  \\
+  Silkie Chicken        & 1.00               & 0.59            & 0.75              &  \\
+  Goose                 & 0.96               & 1.00            & 0.98              &  \\
+  \midrule
+  \textbf{Weighted avg} & \textbf{0.84}      & \textbf{0.80}   & \textbf{0.80}     &  \\ \bottomrule
   \end{tabular}
   \caption{Precision, recall and f1-score of the final late feature fusion ResNet model.}
   \label{table:final_classifier_scores}
 \end{table}
 
-The classes with the lowest f1-score are \textit{Chicken} and \textit{Pony}. Especially the chicken class suffers from low precision. This means that many samples are wrongly classified as chicken. A possible explanation for this is the high variety of environments within the chicken dataset. As outlined in Table \ref{table:train_test_dataset}, the amount of subsets used for the training dataset is very high for the chicken class. It is possible that the high variety of backgrounds make XXX.
+The classes with the lowest f1-score are \textit{chicken} and \textit{pony}. Especially the chicken class suffers from low precision. This means that many samples are wrongly classified as chicken. A possible explanation for this is the high variety of environments within the chicken dataset. As outlined in Table \ref{table:train_test_dataset}, the amount of subsets used for the training dataset is very high for the chicken class. It is possible that the model is biased in favour of the chicken class due to the high variety of backgrounds.
 
-To 
+To further analyse these findings, we made use of t-distributed stochastic neighbour embedding (t-SNE), which was first introduced by \citet{maaten_visualizing_2008}. t-SNE is a dimensionality reduction technique for the visualisation of high-dimensional data. By flattening each image into a single vector, we obtain high-dimensional data points that t-SNE can be applied to. The result is a 2-D representation of the images that can be easily plotted and inspected. The same process can be applied to the outputs of the layers of the neural network.
+
+Figure \ref{fig:test_tsne} shows the result of applying t-SNE to the validation dataset. In all four visualisations, most samples are concentrated in clusters. These clusters most likely correspond to the subsets of the validation dataset. Images that were captured in quick temporal succession are likely to be very similar, which is why they are very close together in the t-SNE visualisation.
 
 \begin{figure}[ht]
   \centering
   \begin{subfigure}[h!]{0.4\textwidth}
     \includegraphics[width=\textwidth]{images/evaluation/embedding/test/input}
     \caption{Input image.}
+    \label{fig:test_tsne_input}
   \end{subfigure}
   \quad
   \begin{subfigure}[h!]{0.4\textwidth}
     \includegraphics[width=\textwidth]{images/evaluation/embedding/test/vis}
     \caption{Output of final conv layer of VIS branch.}
+    \label{fig:test_tsne_vis}
   \end{subfigure}
 
   \begin{subfigure}[h!]{0.4\textwidth}
     \includegraphics[width=\textwidth]{images/evaluation/embedding/test/lwir}
     \caption{Output of final conv layer of LWIR branch.}
+    \label{fig:test_tsne_lwir}
   \end{subfigure}
   \quad
   \begin{subfigure}[h!]{0.4\textwidth}
     \includegraphics[width=\textwidth]{images/evaluation/embedding/test/fc}
     \caption{Output of final fully-connected layer.}
+    \label{fig:test_tsne_fc}
   \end{subfigure}
-  \caption{t-SNE dimensionality reduction of classes.}
+  \caption{t-SNE visualisation of the validation dataset. As the features progress through the layers of the neural network, the classes become more easily separable.}
   \label{fig:test_tsne}
 \end{figure}
+
+As can be seen in Figure \ref{fig:test_tsne_input}, the cat images clearly stand out from the other classes even before being fed into the model. This is most likely a result of the fact that the cat images are the only ones that were captured in an indoor setting, resulting in a significantly lower illumination level.
+
+This interpretation is further supported by the observation that the strict separation of the cat cluster persists throughout the VIS branch of the network, as shown in \ref{fig:test_tsne_vis}. The LWIR band, however, is not sensitive to illumination. Therefore, the LWIR branch of the network is unable to use the overall brightness of the image to make inferences about the classes. This explains why the distinctive cat cluster is not visible in Figure \ref{fig:test_tsne_lwir}.
+
+A similar effect can be observed for the hamburg chicken class. Unlike for the cat class, a large hamburg chicken cluster stands out in the t-SNE of the input image as well as the final convolutional layers of the VIS and LWIR branches. A likely explanation for this pheonomenon is that many images of hamburg chicken are partly occluded by a grid. Since this is unique to this class, it can be assumed that the model uses the grid as a feature to identify hamburg chicken, resulting in undesirable overfitting on the environment.
+
+\subsection{Saliency analysis}
 
 
 \subsection{Accuracy at different lighting conditions}
 
-\subsection{Saliency analysis}
 
 %----------------------------------------------------------------------------------------------------------------------------------
 

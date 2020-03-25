@@ -435,19 +435,19 @@ Finally, the subsets from the raw datasets were rearranged into a training datas
 
 \begin{table}[ht]
   \centering
-  \begin{tabular}{@{}lll@{}}
+  \begin{tabular}{@{}lllll@{}}
     \toprule
-    \textbf{Class}  & \textbf{Train } & \textbf{Validation} \\ \midrule
-    Cat             & 149             & 56 \\
-    Pony            & 415             & 58 \\
-    Alpaca          & 377             & 87 \\
-    Hamburg chicken & 77              & 59 \\
-    Silkie chicken  & 191             & 38 \\
-    Muscovy duck    & 206             & 64 \\
-    Chicken         & 277             & 119 \\
-    Goose           & 125             & 19 \\ \bottomrule
+    \textbf{Class}  & \textbf{Train } & \textbf{Val.} & \textbf{Train subsets}  & \textbf{Val. subsets} \\ \midrule
+    Cat             & 149             & 56                  & 3                 & 1 \\
+    Pony            & 415             & 58                  & 5                 & 4 \\
+    Alpaca          & 377             & 87                  & 4                 & 2 \\
+    Hamburg chicken & 77              & 59                  & 3                 & 3 \\
+    Silkie chicken  & 191             & 38                  & 3                 & 2 \\
+    Muscovy duck    & 206             & 64                  & 6                 & 4 \\
+    Chicken         & 277             & 119                 & 10                & 2 \\
+    Goose           & 125             & 19                  & 1                 & 1 \\ \bottomrule
   \end{tabular}
-  \caption{Classes and sample size train and test datasets.}
+  \caption{Sample size and subset composition of train and validation datasets.}
   \label{table:train_test_dataset}
 \end{table}
 
@@ -1004,7 +1004,7 @@ Finally, the \lstinline{ClassifierActivity} initialises an instance of \lstinlin
 \chapter{Evaluation} 
 How good is your solution? How well did you solve the general problem, and what evidence do you have to support that?
 
-\section{Strategies and hyperparameters}
+\section{Training strategies}
 
 \subsection{Training-validation split}
 \label{eval_train_val_split}
@@ -1032,33 +1032,11 @@ Figure \ref{fig:heatmap_stratified} shows two example class activation heatmaps 
 
 Fitting the models on the training dataset as defined in Section \ref{classes_samples}, validation scores dropped significantly. This was in accordance with our expectations, as the samples from the training and validation datasets are mostly independent. Therefore, the models are not able to overfit on the whole dataset anymore and the validation score is more representative of potential performance on new data.
 
-\subsection{Batch size}
-
-An influential hyperparameter for training neural networks is batch size \citep{ioffe_batch_2015}. The batch size during training determines how many samples are used for each optimisation step. Generally, smaller batch sizes result in the training loss converging in fewer epochs, while larger batch sizes offer better computational efficiency due to parallelisability \cite{devarakonda_adabatch_2018}.
-
-Furthermore, smaller batch sizes make the training process more stochastic. More steps are taken during training. However, the lower amount of samples per batch means that steps are less likely to be in the direction of the global minimum. On the other hand, it is more likely that the model can avoid getting stuck in local minima. \citet{smith_dont_2018} state that increasing the batch size can help the optimisation algorithm converge on the global minimum, instead of bouncing around the optimum. \citet{radiuk_impact_2017} conclude that SGD performs better with larger batch sizes on the MNIST and CIFAR-10 datasets.
-
-To evaluate the effect of different batch sizes on the validation accuracy of our model, we trained our implementation of ResNet in fusion configuration with batch sizes of 2, 8, 32, and 128. We chose the Adam optimizer with an initial learning rate of $10^{-6}$. The results can be seen in Figure \ref{fig:batch_size}.
-
-\begin{figure}[ht]
-  \centering
-  \includegraphics[width=0.8\textwidth]{images/evaluation/batch_size/history.png}
-  \caption{Training and validation loss and accuracy with varying batch sizes.}
-  \label{fig:batch_size}
-\end{figure}
-
-As expected, when training with smaller batch sizes, we can observe a much faster convergence of loss and accuracy. Furthermore, the validation accuracy with the lower batch sizes appears to be higher than that of larger batch sizes. However, lower batch sizes also have a larger validation loss. This can be an indicator for overfitting. Accuracy is a discrete measure, whereas cross-entropy takes probabilities and confidence into consideration.
-
 \subsection{Image resolutions}
 
 \subsection{Data augmentation}
 
 \subsection{Generation of artificial data}
-
-
-\subsection{RGB compared to grayscale}
-
-
 
 %----------------------------------------------------------------------------------------------------------------------------------
 
@@ -1092,10 +1070,32 @@ The LWIR-only configuration appears to be the least effective overall.
 
 Among all configurations, the late feature fusion model achieved the highest accuracy. Furthermore, cross-entropy loss is comparatively low. This result confirms our theory that late feature fusion based approach proposed by \citet{wagner_multispectral_2016} can be applied to our multi-class classification problem. Thus, we selected this configuration as our final classifier. 
 
+%----------------------------------------------------------------------------------------------------------------------------------
+
+\section{Hyperparameters}
+
+\subsection{Batch size}
+
+An influential hyperparameter for training neural networks is batch size \citep{ioffe_batch_2015}. The batch size during training determines how many samples are used for each optimisation step. Generally, smaller batch sizes result in the training loss converging in fewer epochs, while larger batch sizes offer better computational efficiency due to parallelisability \cite{devarakonda_adabatch_2018}.
+
+Furthermore, smaller batch sizes make the training process more stochastic. More steps are taken during training. However, the lower amount of samples per batch means that steps are less likely to be in the direction of the global minimum. On the other hand, it is more likely that the model can avoid getting stuck in local minima. \citet{smith_dont_2018} state that increasing the batch size can help the optimisation algorithm converge on the global minimum, instead of bouncing around the optimum. \citet{radiuk_impact_2017} conclude that SGD performs better with larger batch sizes on the MNIST and CIFAR-10 datasets.
+
+To evaluate the effect of different batch sizes on the validation accuracy of our model, we trained our implementation of ResNet in fusion configuration with batch sizes of 2, 8, 32, and 128. We chose the Adam optimizer with an initial learning rate of $10^{-6}$. The results can be seen in Figure \ref{fig:batch_size}.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.8\textwidth]{images/evaluation/batch_size/history.png}
+  \caption{Training and validation loss and accuracy with varying batch sizes.}
+  \label{fig:batch_size}
+\end{figure}
+
+As expected, when training with smaller batch sizes, we can observe a much faster convergence of loss and accuracy. Furthermore, the validation accuracy with the lower batch sizes appears to be higher than that of larger batch sizes. However, lower batch sizes also have a larger validation loss. This can be an indicator for overfitting. Accuracy is a discrete measure, whereas cross-entropy takes probabilities and confidence into consideration.
 
 %----------------------------------------------------------------------------------------------------------------------------------
 
 \section{Final classifier}
+
+Table \ref{table:final_classifier_scores} shows the precision, recall and f1-score of each class. The classes with the highest f1-score are \textit{Goose}, \textit{Cat} and \textit{Hamburg chicken}. 
 
 \begin{table}[ht]
   \centering
@@ -1116,7 +1116,39 @@ Among all configurations, the late feature fusion model achieved the highest acc
   \label{table:final_classifier_scores}
 \end{table}
 
-\section{Accuracy at different lighting conditions}
+The classes with the lowest f1-score are \textit{Chicken} and \textit{Pony}. Especially the chicken class suffers from low precision. This means that many samples are wrongly classified as chicken. A possible explanation for this is the high variety of environments within the chicken dataset. As outlined in Table \ref{table:train_test_dataset}, the amount of subsets used for the training dataset is very high for the chicken class. It is possible that the high variety of backgrounds make XXX.
+
+To 
+
+\begin{figure}[ht]
+  \centering
+  \begin{subfigure}[h!]{0.4\textwidth}
+    \includegraphics[width=\textwidth]{images/evaluation/embedding/test/input}
+    \caption{Input image.}
+  \end{subfigure}
+  \quad
+  \begin{subfigure}[h!]{0.4\textwidth}
+    \includegraphics[width=\textwidth]{images/evaluation/embedding/test/vis}
+    \caption{Output of final conv layer of VIS branch.}
+  \end{subfigure}
+
+  \begin{subfigure}[h!]{0.4\textwidth}
+    \includegraphics[width=\textwidth]{images/evaluation/embedding/test/lwir}
+    \caption{Output of final conv layer of LWIR branch.}
+  \end{subfigure}
+  \quad
+  \begin{subfigure}[h!]{0.4\textwidth}
+    \includegraphics[width=\textwidth]{images/evaluation/embedding/test/fc}
+    \caption{Output of final fully-connected layer.}
+  \end{subfigure}
+  \caption{t-SNE dimensionality reduction of classes.}
+  \label{fig:test_tsne}
+\end{figure}
+
+
+\subsection{Accuracy at different lighting conditions}
+
+\subsection{Saliency analysis}
 
 %----------------------------------------------------------------------------------------------------------------------------------
 

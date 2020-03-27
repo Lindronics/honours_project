@@ -1040,7 +1040,10 @@ Fitting the models on the training dataset as defined in Section \ref{classes_sa
 
 %----------------------------------------------------------------------------------------------------------------------------------
 
-\section{Network architecture and configuration}
+\section{Hyperparameters}
+
+
+\subsection{Network architecture and configuration}
 
 To determine the configuration with the best performance out of all proposed models, we ran a grid search as described in Section \ref{gridsearch_impl}. All models were trained for 80 epochs with a batch size of 32 samples. We chose Adam as the optimiser with a learning rate of $10^{-6}$. 
 
@@ -1070,11 +1073,9 @@ The LWIR-only configuration appears to be the least effective overall.
 
 Among all configurations, the late feature fusion model achieved the highest accuracy. Furthermore, cross-entropy loss is comparatively low. This result confirms our theory that late feature fusion based approach proposed by \citet{wagner_multispectral_2016} can be applied to our multi-class classification problem. Thus, we selected this configuration as our final classifier. 
 
-%----------------------------------------------------------------------------------------------------------------------------------
-
-\section{Hyperparameters}
-
 \subsection{Batch size}
+
+(XXX TODO: REWORK NEEDED)
 
 An influential hyperparameter for training neural networks is batch size \citep{ioffe_batch_2015}. The batch size during training determines how many samples are used for each optimisation step. Generally, smaller batch sizes result in the training loss converging in fewer epochs, while larger batch sizes offer better computational efficiency due to parallelisability \cite{devarakonda_adabatch_2018}.
 
@@ -1095,7 +1096,7 @@ As expected, when training with smaller batch sizes, we can observe a much faste
 
 \section{Final classifier}
 
-Table \ref{table:final_classifier_scores} shows the precision, recall and f1-score of each class. The classes with the highest f1-score are \textit{goose}, \textit{cat} and \textit{hamburg chicken}. 
+Table \ref{table:final_classifier_scores} shows the precision, recall and f1-score of each class. The classes with the highest f1-score are \textit{goose}, \textit{cat} and \textit{hamburg chicken}. The classes with the lowest f1-score are and \textit{pony} and \textit{muscovy duck}. The pony class stands out with particularly low recall. Only half of all pony samples were classified correctly.
 
 \begin{table}[ht]
   \centering
@@ -1117,11 +1118,13 @@ Table \ref{table:final_classifier_scores} shows the precision, recall and f1-sco
   \label{table:final_classifier_scores}
 \end{table}
 
-The classes with the lowest f1-score are \textit{chicken} and \textit{pony}. Especially the chicken class suffers from low precision. This means that many samples are wrongly classified as chicken. A possible explanation for this is the high variety of environments within the chicken dataset. As outlined in Table \ref{table:train_test_dataset}, the amount of subsets used for the training dataset is very high for the chicken class. It is possible that the model is biased in favour of the chicken class due to the high variety of backgrounds.
+The chicken and muscovy duck classes suffer especially from low precision. This means that many samples are wrongly classified as those classes. A possible explanation for this is the high variety of environments within the chicken and muscovy duck datasets. As outlined in Table \ref{table:train_test_dataset}, the amount of subsets used for the training dataset is very high for both classes. It is possible that the model is biased in favour of these  classes due to the high variety of backgrounds.
+
+\subsection{t-SNE}
 
 To further analyse these findings, we made use of t-distributed stochastic neighbour embedding (t-SNE), which was first introduced by \citet{maaten_visualizing_2008}. t-SNE is a dimensionality reduction technique for the visualisation of high-dimensional data. By flattening each image into a single vector, we obtain high-dimensional data points that t-SNE can be applied to. The result is a 2-D representation of the images that can be easily plotted and inspected. The same process can be applied to the outputs of the layers of the neural network.
 
-Figure \ref{fig:test_tsne} shows the result of applying t-SNE to the validation dataset. In all four visualisations, most samples are concentrated in clusters. These clusters most likely correspond to the subsets of the validation dataset. Images that were captured in quick temporal succession are likely to be very similar, which is why they are very close together in the t-SNE visualisation.
+Figure \ref{fig:test_tsne} shows the result of applying t-SNE to the validation dataset. In all four visualisations, most samples are concentrated in small clusters. These clusters most likely correspond to the subsets of the validation dataset. Images that were captured in quick temporal succession are likely to be very similar, which is why they are very close together in the t-SNE visualisation. Figure \ref{fig:test_tsne_fc} demonstrates that, overall, the network successfully seperates the samples into distinct classes.
 
 \begin{figure}[ht]
   \centering

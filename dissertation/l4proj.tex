@@ -849,6 +849,8 @@ TensorFlow Lite is a set of tools aimed towards running deep learning models on 
 
 To perform the various image processing tasks required for this project, we made use of scikit-image \citep{van_der_walt_scikit-image_2014} and the Python implementation of OpenCV \citep{bradski_opencv_2000}. Furthermore, the Java implementation of OpenCV was used for the Android application, making it possible to perform affine transformations on captured images on the edge device.
 
+We computed the Grad-CAM visualisations of our networks using Keras-vis \citep{kotikalapudi_keras-vis_2017}.
+
 \subsection{Hardware and environment}
 
 Training a deep neural network is a time-consuming process. However, many of the operations that get executed when fitting and evaluating a deep learning model benefit from hardware-accelerated vectorised computation. Therefore, training and evaluation of a neural network can be several orders of magnitude faster on a GPU than on a CPU due to the GPU's ability for parallelised computations \citep{shi_benchmarking_2016}. 
@@ -1162,6 +1164,41 @@ This interpretation is further supported by the observation that the strict sepa
 A similar effect can be observed for the hamburg chicken class. Unlike for the cat class, a large hamburg chicken cluster stands out in the t-SNE of the input image as well as the final convolutional layers of the VIS and LWIR branches. A likely explanation for this pheonomenon is that many images of hamburg chicken are partly occluded by a grid. Since this is unique to this class, it can be assumed that the model uses the grid as a feature to identify hamburg chicken, resulting in undesirable overfitting on the environment.
 
 \subsection{Saliency analysis}
+
+Saliency maps were first introduced by \citet{itti_model_1998} as a means of representing the conspicuity of every spatial location in an image. \citet{simonyan_deep_2014} developed this concept into class-specific saliency maps by using back-propagation of a classification.
+
+Gradient-weighted Class Activation Mapping (Grad-CAM) is a novel visualisation technique developed by \citet{selvaraju_grad-cam_2020}. It uses the gradients of a target class at the last convolutional layer of a network to generate a heatmap showing the most important regions for the classification of that class.
+
+Since the late feature fusion configuration of our ResNet has two parallel final convolutional layers, the gradient has to be computed for both layers.
+
+\begin{figure}[ht]
+  \centering
+  \begin{subfigure}[h!]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{images/evaluation/grad_cam/pos}
+    \caption{Positive example}
+    \label{fig:grad_cam_pos}
+  \end{subfigure}
+  \quad
+  \begin{subfigure}[h!]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{images/evaluation/grad_cam/neg}
+    \caption{Negative example}
+    \label{fig:grad_cam_neg}
+  \end{subfigure}
+
+  \begin{subfigure}[h!]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{images/evaluation/grad_cam/vis}
+    \caption{Positive VIS example}
+    \label{fig:grad_cam_vis}
+  \end{subfigure}
+  \quad
+  \begin{subfigure}[h!]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{images/evaluation/grad_cam/lwir}
+    \caption{Positive LWIR example}
+    \label{fig:grad_cam_lwir}
+  \end{subfigure}
+  \caption{Grad-CAM visualisation of four example images.}
+  \label{grad_cam}
+\end{figure}
 
 
 \subsection{Accuracy at different lighting conditions}

@@ -111,7 +111,7 @@ def grid_search(train_labels: str,
             f.write(classification_report(y_test_, y_pred, target_names=test.class_labels))
 
         # Save classification report
-        with open(os.path.join(sub_path, name_prefix + f"report_{i}.pickle")) as f:
+        with open(os.path.join(sub_path, name_prefix + f"report_{i}.pickle"), "wb") as f:
             pickle.dump(classification_report(y_test_, y_pred, target_names=test.class_labels, output_dict=True), f)
 
 

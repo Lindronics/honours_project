@@ -1124,6 +1124,7 @@ Table \ref{table:final_classifier_scores} shows the precision, recall and f1-sco
 
 The chicken and muscovy duck classes suffer especially from low precision. This means that many samples are wrongly classified as those classes. A possible explanation for this is the high variety of environments within the chicken and muscovy duck datasets. As outlined in Table \ref{table:train_test_dataset}, the amount of subsets used for the training dataset is very high for both classes. It is possible that the model is biased in favour of these  classes due to the high variety of backgrounds.
 
+
 \subsection{t-SNE}
 
 To further analyse these findings, we made use of t-distributed stochastic neighbour embedding (t-SNE), which was first introduced by \citet{maaten_visualizing_2008}. t-SNE is a dimensionality reduction technique for the visualisation of high-dimensional data. By flattening each image into a single vector, we obtain high-dimensional data points that t-SNE can be applied to. The result is a 2-D representation of the images that can be easily plotted and inspected. The same process can be applied to the outputs of the layers of the neural network.
@@ -1165,42 +1166,49 @@ This interpretation is further supported by the observation that the strict sepa
 
 A similar effect can be observed for the hamburg chicken class. Unlike for the cat class, a large hamburg chicken cluster stands out in the t-SNE of the input image as well as the final convolutional layers of the VIS and LWIR branches. A likely explanation for this pheonomenon is that many images of hamburg chicken are partly occluded by a grid. Since this is unique to this class, it can be assumed that the model uses the grid as a feature to identify hamburg chicken, resulting in undesirable overfitting on the environment.
 
+
 \subsection{Saliency analysis}
 
 Saliency maps were first introduced by \citet{itti_model_1998} as a means of representing the conspicuity of every spatial location in an image. \citet{simonyan_deep_2014} developed this concept into class-specific saliency maps by using back-propagation of a classification.
 
 Gradient-weighted Class Activation Mapping (Grad-CAM) is a novel visualisation technique developed by \citet{selvaraju_grad-cam_2020}. It uses the gradients of a target class at the last convolutional layer of a network to generate a heatmap showing the most important regions for the classification of that class.
 
-Since the late feature fusion configuration of our ResNet has two parallel final convolutional layers, the gradient has to be computed for both layers.
+Since the late feature fusion configuration of our ResNet has two parallel final convolutional layers, the gradient has to be computed for both layers. Figure \ref{fig:grad_cam} displays the Grad-CAM visualisation of four example images.
 
 \begin{figure}[ht]
   \centering
   \begin{subfigure}[h!]{0.45\textwidth}
     \includegraphics[width=\textwidth]{images/evaluation/grad_cam/pos}
-    \caption{Positive example}
+    \caption{Desirable example for both channels.}
     \label{fig:grad_cam_pos}
   \end{subfigure}
   \quad
   \begin{subfigure}[h!]{0.45\textwidth}
     \includegraphics[width=\textwidth]{images/evaluation/grad_cam/neg}
-    \caption{Negative example}
+    \caption{Undesirable example for both channels.}
     \label{fig:grad_cam_neg}
   \end{subfigure}
 
   \begin{subfigure}[h!]{0.45\textwidth}
     \includegraphics[width=\textwidth]{images/evaluation/grad_cam/vis}
-    \caption{Positive VIS example}
+    \caption{Desirable VIS example.}
     \label{fig:grad_cam_vis}
   \end{subfigure}
   \quad
   \begin{subfigure}[h!]{0.45\textwidth}
     \includegraphics[width=\textwidth]{images/evaluation/grad_cam/lwir}
-    \caption{Positive LWIR example}
+    \caption{Desirable LWIR example.}
     \label{fig:grad_cam_lwir}
   \end{subfigure}
-  \caption{Grad-CAM visualisation of four example images.}
-  \label{grad_cam}
+  \caption{Grad-CAM visualisation of four example images. Warmer colours correspond to more attention by the last convolutional layer of the network. The left images are the VIS images and corresponding heatmaps. The LWIR image and heatmap can be seen in the right images.}
+  \label{fig:grad_cam}
 \end{figure}
+
+Figure \ref{fig:grad_cam_pos} shows a desirable example. Both final convolutional layers of the network focus on the head and feet of the alpaca to identify the class. This implies high generalisability even for images in different environments.
+
+However, the network does not always focus on the desired relevant parts of the images. In the example shown in Figure \ref{fig:grad_cam_neg}, both the VIS and LWIR branches of the network do not focus on the muscovy duck. Instead, attention is directed towards the environment, such as the grass texture. It is unlikely that the network will be able to predict similar images with a different background.
+
+The remaining two subfigures display examples where only either the VIS or LWIR branches of the network focus on the animals. These cases demonstrate an advantage of the multi-branch approach. The network performs better overall, as it can rely on the features of two semi-redundant branches.
 
 
 \subsection{Accuracy at different lighting conditions}
@@ -1235,7 +1243,7 @@ It can, therefore, be concluded that the model is working correctly in the mobil
 
 \subsection{Performance and latency}
 
-The application was installed on a OnePlus 7 Android device to evaluate the latency of real-time classification. TensorFlow Lite was configured to use the device's GPU for predictions to guarantee the best possible performance. The RGB-only and feature-level fusion configurations of the custom ResNet were evaluated by running the application in classification mode andperforming 1000 predictions. The application displays the mean and standard deviation of classification times since launch. 
+The application was installed on a OnePlus 7 Android device to evaluate the latency of real-time classification. TensorFlow Lite was configured to use the device's GPU for predictions to guarantee the best possible performance. The RGB-only and feature-level fusion configurations of the custom ResNet were evaluated by running the application in classification mode and performing 1000 predictions. The application displays the mean and standard deviation of classification times since launch. 
 
 Whereas the RGB-only model took an average of $40.99 ms$, $\sigma = 4.55 ms$ for a single prediction, the feature-fusion model performed a prediction every $70.24 ms$, $\sigma = 6.79 ms$. This equates to $14.24$ predictions per second, which is significantly higher than the sensor frame rate of $8.7 Hz$. Thus, we conclude that the the multispectral model is suitable for real-time classification tasks on edge devices.
 

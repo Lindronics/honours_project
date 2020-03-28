@@ -839,7 +839,7 @@ What did you do to implement this idea, and what technical achievements did you 
 
 \subsection{Mobile application development}
 
-The mobile application was developed using Android Studio and the Java programming language. To communicate with the FLIR sensor, we used the FLIR Thermal SDK for Android. A continuous delivery (CD) build pipeline was set up using GitHub Actions to verify that changes to the application do not include build-breaking issues. To achieve this, the pipeline automatically downloads software dependencies, such as the FLIR SDK, compiles the application and provides a downloadable and installable APK file.
+The mobile application was developed using Android Studio and the Java programming language. To communicate with the FLIR sensor, we used the FLIR Thermal SDK for Android. A continuous delivery (CD) build pipeline was set up using GitHub Actions to verify that changes to the application do not include build-breaking bugs. To achieve this, the pipeline automatically downloads software dependencies, such as the FLIR SDK, compiles the application and provides a downloadable and installable APK file.
 
 \subsection{Deep learning and image processing}
 
@@ -1133,25 +1133,25 @@ Figure \ref{fig:test_tsne} shows the result of applying t-SNE to the validation 
 \begin{figure}[ht]
   \centering
   \begin{subfigure}[h!]{0.4\textwidth}
-    \includegraphics[width=\textwidth]{images/evaluation/embedding/test/input}
+    \includegraphics[width=\textwidth]{images/evaluation/embedding/val/input}
     \caption{Input image.}
     \label{fig:test_tsne_input}
   \end{subfigure}
   \quad
   \begin{subfigure}[h!]{0.4\textwidth}
-    \includegraphics[width=\textwidth]{images/evaluation/embedding/test/vis}
+    \includegraphics[width=\textwidth]{images/evaluation/embedding/val/vis}
     \caption{Output of final conv layer of VIS branch.}
     \label{fig:test_tsne_vis}
   \end{subfigure}
 
   \begin{subfigure}[h!]{0.4\textwidth}
-    \includegraphics[width=\textwidth]{images/evaluation/embedding/test/lwir}
+    \includegraphics[width=\textwidth]{images/evaluation/embedding/val/lwir}
     \caption{Output of final conv layer of LWIR branch.}
     \label{fig:test_tsne_lwir}
   \end{subfigure}
   \quad
   \begin{subfigure}[h!]{0.4\textwidth}
-    \includegraphics[width=\textwidth]{images/evaluation/embedding/test/fc}
+    \includegraphics[width=\textwidth]{images/evaluation/embedding/val/fc}
     \caption{Output of final fully-connected layer.}
     \label{fig:test_tsne_fc}
   \end{subfigure}

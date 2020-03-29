@@ -807,6 +807,7 @@ The residual blocks are arranged in two groups of three. The convolutional kerne
 
 
 \section{Transfer learning using a pre-trained ResNet}
+\label{transfer_learning}
 
 An attempt was made to make use of transfer learning. We decided to evaluate an RGB-only, LWIR-only and feature fusion configuration of a pretrained network. 
 
@@ -1233,7 +1234,13 @@ Furthermore, the LWIR-only network has a high loss on samples with low LWIR mean
 
 \subsection{Comparison against the baseline}
 
-As shown in Figure \ref{fig:}
+As shown in Figure \ref{fig:resnet_configs}, the final late feature-fusion model outperforms the visible-light-only baseline. It converges after around 50 epochs and remains fairly stable. The final f1-score of $80\%$ is a significant improvement over the $74\%$ achieved by the VIS-only network. We, therefore, conclude that this architecture yields a tangible benefit to our computer vision system.
+
+To put these results into a relevant context, we compared the final classifier to a second, state-of-the-art baseline. This model, as described in \ref{transfer_learning}, is an instance of ResNet152 v2 that has been pre-trained on the ImageNet dataset and transfer-trained on our dataset.
+
+The full training history is shown in Appendix \ref{appendix_baseline} (XXX insert). The VIS-only classifier achieved a final f1-score of $89\%$, significantly outperforming our best model. Our attempts to create a pre-trained late feature fusion model using the ImageNet data for the VIS branch and the FLIR dataset for the LWIR branch did not improve this baseline (XXX insert final score).
+
+Since larger training datasets usually result in more generalisable models and ImageNet contains over a million annotated samples, this result is unsurprising. As a consequence of the aforementioned increased performance of the multispectral model compared to the VIS-only variant, we deem it likely that the pre-traiend baseline could be beat given a large enough dataset.
 
 
 %----------------------------------------------------------------------------------------------------------------------------------
@@ -1366,6 +1373,9 @@ Finally, for applications with stationary systems such as intruder detection or 
   \caption{Training and validation loss and accuracy of different configurations of the ResNet implementation.}
   \label{fig:resnet_configs_app}
 \end{figure}
+
+\chapter{Baseline}
+\label{appendix_baseline}
 
 \chapter{Appendices}
 

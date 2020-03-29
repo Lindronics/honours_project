@@ -1263,8 +1263,9 @@ Whereas the RGB-only model took an average of $40.99 ms$, $\sigma = 4.55 ms$ for
 \end{enumerate}
 
 %==================================================================================================================================
-\chapter{Conclusion}    
-\textit{Summarise the whole project for a lazy reader who didn't read the rest (e.g. a prize-awarding committee).}
+\chapter{Conclusion}
+
+\section{Summary}
 
 This dissertation explored the benefits and drawbacks of multispectral image classification with a thermal and visible light camera. A classifier based on the ResNet deep learning architecture was developed, achieving a validation f1-score of $80\%$.
 
@@ -1274,17 +1275,19 @@ The classifier has been successfully deployed to a mobile edge device and can be
 
 However, our model was not able to beat the second proposed baseline of a state-of-the art VIS-only classifier that was pre-trained on the ImageNet dataset. Attempts to perform transfer learning on an LWIR classifier did not manage to improve our model's performance. We conclude that the lack of available thermal datasets remains a signficant problem for the development of LWIR-based computer vision systems.
 
-Furthermore, our t-SNE and saliency analysis of the final model reveals problems with bias and overfitting on the environment. Nonetheless, we conclude that our multi-branch network architecture increases the system's robustness by providing more redundant features (XXX rephrase).
+Furthermore, our t-SNE and saliency analysis of the final model reveals problems with bias and overfitting on the environment. These issues are likely a result of a noisy and insufficiently diverse dataset.
+
+Nonetheless, our evaluation suggests that our multi-branch network architecture increases the system's robustness by providing more redundant features (XXX rephrase). We conclude that thermal multispectral imaging can significantly improve the performance of deep learning models for the recognition of animals.
 
 %----------------------------------------------------------------------------------------------------------------------------------
 
 \section{Future work}
 
-\subsection{Object detection}
+We attempted to increase the generalisability of our classifier by generating artificial LWIR data using a convolutional autoencoder. Since the scale of this experiment was limited, no reliable conclusion about the effectiveness of this strategy could be drawn. To further evaluate the feasability of incorporating artifically generated data into the training process, a generative adversarial network could be designed and applied to a sufficiently large visible light dataset.
 
-\subsection{Movement segmentation}
+Moreover, many generalisation problems of our model are likely a result of poorly framed input images. Furthermore, the framing of objects is likely to be noisy when using the mobile application. A more robust approach for this usage scenario could involve the development of an object detection model. Such a model would support the detection of multiple objects in a single image at varying distances and positions. State-of-the-art architectures such as YOLO \citep{redmon_you_2016, redmon_yolov3_2018} promise low inference times and might be suitable for this task. 
 
-\section{Acknowledgements}
+Finally, for applications with stationary systems such as intruder detection or wildlife tracking, a model (XXX).
 
 %==================================================================================================================================
 %

@@ -1126,6 +1126,7 @@ The chicken and muscovy duck classes suffer especially from low precision. This 
 
 
 \subsection{t-SNE}
+\label{tsne}
 
 To further analyse these findings, we made use of t-distributed stochastic neighbour embedding (t-SNE), which was first introduced by \citet{maaten_visualizing_2008}. t-SNE is a dimensionality reduction technique for the visualisation of high-dimensional data. By flattening each image into a single vector, we obtain high-dimensional data points that t-SNE can be applied to. The result is a 2-D representation of the images that can be easily plotted and inspected. The same process can be applied to the outputs of the layers of the neural network.
 
@@ -1213,16 +1214,26 @@ The remaining two subfigures display examples where only either the VIS or LWIR 
 
 \subsection{Accuracy at different lighting conditions}
 
+As discussed in Section \ref{modality}, the modality difference between VIS and LWIR images suggests that thermal imaging systems should perform better in low-light conditions compared to visible-light-only systems.
+
+To evaluate the relationship between classification performance and illumination, we calculated the mean and standard deviation of all pixel values of each image in the validation dataset. We then determined the cross entropy loss of each prediction by the VIS-only, LWIR-only and late feature-fusion ResNets and plotted it as a function of mean and standard deviation. The results are shown in Figure \ref{fig:illumination}.
+
 \begin{figure}[ht]
   \centering
   \includegraphics[width=0.8\textwidth]{images/evaluation/illumination}
-  \caption{Cross entropy loss as a function of intensity mean and std of VIS and LWIR images in the validation dataset.}
+  \caption{Cross entropy loss as a function of intensity mean and std of VIS and LWIR images in the validation dataset. The data has been smoothened with a running mean to show general trends.}
   \label{fig:illumination}
 \end{figure}
 
+The overall result defies the expected behaviour of the models. It can be seen that the LWIR-only network performs significantly worse than its VIS-only and late feature fusion counterparts on low-light images. This further supports the theory we formulated in Section \ref{tsne}. The LWIR-only network likely uses the darkness of the cat images as a biased feature of the cat class, giving it near perfect performance.
+
+Since the LWIR band is not sensitive to illumination, the cat pictures do not generally stand out compared to in the VIS images. To obtain more robust results, a dataset with more well-balanced illumination levels would have to be acquired.
+
+Furthermore, the LWIR-only network has a high loss on samples with low LWIR mean intensity. A possible explanation for this is the lack of visible features in these images. 
+
 \subsection{Comparison against the baseline}
 
-
+As shown in Figure \ref{fig:}
 
 
 %----------------------------------------------------------------------------------------------------------------------------------

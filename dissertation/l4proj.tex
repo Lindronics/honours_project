@@ -1213,6 +1213,10 @@ The remaining two subfigures display examples where only either the VIS or LWIR 
 
 \subsection{Accuracy at different lighting conditions}
 
+\subsection{Comparison against baseline}
+
+
+
 
 %----------------------------------------------------------------------------------------------------------------------------------
 
@@ -1260,7 +1264,17 @@ Whereas the RGB-only model took an average of $40.99 ms$, $\sigma = 4.55 ms$ for
 
 %==================================================================================================================================
 \chapter{Conclusion}    
-Summarise the whole project for a lazy reader who didn't read the rest (e.g. a prize-awarding committee).
+\textit{Summarise the whole project for a lazy reader who didn't read the rest (e.g. a prize-awarding committee).}
+
+This dissertation explored the benefits and drawbacks of multispectral image classification with a thermal and visible light camera. A classifier based on the ResNet deep learning architecture was developed, achieving a validation f1-score of $80\%$.
+
+Our evaluation demonstrates that a model based on late feature-level fusion of the thermal and visible light features, similar to \citet{wagner_multispectral_2016} clearly outperforms the VIS-only baseline. This is the case even in settings with sufficient illumination.
+
+The classifier has been successfully deployed to a mobile edge device and can be run in real-time with tolerable latency. This demonstrates the suitability of the system for mobile environments with low computational power, such as phones and self-driving cars.
+
+However, our model was not able to beat the second proposed baseline of a state-of-the art VIS-only classifier that was pre-trained on the ImageNet dataset. Attempts to perform transfer learning on an LWIR classifier did not manage to improve our model's performance. We conclude that the lack of available thermal datasets remains a signficant problem for the development of LWIR-based computer vision systems.
+
+Furthermore, our t-SNE and saliency analysis of the final model reveals problems with bias and overfitting on the environment. Nonetheless, we conclude that our multi-branch network architecture increases the system's robustness by providing more redundant features (XXX rephrase).
 
 %----------------------------------------------------------------------------------------------------------------------------------
 
@@ -1282,6 +1296,13 @@ Summarise the whole project for a lazy reader who didn't read the rest (e.g. a p
 
 \chapter{Grid search results}
 \label{appendix_grid_search}
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.6\textwidth]{images/evaluation/gridsearch/comparison.png}
+  \caption{Validation f1-score of all classifiers and all configurations.}
+  \label{fig:gridsearch_bar}
+\end{figure}
 
 \begin{figure}[ht]
   \centering

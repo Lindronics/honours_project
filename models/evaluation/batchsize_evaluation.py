@@ -4,7 +4,7 @@ import pickle
 import numpy as np
 import matplotlib.pyplot as plt
 
-OUT_PATH = "/Users/lindronics/workspace/4th_year/out/batch_size_lr_10-5"
+OUT_PATH = "/Users/lindronics/workspace/4th_year/out/batch_size"
 
 hists = {}
 for path, _, files in os.walk(OUT_PATH):
@@ -48,4 +48,5 @@ ax_val_acc.legend()
 # fig.suptitle("asdf")
 fig.tight_layout()
 
+fig.savefig("output.pdf")
 plt.show()

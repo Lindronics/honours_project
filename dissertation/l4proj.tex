@@ -1016,7 +1016,7 @@ Multiple configurations of train/test split were attempted. Splitting the data w
 \begin{figure}[ht]
   \centering
   \begin{subfigure}[h!]{0.42\textwidth}
-    \includegraphics[width=\textwidth, trim={0cm 0cm 0cm 0.7cm}, clip=true]{images/evaluation/stratified/accuracy.png}
+    \includegraphics[width=\textwidth, trim={0cm 0cm 0cm 0cm}, clip=true]{images/evaluation/stratified/accuracy}
     \caption{Accuracy over training epochs.}
     \label{fig:acc_stratified}
   \end{subfigure}
@@ -1062,7 +1062,7 @@ The complete loss and accuracy history of all models and configurations are show
 
 \begin{figure}[ht]
   \centering
-  \includegraphics[width=0.8\textwidth]{images/evaluation/gridsearch/resnet.png}
+  \includegraphics[width=0.8\textwidth]{images/evaluation/gridsearch/ResNet}
   \caption{Training and validation loss and accuracy of different configurations of the ResNet implementation.}
   \label{fig:resnet_configs}
 \end{figure}
@@ -1087,7 +1087,7 @@ To evaluate the effect of different batch sizes on the validation accuracy of ou
 
 \begin{figure}[ht]
   \centering
-  \includegraphics[width=0.8\textwidth]{images/evaluation/batch_size/history.png}
+  \includegraphics[width=0.8\textwidth]{images/evaluation/batch_size/history}
   \caption{Training and validation loss and accuracy with varying batch sizes.}
   \label{fig:batch_size}
 \end{figure}
@@ -1134,25 +1134,25 @@ Figure \ref{fig:test_tsne} shows the result of applying t-SNE to the validation 
 \begin{figure}[ht]
   \centering
   \begin{subfigure}[h!]{0.4\textwidth}
-    \includegraphics[width=\textwidth]{images/evaluation/embedding/val/input}
+    \includegraphics[width=\textwidth, trim={1cm 1cm 1cm 1cm}, clip]{images/evaluation/embedding/val/input}
     \caption{Input image.}
     \label{fig:test_tsne_input}
   \end{subfigure}
   \quad
   \begin{subfigure}[h!]{0.4\textwidth}
-    \includegraphics[width=\textwidth]{images/evaluation/embedding/val/vis}
+    \includegraphics[width=\textwidth, trim={1cm 1cm 1cm 1cm}, clip]{images/evaluation/embedding/val/vis}
     \caption{Output of final conv layer of VIS branch.}
     \label{fig:test_tsne_vis}
   \end{subfigure}
 
   \begin{subfigure}[h!]{0.4\textwidth}
-    \includegraphics[width=\textwidth]{images/evaluation/embedding/val/lwir}
+    \includegraphics[width=\textwidth, trim={1cm 1cm 1cm 1cm}, clip]{images/evaluation/embedding/val/lwir}
     \caption{Output of final conv layer of LWIR branch.}
     \label{fig:test_tsne_lwir}
   \end{subfigure}
   \quad
   \begin{subfigure}[h!]{0.4\textwidth}
-    \includegraphics[width=\textwidth]{images/evaluation/embedding/val/fc}
+    \includegraphics[width=\textwidth, trim={1cm 1cm 1cm 1cm}, clip]{images/evaluation/embedding/val/fc}
     \caption{Output of final fully-connected layer.}
     \label{fig:test_tsne_fc}
   \end{subfigure}
@@ -1213,7 +1213,14 @@ The remaining two subfigures display examples where only either the VIS or LWIR 
 
 \subsection{Accuracy at different lighting conditions}
 
-\subsection{Comparison against baseline}
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.8\textwidth]{images/evaluation/illumination}
+  \caption{Cross entropy loss as a function of intensity mean and std of VIS and LWIR images in the validation dataset.}
+  \label{fig:illumination}
+\end{figure}
+
+\subsection{Comparison against the baseline}
 
 
 
@@ -1323,28 +1330,28 @@ Finally, for applications with stationary systems such as intruder detection or 
 
 \begin{figure}[ht]
   \centering
-  \includegraphics[width=0.6\textwidth]{images/evaluation/gridsearch/comparison.png}
+  \includegraphics[width=0.6\textwidth]{images/evaluation/gridsearch/comparison}
   \caption{Validation f1-score of all classifiers and all configurations.}
   \label{fig:gridsearch_bar}
 \end{figure}
 
 \begin{figure}[ht]
   \centering
-  \includegraphics[width=0.8\textwidth]{images/evaluation/gridsearch/customnet.png}
+  \includegraphics[width=0.8\textwidth]{images/evaluation/gridsearch/CustomNet}
   \caption{Training and validation loss and accuracy of different configurations of the custom net.}
   \label{fig:customnet_configs}
 \end{figure}
 
 \begin{figure}[ht]
   \centering
-  \includegraphics[width=0.8\textwidth]{images/evaluation/gridsearch/alexnet.png}
+  \includegraphics[width=0.8\textwidth]{images/evaluation/gridsearch/AlexNet}
   \caption{Training and validation loss and accuracy of different configurations of the AlexNet implementation.}
   \label{fig:alexnet_configs}
 \end{figure}
 
 \begin{figure}[ht]
   \centering
-  \includegraphics[width=0.8\textwidth]{images/evaluation/gridsearch/resnet.png}
+  \includegraphics[width=0.8\textwidth]{images/evaluation/gridsearch/ResNet}
   \caption{Training and validation loss and accuracy of different configurations of the ResNet implementation.}
   \label{fig:resnet_configs_app}
 \end{figure}

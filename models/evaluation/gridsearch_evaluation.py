@@ -51,5 +51,5 @@ for model in hists:
     # fig.suptitle(model)
     fig.tight_layout()
 
-
+    plt.savefig(f"{model}.pdf")
     plt.show()

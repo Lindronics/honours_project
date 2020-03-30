@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 anchors_path = "preprocessing/registration_anchors.json"
 vis_res = np.array([1080, 1440])
 lwir_res = np.array([460, 640])
-target_res = np.array([120, 160])
+target_res = np.array([460, 640])
 
 def scale(points, res):
     return (points * target_res / res).astype(np.int32)

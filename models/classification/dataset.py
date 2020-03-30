@@ -92,8 +92,8 @@ class Dataset(K.utils.Sequence):
         img = tf.image.decode_jpeg(img, channels=3)
         img = tf.image.convert_image_dtype(img, tf.float32).numpy()
         if register:
-            img = cv2.resize(img, tuple(cfg.small.res))
-            img = cv2.warpAffine(img, cfg.small.matrix, tuple(cfg.small.res))
+            img = cv2.resize(img, tuple(cfg.large.res))
+            img = cv2.warpAffine(img, cfg.large.matrix, tuple(cfg.large.res))
         img = cv2.resize(img, self.res)
         return img
 

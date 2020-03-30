@@ -32,6 +32,7 @@ ax.scatter(X[:, 1], y[:, 1], alpha=0.3, label="vertical")
 ax.set_xlabel("Visible light coordinate")
 ax.set_ylabel("LWIR coordinate")
 ax.legend()
+fig.savefig("x_y.pdf")
 plt.show()
 
 # Fit model
@@ -59,6 +60,7 @@ fig, ax = plt.subplots(figsize=(3.5, 2.5))
 # plt.barh(np.arange(len(loss)), loss, tick_label=subsets)
 ax.barh(np.arange(len(df)), df.loss, tick_label=df.index)
 ax.set_xlabel("Mean euclidean distance")
+fig.savefig("error.pdf", bbox_inches="tight")
 plt.show()
 
 print("Images:", len(images))

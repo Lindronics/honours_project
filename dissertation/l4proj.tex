@@ -689,17 +689,17 @@ Prior experiments showed that the required transformation seems to be mostly con
 
 \begin{figure}[ht]
   \centering
-  \begin{subfigure}[h!]{0.45\textwidth}
-    \includegraphics[width=\textwidth]{images/registration/error.png}
+  \begin{subfigure}[t]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{images/registration/error}
     \caption{Mean distance between predicted and actual LWIR coordinates.}
     \label{fig:registration_error}
   \end{subfigure}
-  \begin{subfigure}[h!]{0.45\textwidth}
-    \includegraphics[width=\textwidth]{images/registration/x_y.png}
+  \begin{subfigure}[t]{0.4\textwidth}
+    \includegraphics[width=\textwidth]{images/registration/x_y}
     \caption{Relationship between reference points in VIS and LWIR images.}
     \label{fig:registration_relationship}
   \end{subfigure}
-  \caption{Manual alignment results.}
+  \caption{Manual alignment results. (XXX fix alignment)}
 \end{figure}
 
 To quantitatively evaluate whether the transformation parameters generalise across all images, the mean euclidean distance between the actual LWIR coordinates and the ones predicted by the regression model was computed for every class in the dataset. The results can be seen in Figure \ref{fig:registration_error}. The highest mean distance is around 2, which we consider small considering the image resolution. It is very likely that these errors are due to noise in the manually determined reference points. The mean distance across all reference points in the dataset was determined to be around 1.777 with $\sigma = 0.589$.
@@ -1038,8 +1038,6 @@ Figure \ref{fig:heatmap_stratified} shows two example class activation heatmaps 
 
 Fitting the models on the training dataset as defined in Section \ref{classes_samples}, validation scores dropped significantly. This was in accordance with our expectations, as the samples from the training and validation datasets are mostly independent. Therefore, the models are not able to overfit on the whole dataset anymore and the validation score is more representative of potential performance on new data.
 
-\subsection{Image resolutions}
-
 \subsection{Data augmentation}
 
 \subsection{Generation of artificial data}
@@ -1076,15 +1074,6 @@ The confusion matrices in Figure \ref{fig:auto_confusion} show that the amount o
 To determine the configuration with the best performance out of all proposed models, we ran a grid search as described in Section \ref{gridsearch_impl}. All models were trained for 80 epochs with a batch size of 32 samples. We chose Adam as the optimiser with a learning rate of $10^{-6}$. 
 
 The complete loss and accuracy history of all models and configurations are shown in Appendix \ref{appendix_grid_search}. Overall, the custom CNN yielded the lowest performance out of the three models. This is unsurprising, given the small number of trainable parameters compared to the other two models.
-
-
-
-% \begin{figure}[ht]
-%   \centering
-%   \includegraphics[width=0.6\textwidth]{images/evaluation/kernels/alexnet_color.png}
-%   \caption{First 91 kernels of the first convolutional layer $(3 \rightarrow 96)$ of AlexNet in RGB-only configuration.}
-%   \label{fig:kernels_alexnet}
-% \end{figure}
 
 \begin{figure}[ht]
   \centering

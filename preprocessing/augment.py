@@ -133,12 +133,13 @@ if __name__ == "__main__":
     parser.add_argument("labels_path", help="Output file path for labels file")
     parser.add_argument("multiplier", help="Multiplier")
     parser.add_argument("-d", "--downsample", dest="downsample", help="Downsample to 160x120", action="store_true")
+    parser.add_argument("-r", "--register", dest="register", help="Register images", action="store_true")
     args = vars(parser.parse_args())
 
     res = (120, 160) if args["downsample"] else (480, 640)
 
     labels = generate_labels(lambda x: True, args["in_path"], channel_prefix=True)
-    new_labels = augment_dataset(labels, args["out_path"], multiplier=int(args["multiplier"]), register=True, res=res)
+    new_labels = augment_dataset(labels, args["out_path"], multiplier=int(args["multiplier"]), register=bool(args["register"]), res=res)
     write_labels(new_labels, args["labels_path"])
     
     print("\nFinished.")

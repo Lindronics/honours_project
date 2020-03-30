@@ -10,6 +10,9 @@
 \usepackage{booktabs}
 \usepackage{graphicx}
 \usepackage[export]{adjustbox}
+\usepackage{newfloat}
+
+\DeclareFloatingEnvironment[placement={!ht},name=List]{captionedList}
 
 \begin{document}
 
@@ -1041,6 +1044,28 @@ Fitting the models on the training dataset as defined in Section \ref{classes_sa
 
 \subsection{Generation of artificial data}
 
+We used the autoencoder from Section \ref{autoencoder_implementation} to predict the LWIR signatures of ten images retrieved from Wikimedia Commons (Appendix \ref{appendix_autoencoder}). We then selected a subset of our training dataset, containing images of the \textit{pony}, \textit{alpaca} and \textit{chicken} classes. A second copy of this dataset was created and the ten predicted images were appended to the \textit{pony} class.
+
+The custom ResNet in late feature-fusion configuration was trained on both datasets. The full classification scores can be inspected in Appendices \ref{table:auto_scores_normal} and \ref{table:auto_scores_auto}. 
+
+\begin{figure}[ht]
+  \centering
+  \begin{subfigure}[h!]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{images/evaluation/autoencoder/confusion_normal}
+    \caption{Without generated images.}
+    \label{fig:auto_confusion_normal}
+  \end{subfigure}
+  \begin{subfigure}[h!]{0.3\textwidth}
+    \includegraphics[width=\textwidth]{images/evaluation/autoencoder/confusion_autoencoder}
+    \caption{With generated images.}
+    \label{fig:auto_confusion_auto}
+  \end{subfigure}
+  \caption{Confusion matrix of the custom ResNet in late feature-fusion configuration on a simplified training dataset including and excluding artificially generated samples.}
+  \label{fig:auto_confusion}
+\end{figure}
+
+The confusion matrices in Figure \ref{fig:auto_confusion} show that the amount of correctly classified ponies has indeed increased after including the artificially generated samples. However, more chicken and alpacas are mistakenly classified as ponies. In numbers, the recall of the \textit{pony} class improved from $0.80$ to $0.87$, while the precision dropped from $0.73$ to $0.69$. The weighted average f1-score across the dataset remains unchanged at $0.82$.
+
 %----------------------------------------------------------------------------------------------------------------------------------
 
 \section{Hyperparameters}
@@ -1322,6 +1347,8 @@ Finally, for applications with stationary systems such as intruder detection or 
 
 \begin{appendices}
 
+%==================================================================================================================================
+
 \chapter{Multispectral CNN configurations}
 \label{appendix_arch}
 
@@ -1342,6 +1369,59 @@ Finally, for applications with stationary systems such as intruder detection or 
   \includegraphics[width=0.6\textwidth]{images/models/keras/fusion.png}
   \caption{Architecture of AlexNet in late feature fusion configuration.}
 \end{figure}
+
+%==================================================================================================================================
+
+\chapter{Autoencoder images}
+\label{appendix_autoencoder}
+
+\begin{captionedList}
+  \begin{enumerate}
+    \item{\url{https://commons.wikimedia.org/wiki/File:Shetland_pony_in_the_snow,_Baltasound_-_geograph.org.uk_-_1691743.jpg}}
+    \item{\url{https://commons.wikimedia.org/wiki/File:Sandwick_Shetland_Pony.jpg}}
+    \item{\url{https://commons.wikimedia.org/wiki/File:Shetland_pony_(2).jpg}}
+    \item{\url{https://commons.wikimedia.org/wiki/File:Grey_Shetland_pony_-_geograph.org.uk_-_1606748.jpg}}
+    \item{\url{https://commons.wikimedia.org/wiki/File:Shetland_Ponies_and_Iron_Horse,_Huxter,_Whalsay,_Shetland_-_geograph.org.uk_-_145763.jpg}}
+    \item{\url{https://commons.wikimedia.org/wiki/File:Shetland_ponies_at_Sandwick.jpg}}
+    \item{\url{https://commons.wikimedia.org/wiki/File:Pony_at_Mosedale.jpg}}
+    \item{\url{https://commons.wikimedia.org/wiki/File:Pony_on_Lund_beach_-_geograph.org.uk_-_1741711.jpg}}
+    \item{\url{https://commons.wikimedia.org/wiki/File:Fell_ponies,_West_Fell.jpg}}
+    \item{\url{https://commons.wikimedia.org/w/index.php?title=Special:Search&limit=20&offset=420&profile=default&search=shetland+pony&advancedSearch-current=%7B%7D&ns0=1&ns6=1&ns12=1&ns14=1&ns100=1&ns106=1#/media/File:Jielbeaumadier_cheval_5_scva_paris_2012.jpeg}}
+  \end{enumerate}
+  \caption{Image sources for the autoencoder. All images retrieved under the Creative Commons licence.}
+\end{captionedList}
+
+\begin{table}[ht]
+  \centering
+  \begin{tabular}{@{}lllll@{}}
+  \toprule
+                        & \textbf{precision} & \textbf{recall} & \textbf{f1-score} &  \\ \midrule
+  Pony                  & 0.73               & 0.80            & 0.77              &  \\
+  Alpaca                & 1.00               & 0.60            & 0.75              &  \\
+  Chicken               & 0.80               & 0.99            & 0.89              &  \\
+  \midrule
+  \textbf{Weighted avg} & \textbf{0.85}      & \textbf{0.82}   & \textbf{0.82}     &  \\ \bottomrule
+  \end{tabular}
+  \caption{Precision, recall and f1-score of the custom ResNet in late feature fusion configuration on the simplified dataset including artificially generated samples.}
+  \label{table:auto_scores_normal}
+\end{table}
+
+\begin{table}[ht]
+  \centering
+  \begin{tabular}{@{}lllll@{}}
+  \toprule
+                        & \textbf{precision} & \textbf{recall} & \textbf{f1-score} &  \\ \midrule
+  Pony                  & 0.69               & 0.87            & 0.77              &  \\
+  Alpaca                & 1.00               & 0.60            & 0.75              &  \\
+  Chicken               & 0.84               & 0.97            & 0.90              &  \\
+  \midrule
+  \textbf{Weighted avg} & \textbf{0.86}      & \textbf{0.83}   & \textbf{0.82}     &  \\ \bottomrule
+  \end{tabular}
+  \caption{Precision, recall and f1-score of the custom ResNet in late feature fusion configuration on the simplified dataset including artificially generated samples.}
+  \label{table:auto_scores_auto}
+\end{table}
+
+%==================================================================================================================================
 
 \chapter{Grid search results}
 \label{appendix_grid_search}
@@ -1376,6 +1456,8 @@ Finally, for applications with stationary systems such as intruder detection or 
 
 \chapter{Baseline}
 \label{appendix_baseline}
+
+%==================================================================================================================================
 
 \chapter{Appendices}
 

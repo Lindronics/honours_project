@@ -54,10 +54,10 @@ spec:
           requests:
             # the "m" suffix here means "millicores", so 1 physical CPU
             # core = 1000m. this container requests 2000m = 2 physical cores
-            cpu: "4000m" 
+            cpu: "2000m" 
             # memory units are also defined by a suffix. typically this will
             # be "Mi" or "Gi" as appropriate
-            memory: "64Gi"
+            memory: "32Gi"
             # GPUs are slightly different as they're not natively supported
             # by Kubernetes. This indicates that the container requires 1 
             # GPU in order to run
@@ -72,8 +72,8 @@ spec:
           # one GPU, the cluster will only allocate a single GPU to your container, 
           # and the others will not be visible to code inside it
           limits:
-            cpu: "8000m" 
-            memory: "64Gi"
+            cpu: "4000m" 
+            memory: "32Gi"
             nvidia.com/gpu: 1 
         # this says "mount the external volume 'nfs-access' at the location /nfs
         # inside this container"

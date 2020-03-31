@@ -475,17 +475,17 @@ Finally, the subsets from the raw datasets were rearranged into a training datas
 
 \begin{table}[ht]
   \centering
-  \begin{tabular}{@{}lllll@{}}
+  \begin{tabular}{@{}lll@{}}
     \toprule
-    \textbf{Class}  & \textbf{Train } & \textbf{Val.} & \textbf{Train subsets}  & \textbf{Val. subsets} \\ \midrule
-    Cat             & 149             & 56                  & 3                 & 1 \\
-    Pony            & 415             & 58                  & 5                 & 4 \\
-    Alpaca          & 377             & 87                  & 4                 & 2 \\
-    Hamburg chicken & 77              & 59                  & 3                 & 3 \\
-    Silkie chicken  & 191             & 38                  & 3                 & 2 \\
-    Muscovy duck    & 206             & 64                  & 6                 & 4 \\
-    Chicken         & 277             & 119                 & 10                & 2 \\
-    Goose           & 125             & 19                  & 1                 & 1 \\ \bottomrule
+    \textbf{Class}  & \textbf{Train (subsets)} & \textbf{Validation (subsets)} \\ \midrule
+    Cat             & 149 (3)                  & 56  (1)        \\
+    Pony            & 415 (5)                  & 58  (4)        \\
+    Alpaca          & 377 (4)                  & 87  (2)        \\
+    Hamburg chicken & 77  (3)                  & 59  (3)        \\
+    Silkie chicken  & 191 (3)                  & 38  (2)        \\
+    Muscovy duck    & 206 (6)                  & 64  (4)        \\
+    Chicken         & 277 (10)                 & 119 (2)        \\
+    Goose           & 125 (1)                  & 19  (1)        \\ \bottomrule
   \end{tabular}
   \caption{Sample size and subset composition of train and validation datasets.}
   \label{table:train_test_dataset}
@@ -661,12 +661,12 @@ Considering these results, we concluded that NTG does not appear to be a suitabl
 \begin{figure}[ht]
   \centering
   \begin{subfigure}[h!]{0.45\textwidth}
-    \includegraphics[width=\textwidth]{images/registration/gradient_distribution.png}
+    \includegraphics[width=\textwidth]{images/registration/gradient_distribution}
     \caption{LAB intensity of visible light image vs thermal intensity at $640 \times 420$ px}
     \label{fig:gradient_distribution}
   \end{subfigure}
   \begin{subfigure}[h!]{0.45\textwidth}
-    \includegraphics[width=\textwidth]{images/registration/gradient_distribution_red_green.png}
+    \includegraphics[width=\textwidth]{images/registration/gradient_distribution_red_green}
     \caption{Red channel intensity vs green channel intensity at $640 \times 420$ px}
     \label{fig:gradient_distribution_red_green}
   \end{subfigure}

@@ -21,19 +21,23 @@
 %% METADATA
 \title{Deep neural networks for classification of multispectral images}
 \author{Niklas Lindorfer}
-\date{September 26, 2019}
+\date{April 5, 2020}
 
 \maketitle
 
 %==============================================================================
 %% ABSTRACT
 \begin{abstract}
-    Every abstract follows a similar pattern. Motivate; set aims; describe work; explain results.
-    \vskip 0.5em
-    ``XYZ is bad. This project investigated ABC to determine if it was better. 
-    ABC used XXX and YYY to implement ZZZ. This is particularly interesting as XXX and YYY have
-    never been used together. It was found that  
-    ABC was 20\% better than XYZ, though it caused rabies in half of subjects.''
+    % Every abstract follows a similar pattern. Motivate; set aims; describe work; explain results.
+    % \vskip 0.5em
+    % ``XYZ is bad. This project investigated ABC to determine if it was better. 
+    % ABC used XXX and YYY to implement ZZZ. This is particularly interesting as XXX and YYY have
+    % never been used together. It was found that  
+    % ABC was 20\% better than XYZ, though it caused rabies in half of subjects.''
+    Many conventional image recognition systems are constrained by the limitations of wavelengths visible to the human eye.
+    This project explores the benefits and drawbacks of incorporating thermal images into image classification models. Several neural network architectures for multispectral images based on state-of-the art models were evaluated on a multi-class dataset of animals.
+    The final model significantly outperforms a comparable visible-light-only system, increasing the classification f1-score from $74\%$ to $80\%$. However, the proposed system is unable to beat a state-of-the-art model that has been pre-trained on ImageNet and transfer-learned on the custom animals dataset.
+    The model was successfully deployed to an Android mobile application, enabling real-time classification of animals for devices equipped with a thermal camera.
 \end{abstract}
 
 %==============================================================================
@@ -91,29 +95,40 @@
 
 \section{Motivation}
 
-Deep convolutional neural networks have achieved impressive results on image classification tasks. The majority of image classification systems is trained on conventional visible light images. 
+Deep convolutional neural networks have achieved impressive results on image classification tasks. The majority of image classification systems is trained on conventional visible light images. Conventional cameras are usually built to capture images primarily in wavelengths visible to the human eye. Therefore, many computer vision systems are inherently limited by the physical constraints of human vision. 
 
-Thermal cameras have gotten significantly more affordable in recent years. This makes it increasingly feasible to extend computer vision systems 
+To further improve the performance of image classification systems beyond these constraints, further input sources, such as additional wavelengths and depth perception can be introduced.
+
+Thermal cameras have become significantly more affordable in recent years. This makes it increasingly feasible to equip computer vision systems with thermal cameras. Thermal imaging promises to reveal properties of objects that remain hidden to the human eye, extending the sensing capabilities of an image classifier.
+
+The development of autonomous systems, such as self-driving cars, is drastically increasing the demand for robust and precise object recognition and classification models. These systems often operate in real-time. Therefore, low latency without sacrificing accuracy is required to be able to make fast androbust decisions.
 
 %----------------------------------------------------------------------------------------------------------------------------------
 
 \section{Aim}
 
-The aim of this project is to explore the benefits and drawbacks of incorporating thermal imaging into an image classification model. We shall demonstrate our findings on a multi-class classification task involving eight classes of animals. To achieve this, we will:
+The primary aim of this project is to explore the benefits and drawbacks of incorporating a thermal imaging system into a deep learning image classification model.
+
+We shall demonstrate our findings on a multi-class classification task involving eight classes of animals. To achieve this, we will:
 
 \begin{itemize}
   \item review existing solutions for multispectral image classification systems (Section \ref{background}),
   \item analyse the problems and potential benefits involved with creating a machine learning model based on multispectral data (Section \ref{analysis}),
-  \item create a dataset of eight classes of farm animals, develop strategies to prevent overfitting and implement a state-of-the-art convolutional neural network for image classification (Section \ref{design}),
-  \item analyse the performance of our model compared to conventional, visible-light-only image classifiers.
+  \item create a dataset of eight classes of animals, develop strategies to improve generalisability and implement a model based on a state-of-the-art convolutional neural network architecture for image classification (Section \ref{design}),
+  \item analyse the performance of our model compared to conventional, visible-light-only image classifiers (Section \ref{evaluation}).
 \end{itemize}
+
+Furthermore, we will develop a mobile application for Android devices, allowing the real-time classification of multispectral images from a mobile edge device (Section \ref{implementation}). This shall demonstrate the feasibility of running the model in situations with low-latency requirements.
 
 %----------------------------------------------------------------------------------------------------------------------------------
 
 \section{Potential applications}
 
+A thermal multispectral animal recognition model could be used for a variety of possible applications. Being able to detect and classify animals in both day and night scenarios as well as in partially occluded settings could be beneficial for tracking wildlife. This could be beneficial for research applications or autonomously tracking endangered species.
 
+Furthermore, stationary systems could be used for security applications such as intruder detection in remote places, where an alarm should only be triggered if the intruder is of a certain species. 
 
+Finally, the system has potential for educational applications. As modern-day mobile devices are equipped with an increasing amount of sensors, it is possible that thermal multispectral imaging systems might become widely available to smartphone users. An application for classifying animals in real-time could be useful for teaching various species to users.
 
 %==================================================================================================================================
 \chapter{Background}
@@ -1351,7 +1366,7 @@ Nonetheless, our evaluation suggests that our multi-branch network architecture 
 
 \section{Future work}
 
-We attempted to increase the generalisability of our classifier by generating artificial LWIR data using a convolutional autoencoder. Since the scale of this experiment was limited, no reliable conclusion about the effectiveness of this strategy could be drawn. To further evaluate the feasability of incorporating artifically generated data into the training process, a generative adversarial network could be designed and applied to a sufficiently large visible light dataset.
+We attempted to increase the generalisability of our classifier by generating artificial LWIR data using a convolutional autoencoder. Since the scale of this experiment was limited, no reliable conclusion about the effectiveness of this strategy could be drawn. To further evaluate the feasibility of incorporating artifically generated data into the training process, a generative adversarial network could be designed and applied to a sufficiently large visible light dataset.
 
 Moreover, many generalisation problems of our model are likely a result of poorly framed input images. Furthermore, the framing of objects is likely to be noisy when using the mobile application. A more robust approach for this usage scenario could involve the development of an object detection model. Such a model would support the detection of multiple objects in a single image at varying distances and positions. State-of-the-art architectures such as YOLO \citep{redmon_you_2016, redmon_yolov3_2018} promise low inference times and might be suitable for this task. 
 

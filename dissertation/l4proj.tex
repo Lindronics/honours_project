@@ -145,7 +145,7 @@ Infrared light (IR), with wavelengths between $700 nm$ and $1 mm$, is generally 
 
 \begin{figure}[ht]
   \centering
-  \begin{subfigure}[h!]{0.9\textwidth}
+  \begin{subfigure}[h!]{0.8\textwidth}
     \includegraphics[width=\textwidth, trim={1.5cm 4cm 2cm 4cm}, clip=true]{images/EM_spectrum.pdf}
   \end{subfigure}
   \caption{The electromagnetic spectrum with detailled view of visible light and infrared. IR subdivisions modelled after \citet[p. 28]{byrnes_unexploded_2008}.}
@@ -180,37 +180,11 @@ Multispectral images comprise of a few discrete wavebands. As opposed to hypersp
 
 %----------------------------------------------------------------------------------------------------------------------------------
 
-\section{Machine learning}
-
-\subsection{Supervised and unsupervised algorithms}
-
-Machine learning techniques can be categorised into supervised, semi-supervised, unsupervised, and reinforcement learning \citep{burkov_hundred-page_2019}.
-
-In supervised learning, a dataset consisting of a list of labelled features $\{(\vec{x}_i, y_i)\}^N_{i=1}$ is provided. $\vec{x_i}$ is called a feature vector. The supervised learning algorithm then attempts to fit a model $f$ on the dataset such that $\forall{\vec{x_i}}. (f(\vec{x_i}) = y_i)$. The model can then be used to predict the unknown label of a test data point. In practice, a perfect fit is not possible due to noise in the dataset. Therefore, supervised algorithms are evaluated according to a loss function measuring the difference between $f(\vec{x_i})$ and $y_i$. When fitting the model, the algorithm attempts to minimise the loss over the training data. Common choices for loss functions are mean squared error (MSE) for regression and categorical cross-entropy for classification problems.
-
-Unsupervised learning involves a dataset of unlabeled data $\{\vec{x}_i\}^N_{i=1}$. An unsupervised learning algorithm attempts to transform each feature vector $\vec{x}_i$ into another vector to solve a practical problem, such as dimensionality reduction or outlier detection \citep{burkov_hundred-page_2019}. 
-This project focuses on supervised learning.
-
-\subsection{Regression and classification}
-
-In supervised learning, one speaks of classification or regression, depending on whether the data labels $y_i$ are discrete classes or continous, real values.
-
-
-%----------------------------------------------------------------------------------------------------------------------------------
-
-
 \section{Deep learning}
 
 Deep learning is a branch of machine learning based upon the concept of artificial neural networks (ANN). ANNs leverage the concept of artificial neurons, which are an abstract model derived from biological neurons. 
 
-\begin{figure}[ht]
-  \centering
-  \includegraphics[width=0.5\textwidth, page={1}, trim={3.5cm 5cm 3.5cm 5cm}, clip]{images/Artificial_Neuron}
-  \caption{Model of an artificial neuron.}
-  \label{fig:neuron}
-\end{figure}
-
-A model of an artifical neuron is shown in Figure \ref{fig:neuron}. It consists of an input vector $\vec{x}$, a vector of weights $\vec{w}$, an optional bias $b$, an activation function $\varphi$, and an output scalar $y$. The input vector is multiplied with the weights element-wise. The sum of the result is computed and passed into the activation function, yielding the output. The output of an artificial neuron can, therefore, be computed as follows:
+An artificial neuron consists of an input vector $\vec{x}$, a vector of weights $\vec{w}$, an optional bias $b$, an activation function $\varphi$, and an output scalar $y$. The input vector is multiplied with the weights element-wise. The sum of the result is computed and passed into the activation function, yielding the output. The output of an artificial neuron can, therefore, be computed as follows:
 
 \begin{equation}
   y_j = \varphi (\sum_{i=0}^n x_i w_{ij}),
@@ -226,37 +200,11 @@ As proven by the universal approximation theorem \citep{csaji_approximation_2001
 
 
 
-\subsection{Overfitting and regularisation}
+\subsection{Overfitting and dropout}
 
-When developing a machine learning model, the goal is to create an algorithm than yields not only good performance on the training data. The model must also be able to deliver accurate and robust predictions on previously unseen inputs. An algorithm is deemded generalisable if it is able to correctly predict samples that it has not been trained on. 
-
-In practice, many models are very good at correctly predicting training samples, but produce frequent errors when attempting to predict unknown samples. This property is called overfitting. Conversely, if the model performs poorly on both training and validation data, one speask of underfitting. If a model is underfitted or overfitted, it is generally deemed to have low generalisability \citep{burkov_hundred-page_2019}. 
-
-Figure \ref{fig:fitting} shows the effect of overfitting and underfitting in a binary classification scenario. Overfitting usually occurs when a model is too complex and has too many trainable parameters. This means that the algorithm has essentially memorised all training points without having learnt the inherent similarities and diffrences between the samples. Underfitting is usually the result of a model with too few parameters. 
-
-\begin{figure}[ht]
-  \centering
-  \begin{subfigure}[h!]{0.3\textwidth}
-    \includegraphics[width=\textwidth, page={1}, trim={6.5cm 4cm 6.5cm 4cm}, clip]{images/Overfitting}
-    \caption{Appropriate fitting.}
-  \end{subfigure}
-  \begin{subfigure}[h!]{0.3\textwidth}
-    \includegraphics[width=\textwidth, page={2}, trim={6.5cm 4cm 6.5cm 4cm}, clip]{images/Overfitting}
-    \caption{Underfitting.}
-  \end{subfigure}
-  \begin{subfigure}[h!]{0.3\textwidth}
-    \includegraphics[width=\textwidth, page={3}, trim={6.5cm 4cm 6.5cm 4cm}, clip]{images/Overfitting}
-    \caption{Overfitting.}
-  \end{subfigure}
-  \caption{Visualisation of overfitting and underfitting in binary classification. When underfitted, the model is too simple to explain the variance in the data, yielding a high error on the training data. When overfitted, the model has memorized all training points, including outliers and produces a high error on valiation data.}
-  \label{fig:fitting}
-\end{figure}
+In practice, many machine learning models are very good at correctly predicting training samples, but produce frequent errors when attempting to predict unknown samples. This property is called overfitting. Conversely, if the model performs poorly on both training and validation data, one speask of underfitting. If a model is underfitted or overfitted, it is generally deemed to have low generalisability \citep{burkov_hundred-page_2019}. 
 
 Due to the ability of neural networks with sufficient depth to approximate any multidimensional function, they are naturally susceptible to overfitting \citep{tetko_neural_1995}. It is, therefore, necessary to reduce the generalisation error of a deep learning model by employing strategies to combat overfitting. Such strategies are known as regularisation techniques \citep{goodfellow_deep_2016}.
-
-\subsubsection{Parameter Regularisation}
-
-\subsubsection{Dropout}
 
 Dropout is a technique to addressing the problem of overfitting in neural networks that was introduced by \citet{srivastava_dropout_2014}. It attempts reducing interdependent learning amongst neurons in a network. This is achieved by, for each iteration during the training phase, ignoring a random fraction of inputs to a given layer. An input is ignored (dropped out) by setting it to 0.
 
@@ -264,7 +212,7 @@ Since nodes cannot overfit on specific inputs due to them being disabled during 
 
 Research has shown dropout to be highly effective for the regularisation of deep neural networks with fully-connected layers \citep{wu_towards_2015}. However, the effect of dropout on convolutional layers is still subject to active research. \citet{cai_effective_2019} state that traditional dropout is mostly ineffective on convolutional layers, creating training instability. They propose four alternative dropout methods (drop-neuron, drop-channel, drop-path and drop-layer) that have been specifically designed for convolutional networks, reporting an increase in performance from all methods. 
 
-\subsection{Evaluation techniques}
+\subsection{Standard evaluation techniques}
 
 \subsubsection{Performance metrics}
 
@@ -278,8 +226,6 @@ Some of the most common performance metrics used to evaluate machine learning mo
 \end{align}
 
 where TP is the number of true positives, FP is the number of false positives, TN is the number of true negatives and FN is the number of false negatives.
-
-\subsubsection{Confusion matrix}
 
 %----------------------------------------------------------------------------------------------------------------------------------
 
@@ -994,7 +940,7 @@ Figure \ref{fig:autoencoder_pony_train_unet} displays the predicted LWIR image f
 
 \subsubsection{Results on unknown data}
 
-After successful training of the networks, two images of ponies were retrieved from Wikimedia Commons \footnote{\url{https://commons.wikimedia.org/wiki/File:Sandwick_Shetland_Pony.jpg}} \footnote{\url{https://commons.wikimedia.org/wiki/File:Shetland_ponies_at_Sandwick.jpg}}. They were then fed into the network in an attempt to generate the corresponding LWIR images. The respective outputs can be seen in Figure \ref{fig:autoencoder_pony}.
+After successful training of the networks, two images of ponies were retrieved from Wikimedia Commons. They were then fed into the network in an attempt to generate the corresponding LWIR images. The respective outputs can be seen in Figure \ref{fig:autoencoder_pony}.
 
 \begin{figure}[ht]
   \centering
@@ -1013,7 +959,7 @@ After successful training of the networks, two images of ponies were retrieved f
     \includegraphics[width=\textwidth]{images/autoencoder/pony_2/unet.png}
     \caption{U-Net prediction}
   \end{subfigure}
-  \caption{Predicted LWIR signature of images of shetland ponies.}
+  \caption{Predicted LWIR signature of images of shetland ponies. Image sources in List \ref{image_sources}.}
   \label{fig:autoencoder_pony}
 \end{figure}
 
@@ -1080,9 +1026,11 @@ Fitting the models on the training dataset as defined in Section \ref{classes_sa
 
 \subsubsection{Affine transformation}
 
-The data augmentation strategy as described in Section \ref{augmentation_impl} was evaluated by applying the augmentation script to the training dataset twice, with a factor of 2 and 5 respectively. The augmented datasets, thus, contain around 2 and 5 times as many samples than the original dataset. Furthermore, the class imbalances have been equalised by the script by creating more samples of the underrepresented classes.
+The data augmentation strategy as described in Section \ref{augmentation_impl} was evaluated by applying the augmentation script to the training dataset twice, with a multiplication factor of 2 and 5 respectively. The augmented datasets, thus, contain around 2 and 5 times as many samples than the original dataset. Furthermore, the class imbalances were equalised by the script by creating more samples of the underrepresented classes.
 
-The custom ResNet in fusion mode was trained on the original and the two augmented datasets for 80 epochs. The complete classification reports can be inspected in Appendix \ref{appendix_augmentation_affine}. The overall f1-score increased from $0.73$ without any augmentation to $0.78$ with augmentation with a factor of 2. For the factor-5-dataset, a slight increase of the f1-score to $0.79$ was determined.
+The custom ResNet in fusion mode was trained on the original and the two augmented datasets for 80 epochs. The complete classification reports can be inspected in Appendix \ref{appendix_augmentation_affine}. The overall f1-score increased from $0.73$ without any augmentation to $0.78$ with augmentation with a factor of 2. For the factor-5-dataset, a slight increase of the f1-score to $0.79$ was determined. 
+
+As creating even more augmented samples (factor 10) did not seem to significantly change the achieved accuracy, we decided to perform further evaluations with the factor-5-dataset.
 
 \subsubsection{Generation of artificial data}
 
@@ -1106,7 +1054,7 @@ The custom ResNet in late feature-fusion configuration was trained on both datas
   \label{fig:auto_confusion}
 \end{figure}
 
-The confusion matrices in Figure \ref{fig:auto_confusion} show that the amount of correctly classified ponies has indeed increased after including the artificially generated samples. However, more chicken and alpacas are mistakenly classified as ponies. In numbers, the recall of the \textit{pony} class improved from $0.80$ to $0.87$, while the precision dropped from $0.73$ to $0.69$. The weighted average f1-score across the dataset remains unchanged at $0.82$.
+The confusion matrices in Figure \ref{fig:auto_confusion} show that the amount of correctly classified ponies has indeed increased after including the artificially generated samples. However, more chicken and alpacas are mistakenly classified as ponies. In numbers, the recall of the \textit{pony} class improved from $0.80$ to $0.87$, while the precision dropped from $0.73$ to $0.69$. The weighted average f1-score across the dataset remains unchanged at $0.82$. For this reason, we did not incorporate this approach into our further evaluation.
 
 %----------------------------------------------------------------------------------------------------------------------------------
 
@@ -1334,17 +1282,6 @@ The application was installed on a OnePlus 7 Android device to evaluate the late
 
 Whereas the RGB-only model took an average of $40.99 ms$, $\sigma = 4.55 ms$ for a single prediction, the feature-fusion model performed a prediction every $70.24 ms$, $\sigma = 6.79 ms$. This equates to $14.24$ predictions per second, which is significantly higher than the sensor frame rate of $8.7 Hz$. Thus, we conclude that the the multispectral model is suitable for real-time classification tasks on edge devices.
 
-%----------------------------------------------------------------------------------------------------------------------------------
-
-\section{Issues and caveats}
-
-\begin{enumerate}
-  \item Cross-validation
-  \item Better dataset
-  \item GAN
-  \item Evaluation of low-light scenarios
-\end{enumerate}
-
 %==================================================================================================================================
 \chapter{Conclusion}
 
@@ -1489,6 +1426,7 @@ Finally, for applications with stationary systems such as intruder detection or 
     \item{\url{https://commons.wikimedia.org/w/index.php?title=Special:Search&limit=20&offset=420&profile=default&search=shetland+pony&advancedSearch-current=%7B%7D&ns0=1&ns6=1&ns12=1&ns14=1&ns100=1&ns106=1#/media/File:Jielbeaumadier_cheval_5_scva_paris_2012.jpeg}}
   \end{enumerate}
   \caption{Image sources for the autoencoder. All images retrieved under the Creative Commons licence.}
+  \label{image_sources}
 \end{captionedList}
 
 \begin{table}[H]

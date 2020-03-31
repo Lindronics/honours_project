@@ -85,17 +85,38 @@
 % reset page numbering. Don't remove this!
 \pagenumbering{arabic} 
 
+%----------------------------------------------------------------------------------------------------------------------------------
 
-Why should the reader care about what are you doing and what are you actually doing?
 
-\section{Aims and motivations}
+\section{Motivation}
+
+Deep convolutional neural networks have achieved impressive results on image classification tasks. The majority of image classification systems is trained on conventional visible light images. 
+
+Thermal cameras have gotten significantly more affordable in recent years. This makes it increasingly feasible to extend computer vision systems 
+
+%----------------------------------------------------------------------------------------------------------------------------------
+
+\section{Aim}
+
+The aim of this project is to explore the benefits and drawbacks of incorporating thermal imaging into an image classification model. We shall demonstrate our findings on a multi-class classification task involving eight classes of animals. To achieve this, we will:
+
+\begin{itemize}
+  \item review existing solutions for multispectral image classification systems (Section \ref{background}),
+  \item analyse the problems and potential benefits involved with creating a machine learning model based on multispectral data (Section \ref{analysis}),
+  \item create a dataset of eight classes of farm animals, develop strategies to prevent overfitting and implement a state-of-the-art convolutional neural network for image classification (Section \ref{design}),
+  \item analyse the performance of our model compared to conventional, visible-light-only image classifiers.
+\end{itemize}
+
+%----------------------------------------------------------------------------------------------------------------------------------
 
 \section{Potential applications}
 
 
+
+
 %==================================================================================================================================
 \chapter{Background}
-What did other people do, and how is it relevant to what you want to do?
+\label{background}
 
 \section{Imaging}
 \label{imaging}
@@ -282,6 +303,7 @@ Expanding upon the late feature fusion network introduced by \citet{wagner_multi
 %==================================================================================================================================
 
 \chapter{Problem analysis}
+\label{analysis}
 
 \section{Data acquisition}
 
@@ -395,8 +417,7 @@ The mobile application will furthermore provide the ability to capture datasets 
 %==================================================================================================================================
 
 \chapter{Design}
-How is this problem to be approached, without reference to specific implementation details? 
-
+\label{design}
 
 \section{Dataset}
 
@@ -837,7 +858,7 @@ The mobile application was designed with two primary requirements in mind:
 
 %==================================================================================================================================
 \chapter{Implementation}
-What did you do to implement this idea, and what technical achievements did you make?
+\label{implementation}
 
 \section{Frameworks and tools}
 
@@ -1007,8 +1028,8 @@ Finally, the \lstinline{ClassifierActivity} initialises an instance of \lstinlin
 
 %==================================================================================================================================
 
-\chapter{Evaluation} 
-How good is your solution? How well did you solve the general problem, and what evidence do you have to support that?
+\chapter{Evaluation}
+\label{evaluation}
 
 \section{Training strategies}
 

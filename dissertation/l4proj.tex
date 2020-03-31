@@ -11,6 +11,7 @@
 \usepackage{graphicx}
 \usepackage[export]{adjustbox}
 \usepackage{newfloat}
+\usepackage{float}
 
 \DeclareFloatingEnvironment[placement={!ht},name=List]{captionedList}
 
@@ -906,6 +907,7 @@ While this approach was necessary to fit the model on the whole training dataset
 To evaluate the performance of the four different models and the six configurations, a grid search was run over all 24 possible combinations. For this purpose, we derived all models from a custom-built superclass \lstinline{AbstractModel}, to ensure that they implement a common API. This enabled us to iterate over all models and all configurations, training and evaluating every combination.
 
 \subsection{Affine data augmentation}
+\label{augmentation_impl}
 
 Various tools are available to perform real-time data augmentation as part of the training pipeline. However, to achieve the highest possible level of control, a custom data augmentation function was designed. The function accepts a multiplication factor $n$ and leverages TensorFlow's \lstinline{ImageDataGenerator} to apply random affine transformations to images in the dataset.
 
@@ -1061,9 +1063,15 @@ Fitting the models on the training dataset as defined in Section \ref{classes_sa
 
 \subsection{Data augmentation}
 
-\subsection{Generation of artificial data}
+\subsubsection{Affine transformation}
 
-We used the autoencoder from Section \ref{autoencoder_implementation} to predict the LWIR signatures of ten images retrieved from Wikimedia Commons (Appendix \ref{appendix_autoencoder}). We then selected a subset of our training dataset, containing images of the \textit{pony}, \textit{alpaca} and \textit{chicken} classes. A second copy of this dataset was created and the ten predicted images were appended to the \textit{pony} class.
+The data augmentation strategy as described in Section \ref{augmentation_impl} was evaluated by applying the augmentation script to the training dataset twice, with a factor of 2 and 5 respectively. The augmented datasets, thus, contain around 2 and 5 times as many samples than the original dataset. Furthermore, the class imbalances have been equalised by the script by creating more samples of the underrepresented classes.
+
+The custom ResNet in fusion mode was trained on the original and the two augmented datasets for 80 epochs. The complete classification reports can be inspected in Appendix \ref{appendix_augmentation_affine}. The overall f1-score increased from $0.73$ without any augmentation to $0.78$ with augmentation with a factor of 2. For the factor-5-dataset, a slight increase of the f1-score to $0.79$ was determined.
+
+\subsubsection{Generation of artificial data}
+
+We used the autoencoder from Section \ref{autoencoder_implementation} to predict the LWIR signatures of ten images retrieved from Wikimedia Commons (Appendix \ref{appendix_augmentation}). We then selected a subset of our training dataset, containing images of the \textit{pony}, \textit{alpaca} and \textit{chicken} classes. A second copy of this dataset was created and the ten predicted images were appended to the \textit{pony} class.
 
 The custom ResNet in late feature-fusion configuration was trained on both datasets. The full classification scores can be inspected in Appendices \ref{table:auto_scores_normal} and \ref{table:auto_scores_auto}. 
 
@@ -1382,8 +1390,75 @@ Finally, for applications with stationary systems such as intruder detection or 
 
 %==================================================================================================================================
 
-\chapter{Autoencoder images}
-\label{appendix_autoencoder}
+\chapter{Data augmentation evaluation}
+\label{appendix_augmentation}
+
+\section{Affine transformation}
+\label{appendix_augmentation_affine}
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{@{}lllll@{}}
+  \toprule
+                        & \textbf{precision} & \textbf{recall} & \textbf{f1-score} &  \\ \midrule
+  Cat                   & 0.57               & 1.00            & 0.72              &  \\
+  Pony                  & 0.83               & 0.60            & 0.70              &  \\
+  Hamburg chicken       & 0.74               & 0.89            & 0.81              &  \\
+  Alpaca                & 1.00               & 0.52            & 0.68              &  \\
+  Muscovy Duck          & 0.59               & 0.65            & 0.62              &  \\
+  Chicken               & 0.53               & 0.61            & 0.57              &  \\
+  Silkie Chicken        & 1.00               & 0.60            & 0.75              &  \\
+  Goose                 & 0.98               & 1.00            & 0.99              &  \\
+  \midrule
+  \textbf{Weighted avg} & \textbf{0.78}      & \textbf{0.73}   & \textbf{0.73}     &  \\ \bottomrule
+  \end{tabular}
+  \caption{Precision, recall and f1-score of the late feature fusion ResNet model without affine data augmentation.}
+  \label{table:appendix_affine_1}
+\end{table}
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{@{}lllll@{}}
+  \toprule
+                        & \textbf{precision} & \textbf{recall} & \textbf{f1-score} &  \\ \midrule
+  Cat                   & 0.70               & 1.00            & 0.82              &  \\
+  Pony                  & 0.97               & 0.59            & 0.73              &  \\
+  Hamburg chicken       & 0.96               & 0.86            & 0.91              &  \\
+  Alpaca                & 1.00               & 0.63            & 0.77              &  \\
+  Muscovy Duck          & 0.53               & 0.86            & 0.65              &  \\
+  Chicken               & 0.61               & 0.74            & 0.67              &  \\
+  Silkie Chicken        & 1.00               & 0.57            & 0.73              &  \\
+  Goose                 & 1.00               & 1.00            & 1.00              &  \\
+  \midrule
+  \textbf{Weighted avg} & \textbf{0.84}      & \textbf{0.78}   & \textbf{0.78}     &  \\ \bottomrule
+  \end{tabular}
+  \caption{Precision, recall and f1-score of the late feature fusion ResNet model with affine data augmentation (factor 2).}
+  \label{table:appendix_affine_2}
+\end{table}
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{@{}lllll@{}}
+  \toprule
+                        & \textbf{precision} & \textbf{recall} & \textbf{f1-score} &  \\ \midrule
+  Cat                   & 0.89               & 1.00            & 0.94              &  \\
+  Pony                  & 0.97               & 0.48            & 0.64              &  \\
+  Hamburg chicken       & 1.00               & 0.79            & 0.88              &  \\
+  Alpaca                & 0.97               & 0.74            & 0.84              &  \\
+  Muscovy Duck          & 0.47               & 0.78            & 0.59              &  \\
+  Chicken               & 0.61               & 0.84            & 0.70              &  \\
+  Silkie Chicken        & 1.00               & 0.57            & 0.73              &  \\
+  Goose                 & 1.00               & 1.00            & 1.00              &  \\
+  \midrule
+  \textbf{Weighted avg} & \textbf{0.85}      & \textbf{0.79}   & \textbf{0.79}     &  \\ \bottomrule
+  \end{tabular}
+  \caption{Precision, recall and f1-score of the late feature fusion ResNet model with affine data augmentation (factor 5).}
+  \label{table:appendix_affine_3}
+\end{table}
+
+%----------------------------------------------------------------------------------------------------------------------------------
+
+\section{Artificial data}
 
 \begin{captionedList}
   \begin{enumerate}
@@ -1401,7 +1476,7 @@ Finally, for applications with stationary systems such as intruder detection or 
   \caption{Image sources for the autoencoder. All images retrieved under the Creative Commons licence.}
 \end{captionedList}
 
-\begin{table}[ht]
+\begin{table}[H]
   \centering
   \begin{tabular}{@{}lllll@{}}
   \toprule
@@ -1416,7 +1491,7 @@ Finally, for applications with stationary systems such as intruder detection or 
   \label{table:auto_scores_normal}
 \end{table}
 
-\begin{table}[ht]
+\begin{table}[H]
   \centering
   \begin{tabular}{@{}lllll@{}}
   \toprule

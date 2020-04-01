@@ -378,24 +378,23 @@ For multispectral models, this highly effective approach becomes more difficult,
 
 Pre-training a multispectral classifier on an VIS-only dataset is not directly possible due to the incompatible input tensor shapes ($h \times w \times 3$ compared to $h \times w \times 4$) and the resulting difference in trainable weights. Moreover, the modality gap outlined in Section \ref{modality} makes it likely that this approach would be unfeasible even if the tensor shapes were compatible.
 
-However, there are strategies to mitigate this issue. It is possible to divide the model into two separate branches of layers that process the VIS and LWIR images individually, and perform late feature-level fusion \citep{guo_face_2017} by concatenating the respective feature maps and adding at least one fully connected layer after the concatenation. This approach can make it possible to load pretrained weights into the VIS-branch of the model without affecting the LWIR branch. During training, the LWIR-branch of the model gets trained from scratch, whereas transfer learning is simultaneously performed on the VIS-branch.
+However, there are strategies to mitigate this issue. It is possible to divide the model into two separate branches of layers that process the VIS and LWIR images individually, and perform late feature-level fusion \citep{wagner_multispectral_2016, guo_face_2017} by concatenating the respective feature maps and adding at least one fully connected layer after the concatenation. This approach can make it possible to load pretrained weights into the VIS-branch of the model without affecting the LWIR branch. During training, the LWIR-branch of the model gets trained from scratch, whereas transfer learning is simultaneously performed on the VIS-branch.
 
 Another possible approach to enable the usage of existing off-the-shelf datasets is to perform generative image augmentation. In Section \ref{autoencoder_implementation} we explore the application of a primitive generative model for predicting the corresponding LWIR image of a known type of object from a given RGB image. Given sufficient quality of predicted images, it would then be possible to turn RGB-only images into multispectral training data.
 
 %----------------------------------------------------------------------------------------------------------------------------------
 
 \section{Mobile application}
+\label{analysis_mobile_application}
 
-This project aims to deploy the final deep learning model to a mobile edge device. This introduces many challenges related to mobile computing. Contrary to most computers, computational power on mobile devices is highly limited. Furthermore, to provide robust and reliable real-time classification, low latency between image capture and classification will be necessary. Two major strategies can be used to perform image classification on a mobile device:
+This project aimed to deploy the final deep learning model to a mobile edge device. This introduced many challenges related to mobile computing. Contrary to most computers, computational power on mobile devices is highly limited. Furthermore, to provide robust and reliable real-time classification, low latency between image capture and classification was necessary. Two major strategies can be used to perform image classification on a mobile device:
 
 \begin{enumerate}
-  \item Deploy the model to a web service, upload captured frames from edge device, and retrieve the prediction.
-  \item Deploy the model to the edge device and perform all computations \textit{offline} on the mobile device.
+  \item Deploy the model to a web service, upload captured frames from edge device, and retrieve the prediction. This requires minimal computational power on the edge device, as all calculations are performed remotely. However, it might come at the cost of increased latency from transmitting the input images to the server. Furthermore, in situations with poor connectivity, such as remote regions, no classification can be performed.
+  \item Deploy the model to the edge device and perform all computations \textit{offline} on the mobile device. This avoids potential connectivity problems while requiring sufficient computational efficiency to be able to run in real-time.
 \end{enumerate}
 
-To minimise latency, the second approach was selected. It will therefore be possible to use the application even in situations with poor connectivity. However, the necessity to perform all computational tasks on the edge device imposes many problems. The TensorFlow SDK for Java is very limited compared to the Python API. Furthermore, various image pre-processing tasks have to be performed without the standard Python data science stack that was used for training and experimentation. Many image processing libraries do not support multispectral data, further complicating image processing.
-
-The mobile application will furthermore provide the ability to capture datasets in a convenient way, without the need to seperately extract raw RGB and LWIR images after capture.
+Whereas the latter approach appears more robust, it introduces a variety of problems. The amount of deep learning and image processing tools available for Java and Android is limited compared to the Python machine learning stack. Libraries such as TensorFlow only provide simplified APIs with reduced functionality for Java. Many image processing libraries do not support multispectral data, further complicating image processing.
 
 
 %==================================================================================================================================
@@ -688,6 +687,7 @@ For this purpose, 97 reference points were manually determined from the training
     -14.619  \\
     -18.660
   \end{pmatrix}.
+  \label{trans}
 \end{equation}
 
 Prior experiments showed that the required transformation seems to be mostly consistent across different images. Device orientation appears to be the only factor with a large impact on the required transformation. To avoid this problem, all images were captured in portrait mode. Figure \ref{fig:registration_relationship} shows the relationship between the re-scaled visible light and LWIR coordinates across both dimensions. The relationship appears to be linear. However, it can be seen that the gradient for the relationship of horizontal coordinates is slightly steeper than for the vertical coordinates. This supports the necessity to perform an affine transformation, as opposed to just zooming in.
@@ -714,6 +714,7 @@ When using convolutional kernels with a small size, such as $3 \times 3$, this d
 %----------------------------------------------------------------------------------------------------------------------------------
 
 \section{Classifiers}
+\label{design_classifiers}
 
 As concluded in \ref{fig:augmentation_affine}, the spatial and intensity properties of RGB and LWIR images are significantly different. Due to the registration problem and the different intensity distributions, a stacked multispectral approach is unlikely to produce satisfactory results. Consequently, we decided to implement six different configurations of every CNN and evaluate the results separately.
 
@@ -831,14 +832,20 @@ The feature fusion configuration of our transfer learning model, therefore, uses
 
 \section{Mobile application design}
 
-The mobile application was designed with two primary requirements in mind:
+The mobile application was designed with two primary user requirements in mind:
 
-\begin{itemize}
-  \item Enabling the easy capture of combined visible-light and thermal datasets.
-  \item Being able to perform live multi-class classification on multiple species of animals.
-\end{itemize}
+\begin{enumerate}
+  \item Giving users the ability to capture combined visible-light and thermal datasets. For this purpose, easy access to the captured raw images shall be provided.
+  \item Being able to perform real-time multi-class classification using the CNNs designed in Section \ref{design_classifiers}.
+\end{enumerate}
 
+Following the analysis in Section \ref{analysis_mobile_application}, we decided to perform all necessary computations on-device. This means that the application does not require an active internet connection to perform real-time classification. 
 
+The application comprises of a camera activity and a classifier activity that are each designed to meet one of the two requirements. Both activities display the live image feed from the FLIR camera. The camera view, furthermore, has a button to start and stop the capture mode. When enabled, each frame captured by the FLIR camera is saved to device storage and added to the gallery.
+
+The classifier activity shows the top three predictions of the current image at the top of the screen. Both activities contain a toggle switch to enable and disable image registration. When activated, the affine transformation from Equation \ref{trans} is applied to the VIS images from the FLIR camera, before displaying them or feeding them into the classifier.
+
+(XXX screenshots appendix)
 
 %==================================================================================================================================
 \chapter{Implementation}

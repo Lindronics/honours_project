@@ -184,20 +184,31 @@ Multispectral images comprise of a few discrete wavebands. As opposed to hypersp
 
 Deep learning is a branch of machine learning based upon the concept of artificial neural networks (ANN). ANNs leverage the concept of artificial neurons, which are an abstract model derived from biological neurons. 
 
-An artificial neuron consists of an input vector $\vec{x}$, a vector of weights $\vec{w}$, an optional bias $b$, an activation function $\varphi$, and an output scalar $y$. The input vector is multiplied with the weights element-wise. The sum of the result is computed and passed into the activation function, yielding the output. The output of an artificial neuron can, therefore, be computed as follows:
+An artificial neuron consists of an input vector $\vec{x}$, a vector of weights $\vec{w}$, a bias $b$, an activation function $\varphi$, and an output scalar $y$. The input vector is multiplied with the weights element-wise. The sum of the result is computed and passed into the activation function, yielding the output. The output of an artificial neuron can, therefore, be computed as follows:
 
 \begin{equation}
-  y_j = \varphi (\sum_{i=0}^n x_i w_{ij}),
+  y_j = \varphi (b + \sum_{i=0}^n x_i w_{ij}).
 \end{equation}
 
-where the bias $b$ can be treated as the first element of the input vector $\vec{x}$. A special case of the artificial neuron is the perceptron, where the activation function is a binary threshold, making the neuron output either 0 or 1 depending on the input.
+Common choices for activation functions are sigmoid functions or rectified linear unit (ReLU), although various alternatives have been proposed \citep{ramachandran_searching_2017}.
 
-In ANNs, neurons are usually grouped into fully-connected layers. For each neuron in layer $j$, $\vec{x}$ represents the outputs of all neurons of the previous layer $j-1$. A traditional feed-forward neural network thus consists of an input layer, a sequence of multiple so-called hidden layers of artificial neurons, and an output layer.
+In conventional ANNs, neurons are usually grouped into fully-connected layers. For each neuron in layer $j$, $\vec{x}$ represents the outputs of all neurons of the previous layer $j-1$. A traditional feed-forward neural network thus consists of an input layer, a sequence of multiple so-called hidden layers of artificial neurons, and an output layer. The behaviour of all neurons in a layer can be expressed as simple matrix multiplication, making it highly computationally efficient.
 
-As proven by the universal approximation theorem \citep{csaji_approximation_2001}, feed-forward neural networks can act as universal function approximators. By setting the right weights, an ANN with a sufficient amount of parameters can, therefore, be used as a machine learning estimator.
+As proven by the universal approximation theorem, feed-forward neural networks can act as universal function approximators \citep{hornik_approximation_1991}. By defining a differentiable loss function for the output of the model, the coefficients of a neural network can be trained using the backpropagation algorithm \citep{rumelhart_learning_1986}. Backpropagation calculates the gradient of the loss function with respect to the weights of the layers in the network. Subsequently, it updates the weights following an optimisation algorithm such as gradient descent. This process is performed layer by layer, starting from the final layer of the network and moving backwards.
 
 \subsection{Convolutional neural networks}
 
+Convolutional neural networks (CNN) are a specialised type of neural network that makes use of convolution operations instead of general matrix multiplication for at least one of its layers \citep{goodfellow_deep_2016}. The 2-D discrete convolution as commonly used in CNNs is defined as follows:
+
+\begin{equation}
+  S(i, j) = (K \ast I) (i, j) = \sum_m \sum_n I(i-m, j-n) K(m, n),
+\end{equation}
+
+where $I$ denotes the $i \times j$ input tensor, $K$ is the $m \times n$ convolutional kernel, and S is the $i \times j$ output or feature map. Depending on the kernel weights, convolution can be used for various image processing tasks, such as smoothing or edge detection.
+
+\citet{lecun_backpropagation_1989} first used backpropagation to automatically learn the coefficients of convolutional kernels as part of an image classification task. The kernels of a CNN are trained to recognise and aggregate important spatial features of an image. This is an advantage over fully-connected networks, as they are agnostic towards spatial relations of the input.
+
+Convolutional layers in neural networks consist of multiple kernels that are applied to the input, usually resulting in an output tensor of depth equal to the number of kernels. The amount of trainable coefficients of a convolutional layer is generally much lower than that of a fully-connected layer, making CNNs more computationally efficient. This enables the design of much deeper neural networks \citep{goodfellow_deep_2016}. CNNs with increasingly deep architectures have been shown to be highly effective on image classification and detection tasks, significantly outperforming conventional fully-connected networks \citep{krizhevsky_imagenet_2012, szegedy_going_2015, he_deep_2016}.
 
 
 \subsection{Overfitting and dropout}

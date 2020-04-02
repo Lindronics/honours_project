@@ -32,7 +32,7 @@ ax.scatter(X[:, 1], y[:, 1], alpha=0.3, label="vertical")
 ax.set_xlabel("Visible light coordinate")
 ax.set_ylabel("LWIR coordinate")
 ax.legend()
-fig.savefig("x_y.pdf")
+fig.savefig("x_y.pdf", bbox_inches="tight")
 plt.show()
 
 # Fit model

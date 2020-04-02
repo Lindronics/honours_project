@@ -713,45 +713,47 @@ When using convolutional kernels with a small size, such as $3 \times 3$, this d
 \section{Classifiers}
 \label{design_classifiers}
 
-As concluded in \ref{fig:augmentation_affine}, the spatial and intensity properties of RGB and LWIR images are significantly different. Due to the registration problem and the different intensity distributions, a stacked multispectral approach is unlikely to produce satisfactory results. Consequently, we decided to implement six different configurations of every CNN and evaluate the results separately.
+Following the conclusion of \citet{wagner_multispectral_2016} about early and late feature fusion, we decided to implement and evaluate the performance of early pixel-based fusion, late feature-level fusion and score-level-based fusion classifiers. These three multispectral neural network architectures are shown in Figure \ref{fig:archs}.
 
 \begin{figure}[ht]
   \centering
   \begin{subfigure}[h!]{0.3\textwidth}
     \includegraphics[width=\textwidth, page={1}, trim={6.5cm 2.2cm 6.5cm 1.5cm}, clip]{images/models/archs}
-    \caption{Pixel fusion configuration.}
+    \caption{Pixel-based early fusion.}
     \label{fig:arch_stacked}
   \end{subfigure}
+  \quad
   \begin{subfigure}[h!]{0.3\textwidth}
     \includegraphics[width=\textwidth, page={2}, trim={6.5cm 2.2cm 6.5cm 1.5cm}, clip]{images/models/archs}
-    \caption{Score fusion configuration.}
+    \caption{Score-based fusion.}
     \label{fig:arch_combsum}
   \end{subfigure}
+  \quad
   \begin{subfigure}[h!]{0.3\textwidth}
     \includegraphics[width=\textwidth, page={3}, trim={6.5cm 2.2cm 6.5cm 1.5cm}, clip]{images/models/archs}
-    \caption{Late feature fusion configuration.}
+    \caption{Late feature fusion.}
     \label{fig:arch_fusion}
   \end{subfigure}
-  \caption{Implemented neural network configurations excluding RGB-only, LWIR-only and grayscale.}
+  \caption{Multispectral CNN configurations that were implemented for each CNN architecture.}
   \label{fig:archs}
 \end{figure}
 
+In total, we implemented five configurations of each of the CNN designs outlined in the Sections \ref{custom_cnn}, \ref{alexnet} and \ref{resnet}:
+
 \begin{enumerate}
-  \item An RGB-only implementation similar to the default implementation of most networks. This will be used as a baseline.
-  \item An LWIR-only implementation.
-  \item A greyscale implementation. This will calculate the mean across the three colour channels of the RGB image, yielding a single-channel greyscale image. The purpose of this model will be to evaluate the benefits and drawbacks of using all three colour channels.
-  \item A single-branch, pixel fusion implementation. The RGB and LWIR channels are stacked into a tensor of shape $({batch\ size} \times width \times height \times 4)$. This tensor is then fed into the network, yielding a prediction. This configuration is shown in Figure \ref{fig:arch_stacked}.
-  \item A multi-branch implementation with late feature-level fusion, as shown in Figure \ref{fig:arch_fusion}. Here, the RGB and LWIR images are fed into separate branches of convolutional layers. Finally, the respective outputs are flattened, concatenated and fed into the fully-connected layers at the end of the network.
-  \item A multi-branch score-level fusion implementation with voting classifiers. Similarly to the late feature-fusion implementation, the VIS and LWIR images are run through seperate network branches. However, the branches have their own individual fully-connected layers, which produce separate predictions. The final output is the weighted mean of these two predictions. The relative weights of the branches can be treated as trainable parameters. This configuration can be seen in Figure \ref{fig:arch_combsum}.
+  \item An RGB-only configuration similar to the default implementation of most networks. This configuration provides a baseline for our multispectral models, as it resembles the capabilities of conventional VIS-only computer vision.
+  \item An LWIR-only implementation. This configuration allows us to compare the isolated performance of LWIR-based and VIS-based classifiers for our dataset.
+  \item A pixel-based early fusion implementation. The RGB and LWIR channels are stacked into a tensor of shape $({batch\ size} \times width \times height \times 4)$. This tensor is then fed into the network. This configuration is shown in Figure \ref{fig:arch_stacked} and is referred to in evaluation figure legends as \textit{stacked} mode.
+  \item A score-level fusion implementation with soft-voting classifiers. The VIS and LWIR images are run through seperate CNNs, producing separate predictions. The final output of the classifier is the mean of these two predictions. This configuration can be seen in Figure \ref{fig:arch_combsum} and is labelled \textit{voting} mode in figure legends.
+  \item A multi-branch implementation with late feature-level fusion, as shown in Figure \ref{fig:arch_fusion}. Here, the RGB and LWIR images are fed into separate branches of convolutional layers. The respective outputs are flattened, concatenated and fed into the fully-connected layers at the end of the network, producing the final prediction. This configuration is referred to as \textit{fusion} mode in figure legends.
 \end{enumerate}
 
-Following the conclusion of \citet{wagner_multispectral_2016} about early and late feature fusion, this project aims to evaluate the performance of pixel-based fusion, feature-level fusion and score-level-based fusion classifiers \citep{guo_face_2017}. We chose the RGB-only networks as a baseline, as most image classification models rely solely on visible light.
+Furthermore, three different CNN designs were evaluated. At first, a custom neural network was designed and implemented. In addition, we implemented modified versions of AlexNet and ResNet, two networks commonly used for image classification tasks. 
 
-Furthermore, multiple different CNN designs were evaluated. At first, a custom neural network was designed and implemented. In addition, we implemented modified versions of AlexNet and ResNet, two networks commonly used for image classification tasks. 
-
-Note that the following architecture diagrams (Figures \ref{fig:alexnet} and \ref{fig:resnet}) show the RGB-only configurations. The other configurations can be derived from these and the architectural visualisation in Figure \ref{fig:archs}.
+Note that the following architecture diagrams (Figures \ref{fig:customnet}, \ref{fig:alexnet} and \ref{fig:resnet}) show the RGB-only configurations of the networks. The other configurations can be derived from these and the architectural visualisation in Figure \ref{fig:archs}. To provide a tangible example, Appendix \ref{appendix_arch} contains the detailed multispectral configurations of our AlexNet implementation.
 
 \subsection{Custom CNN}
+\label{custom_cnn}
 
 A custom CNN architecture as shown in Figure \ref{fig:customnet} was implemented. The network follows a common design pattern for image classifiers, chaining multiple convolutional and pooling layers with increasing amounts of filters, followed by one or more fully-connected layers. 
 
@@ -767,6 +769,7 @@ Our model consists of two multi-layer blocks. Each block is composed of two conv
 Overall, the model has $117\,592$ trainable weights. This architecture was designed as a low-end model with relatively few parameters that is fast to train and evaluate.
 
 \subsection{AlexNet}
+\label{alexnet}
 
 AlexNet was first introduced by \citet{krizhevsky_imagenet_2012}, winning the ImageNet Large Scale Visual Recognition Challenge (ILSVRC). Significantly outperforming the state-of-the-art traditional image classification models of its time, AlexNet is considered a significant breakthrough in computer vision \citep{alom_history_2018}.
 
@@ -784,6 +787,7 @@ We decided to evaluate an implementation of AlexNet due to various factors. Firs
 Our implementation of AlexNet, as shown in Figure \ref{fig:alexnet} diverges slightly from the original. Due to a lower input resolution and a smaller number of resulting parameters, the FC layers at the end of the network only have 1024 instead of 4096 parameters each. Furthermore, we included dropout layers after both FC layers to combat overfitting. In total, our AlexNet implementation has $7\,951\,752$ trainable parameters in the RGB-only configuration.
 
 \subsection{ResNet}
+\label{resnet}
 
 Since the initial introduction of AlexNet, many more CNN-architectures have been developed. \citet{simonyan_very_2015} propose VGG, a neural network with a substantially increased number of convolutional layers. They demonstrate that deeper networks are more likely to perform well on image classification tasks than shallow architectures \citep{alom_history_2018}.
 
@@ -891,7 +895,7 @@ While this approach was necessary to fit the model on the whole training dataset
 \subsection{Grid search}
 \label{gridsearch_impl}
 
-To evaluate the performance of the four different models and the six configurations, a grid search was run over all 24 possible combinations. For this purpose, we derived all models from a custom-built superclass \lstinline{AbstractModel}, to ensure that they implement a common API. This enabled us to iterate over all models and all configurations, training and evaluating every combination.
+To evaluate the performance of the four different models and the five configurations, a grid search was run over all 20 possible combinations. For this purpose, we derived all models from a custom-built superclass \lstinline{AbstractModel}, to ensure that they implement a common API. This enabled us to iterate over all models and all configurations, training and evaluating every combination.
 
 \subsection{Affine data augmentation}
 \label{augmentation_impl}

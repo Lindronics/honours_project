@@ -1526,27 +1526,36 @@ Finally, for applications with stationary systems such as intruder detection or 
 
 %==================================================================================================================================
 
-\chapter{Appendices}
+\chapter{Mobile application}
 
-Typical inclusions in the appendices are:
+\begin{figure}[ht]
+  \centering
+  \begin{subfigure}[h!]{0.32\textwidth}
+    \includegraphics[width=\textwidth]{images/app/overview.jpg}
+    \caption{Home activity.}
+    \label{fig:app_activities_home}
+  \end{subfigure}
+  \begin{subfigure}[h!]{0.32\textwidth}
+    \includegraphics[width=\textwidth]{images/app/camera.jpg}
+    \caption{Camera activity.}
+    \label{fig:app_activities_camera}
+  \end{subfigure}
+  \begin{subfigure}[h!]{0.32\textwidth}
+    \includegraphics[width=\textwidth]{images/app/screenshot_0.jpg}
+    \caption{Classifier activity.}
+    \label{fig:app_activities_classifier}
+  \end{subfigure}
+  \caption{Activities of the mobile application. From the home activity \subref{fig:app_activities_home}, users can launch camera or classifier mode for any discovered FLIR camera. The camera activity \subref{fig:app_activities_camera} can be used to capture thermal multispectral datasets. The classifier activity \subref{fig:app_activities_classifier} can be used for real-time multi-class classification.}
+  \label{fig:app_activities}
+\end{figure}
 
-\begin{itemize}
-\item
-  Copies of ethics approvals (required if obtained)
-\item
-  Copies of questionnaires etc. used to gather data from subjects.
-\item
-  Extensive tables or figures that are too bulky to fit in the main body of
-  the report, particularly ones that are repetitive and summarised in the body.
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.4\textwidth, trim={0cm 32cm 0cm 0cm}, clip]{images/app/battery}
+  \caption{Battery usage statistics of running the mobile application in classification mode for 20 minutes. The application reduced the battery charge by $8\%$.}
+  \label{fig:app_battery}
+\end{figure}
 
-\item Outline of the source code (e.g. directory structure), or other architecture documentation like class diagrams.
-
-\item User manuals, and any guides to starting/running the software.
-
-\end{itemize}
-
-\textbf{Don't include your source code in the appendices}. It will be
-submitted separately.
 
 \end{appendices}
 

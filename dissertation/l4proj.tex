@@ -14,6 +14,7 @@
 \usepackage{float}
 
 \DeclareFloatingEnvironment[placement={!ht},name=List]{captionedList}
+\PassOptionsToPackage{hyphens}{url}\usepackage{hyperref}
 
 \begin{document}
 
@@ -1014,7 +1015,7 @@ Both activities share common functionality by extending \lstinline{AbstractCamer
 
 The \lstinline{CameraActivity} is designed to enable users to capture multispectral datasets. It contains a button for starting and stopping a recording. In addition, it uses an instance of the \lstinline{ImageWriter} class to save the captured frames to device storage and add them to the gallery.
 
-Finally, the \lstinline{ClassifierActivity} initialises an instance of \lstinline{ModelHandler}. This class loads the TensorFlow Lite model and the class labels and performs real-time predictions on the images provided by the \lstinline{CameraHandler}.
+Finally, the \lstinline{ClassifierActivity} initialises an instance of \lstinline{ModelHandler}. This class loads the TensorFlow Lite model and the class labels and performs real-time predictions on the images provided by the \lstinline{CameraHandler}. Screenshots of the finished application are attached in Figure \ref{fig:app_activities}.
 
 
 
@@ -1305,11 +1306,14 @@ It can, therefore, be concluded that the model is working correctly in the mobil
   \label{fig:app_screenshots}
 \end{figure}
 
-\subsection{Performance and latency}
+\subsection{Performance, latency and battery usage}
 
-The application was installed on a OnePlus 7 Android device to evaluate the latency of real-time classification. TensorFlow Lite was configured to use the device's GPU for predictions to guarantee the best possible performance. The RGB-only and feature-level fusion configurations of the custom ResNet were evaluated by running the application in classification mode and performing 1000 predictions. The application displays the mean and standard deviation of classification times since launch. 
+The application was installed on a OnePlus 7 Android device to evaluate the latency of real-time classification. TensorFlow Lite was configured to use the device's GPU for predictions. The RGB-only and feature-level fusion configurations of the custom ResNet were evaluated by running the application in classification mode and performing 1000 predictions. As visible in Figure \ref{fig:app_screenshots}, the application displays the mean and standard deviation of classification times since launch. The following values are readings from this output.
 
-Whereas the RGB-only model took an average of $40.99 ms$, $\sigma = 4.55 ms$ for a single prediction, the feature-fusion model performed a prediction every $70.24 ms$, $\sigma = 6.79 ms$. This equates to $14.24$ predictions per second, which is significantly higher than the sensor frame rate of $8.7 Hz$. Thus, we conclude that the the multispectral model is suitable for real-time classification tasks on edge devices.
+Whereas the RGB-only model took an average of $40.99 ms$, $\sigma = 4.55 ms$ for a single prediction, the feature-fusion model performed a prediction every $70.24 ms$, $\sigma = 6.79 ms$. This equates to $14.24$ predictions per second, which is significantly higher than the sensor frame rate of $8.7 Hz$. 
+Infrequent stuttering of the image feed in both the camera and classifier activities are a result of the sensor occasionally closing the shutter and automatically recalibrating, as outlined in the user guide\footnote{\url{http://www.flirmedia.com/flir-one/flir-one-pro/user-guides/flir-one-pro-user-guide.html}}.
+
+Finally, the battery impact of running the application was evaluated by running the classifier activity for 20 minutes. No other applications were active on the device simultaneously. According to Android's battery usage statistics (Figure \ref{fig:app_battery}), our application used around $8\%$ of the device's $3700 mAh$ battery capacity over the course of the $20 min$. This implies a theoretical maximum usage time of $4.17 h$, assuming the usage statistics are accurate. Based on the results of this evaluation, we conclude that the the multispectral model is suitable for real-time classification tasks on edge devices.
 
 %==================================================================================================================================
 \chapter{Conclusion}

@@ -707,7 +707,7 @@ Prior experiments showed that the required transformation seems to be mostly con
 
 To quantitatively evaluate whether the transformation parameters generalise across all images, the mean euclidean distance between the actual LWIR coordinates and the ones predicted by the regression model was computed for every class in the dataset. The results can be seen in Figure \ref{fig:registration_error}. The highest mean distance is around 2, which we consider small considering the image resolution. It is very likely that these errors are due to noise in the manually determined reference points. The mean distance across all reference points in the dataset was determined to be around 1.777 with $\sigma = 0.589$.
 
-When using convolutional kernels with a small size, such as $3 \times 3$, this distance could, however, be problematic, as edges and other features might not be picked up consistently across channels. Therefore, an attempt was made to use larger kernels in the initial convolutional layer to mitigate this potential problem.
+When using convolutional kernels with a small size, such as $3 \times 3$, this distance could, however, be problematic, as edges and other features might not be picked up consistently across channels.
 
 %----------------------------------------------------------------------------------------------------------------------------------
 
@@ -1030,28 +1030,18 @@ Finally, the \lstinline{ClassifierActivity} initialises an instance of \lstinlin
 \subsection{Training-validation split}
 \label{eval_train_val_split}
 
-Multiple configurations of train/test split were attempted. Splitting the data with stratified sampling and train-validation-split of 80-20, the custom ResNet in fusion mode achieved perfect training and validation accuray, as can be seen in Figure \ref{fig:acc_stratified}.  
+At first, the whole animals dataset was divided into training and validation data using stratified sampling and a validation split of $20\%$. When fitting the custom ResNet in late fusion mode using this split, near perfect training and validation accuracy was achieved, as can be seen in Figure \ref{fig:acc_stratified}.  
 
 \begin{figure}[ht]
   \centering
-  \begin{subfigure}[h!]{0.42\textwidth}
-    \includegraphics[width=\textwidth, trim={0cm 0cm 0cm 0cm}, clip=true]{images/evaluation/stratified/accuracy}
-    \caption{Accuracy over training epochs.}
-    \label{fig:acc_stratified}
-  \end{subfigure}
-  \begin{subfigure}[h!]{0.4\textwidth}
-    \includegraphics[width=\textwidth]{images/evaluation/stratified/heatmaps.png}
-    \caption{Example class activation heatmaps.}
-    \label{fig:heatmap_stratified}
-  \end{subfigure}
-  \caption{Evaluation results of the custom ResNet with stratified train-validation split.}
+    \includegraphics[width=0.4\textwidth]{images/evaluation/stratified/accuracy}
+  \caption{Training and validation accuracy over training epochs using a stratified train-validation split.}
+  \label{fig:acc_stratified}
 \end{figure}
 
-This result is most likely due to the similarity of many images as mentioned in Section \ref{classes_samples}. Since training and validation samples are drawn from the same raw dataset, we conclude that it is very likely that the models are significantly overfitted on the captured data. It is unlikely that they would perform as well on chaotic new data as indicated by the validation accuracy. 
+This result is most likely due to the similarity of many images within individual subsets as explained in Section \ref{classes_samples}. Since training and validation samples are drawn from the same raw dataset, it is likely that each subset is represented in both groups. Therefore, we conclude that it is very likely that the model is significantly overfitted on the captured data and that the validation accuracy is not representative of the classifier's performance on chaotic new data. 
 
-Figure \ref{fig:heatmap_stratified} shows two example class activation heatmaps for the trained model. In these two images, the focus of the classifier appears to be on many environmental features instead of the animals, supporting our theory.
-
-Fitting the models on the training dataset as defined in Section \ref{classes_samples}, validation scores dropped significantly. This was in accordance with our expectations, as the samples from the training and validation datasets are mostly independent. Therefore, the models are not able to overfit on the whole dataset anymore and the validation score is more representative of potential performance on new data.
+Fitting the model on the training dataset as defined in Section \ref{classes_samples}, validation scores dropped significantly. This was in accordance with our expectations, as the samples from the training and validation datasets are mostly independent. Therefore, the model is not able to overfit on the whole dataset anymore and the validation score is more representative of the potential performance on new data.
 
 \subsection{Data augmentation}
 
@@ -1085,18 +1075,31 @@ The custom ResNet in late feature-fusion configuration was trained on both datas
   \label{fig:auto_confusion}
 \end{figure}
 
-The confusion matrices in Figure \ref{fig:auto_confusion} show that the amount of correctly classified ponies has indeed increased after including the artificially generated samples. However, more chicken and alpacas are mistakenly classified as ponies. In numbers, the recall of the \textit{pony} class improved from $0.80$ to $0.87$, while the precision dropped from $0.73$ to $0.69$. The weighted average f1-score across the dataset remains unchanged at $0.82$. For this reason, we did not incorporate this approach into our further evaluation.
+The confusion matrices in Figure \ref{fig:auto_confusion} show that the amount of correctly classified ponies has indeed increased after including the artificially generated samples. However, more chicken and alpacas are mistakenly classified as ponies. The recall of the \textit{pony} class improved from $0.80$ to $0.87$, while the precision dropped from $0.73$ to $0.69$. The weighted average f1-score across the dataset remains unchanged at $0.82$. 
+
+This behaviour can possibly be explained by the altered class balance of the dataset. As more samples of the \textit{pony} class are available in the training data, the model might simply have developed a stronger bias towards that class. As we could not reach a decisive conclusion about the effect of the incorporation of artificial data, we did not incorporate this approach into our further evaluation.
 
 %----------------------------------------------------------------------------------------------------------------------------------
 
-\section{Hyperparameters}
+\section{Network architecture and configuration}
 
+\subsection{Experimental setup}
 
-\subsection{Network architecture and configuration}
+To determine the multispectral configuration with the best performance out of all proposed models, we ran a grid search as described in Section \ref{gridsearch_impl}. All models were trained for 80 epochs with a batch size of 32 samples, using the Adam optimiser with a learning rate of $10^{-6}$. 
 
-To determine the configuration with the best performance out of all proposed models, we ran a grid search as described in Section \ref{gridsearch_impl}. All models were trained for 80 epochs with a batch size of 32 samples. We chose Adam as the optimiser with a learning rate of $10^{-6}$. 
+The combination of batch size and learning rate was previously determined as an appropriate compromise between a fast convergence and stability of the loss function. Generally, smaller batch sizes result in the training loss converging in fewer epochs, while larger batch sizes offer better computational efficiency due to parallelisability \citep{devarakonda_adabatch_2018}. 
 
-The complete loss and accuracy history of all models and configurations are shown in Appendix \ref{appendix_grid_search}. Overall, the custom CNN yielded the lowest performance out of the three models. This is unsurprising, given the small number of trainable parameters compared to the other two models.
+Furthermore, smaller batch sizes make the training process more stochastic. More steps are taken during training. However, the smaller amount of samples per batch means that steps are less likely to be in the direction of the global minimum. On the other hand, it is more likely that the model can avoid getting stuck in local minima.
+
+The effect of varying batch sizes is highly dependent on the specific properties of the dataset, optimiser and model. Whereas \citet{masters_revisiting_2018} achieved better generalisability on the CIFAR-10 dataset \citep{krizhevsky_learning_2009} using ResNet with smaller batch sizes, \citet{radiuk_impact_2017} reported higher testing accuracies on the same data using ResNet with larger batch sizes.
+
+Our evaluation (XXX) (results shown in Figure \ref{fig:batch_size}) 
+
+Adam was published by \citet{kingma_adam_2014} and is generally considered to yield good performance for deep learning algorithms \citep{alom_history_2018}.
+
+\subsection{Grid search results}
+
+The complete loss and accuracy history of all models and configurations are shown in Appendix \ref{appendix_grid_search}. Overall, the custom CNN achieved the lowest performance out of the three models. This is unsurprising, given the small number of trainable parameters compared to the other two models.
 
 \begin{figure}[ht]
   \centering
@@ -1105,7 +1108,7 @@ The complete loss and accuracy history of all models and configurations are show
   \label{fig:resnet_configs}
 \end{figure}
 
-Out of the three models, our ResNet implementation performed best. The results for this model can be seen in Figure \ref{fig:resnet_configs}. For all configurations some overfitting can be observed, as the training losses and accuracies converge at near perfect values.
+The custom ResNet implementation achieved the highest accuracy among the three models. The results for the ResNet can be seen in Figure \ref{fig:resnet_configs}. For all configurations some overfitting can be observed, as the training losses and accuracies converge at near perfect values. Moreover, we observe that 
 
 The LWIR-only configuration appears to be the least effective overall. 
 
@@ -1499,6 +1502,18 @@ Finally, for applications with stationary systems such as intruder detection or 
   \caption{Precision, recall and f1-score of the custom ResNet in late feature fusion configuration on the simplified dataset including artificially generated samples.}
   \label{table:auto_scores_auto}
 \end{table}
+
+%==================================================================================================================================
+
+\chapter{Batch size evaluation}
+\label{appendix_batch_size}
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.8\textwidth]{images/evaluation/batch_size/history}
+  \caption{Training and validation loss and accuracy with varying batch sizes.}
+  \label{fig:batch_size}
+\end{figure}
 
 %==================================================================================================================================
 

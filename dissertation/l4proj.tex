@@ -38,7 +38,7 @@
     % ABC was 20\% better than XYZ, though it caused rabies in half of subjects.''
     Many conventional image recognition systems are constrained by the limitations of wavelengths visible to the human eye.
     This project explores the benefits and drawbacks of incorporating thermal images into image classification models. Several neural network architectures for multispectral images based on state-of-the art models were evaluated on a multi-class dataset of animals.
-    The final model significantly outperforms a comparable visible-light-only system, increasing the classification f1-score from $74\%$ to $80\%$. However, the proposed system is unable to beat a state-of-the-art model that has been pre-trained on ImageNet and transfer-learned on the custom animals dataset.
+    The final model significantly outperforms a comparable visible-light-only system, increasing the classification f1-score from $74\%$ to $80\%$. The proposed system is unable to beat a state-of-the-art model that has been pre-trained on ImageNet and transfer-learned on the custom animals dataset.
     The model was successfully deployed to an Android mobile application, enabling real-time classification of animals for devices equipped with a thermal camera.
 \end{abstract}
 
@@ -217,13 +217,13 @@ Convolutional layers in neural networks consist of multiple kernels that are app
 
 \subsection{Overfitting and dropout}
 
-In practice, many machine learning models are very good at correctly predicting training samples, but produce frequent errors when attempting to predict unknown samples. This property is called overfitting. Conversely, if the model performs poorly on both training and validation data, one speask of underfitting. If a model is underfitted or overfitted, it is generally deemed to have low generalisability \citep{burkov_hundred-page_2019}. 
+In practice, many machine learning models are very good at correctly predicting training samples, but produce frequent errors when attempting to predict unknown samples. This property is called overfitting. Conversely, if the model performs poorly on both training and validation data, one speaks of underfitting. If a model is underfitted or overfitted, it is generally deemed to have low generalisability \citep{burkov_hundred-page_2019}. 
 
 Due to the ability of neural networks with sufficient depth to approximate any multidimensional function, they are naturally susceptible to overfitting \citep{tetko_neural_1995}. It is, therefore, necessary to reduce the generalisation error of a deep learning model by employing strategies to combat overfitting. Such strategies are known as regularisation techniques \citep{goodfellow_deep_2016}.
 
 Dropout is a technique for addressing the problem of overfitting in neural networks that was introduced by \citet{srivastava_dropout_2014}. It attempts to reduce interdependent learning amongst neurons in a network. This is achieved by, for each iteration during the training phase, ignoring a random fraction of inputs to a given layer. An input is ignored (dropped out) by setting it to 0.
 
-Since nodes can not over-rely on specific inputs due to them being disabled during many training iterations, the network is forced to learn reduncant connections. The model is able to learn more independent features, making it more robust. During the validation and prediction phase, no dropout is applied. Therefore, nodes are able to use all inputs for predictions.
+Since nodes can not over-rely on specific inputs due to them being disabled during many training iterations, the network is forced to learn redundant connections. The model is able to learn more independent features, making it more robust. During the validation and prediction phase, no dropout is applied. Therefore, nodes are able to use all inputs for predictions.
 
 Research has shown dropout to be highly effective for the regularisation of deep neural networks with fully-connected layers \citep{wu_towards_2015}. However, the effect of dropout on convolutional layers is still subject to active research. \citet{cai_effective_2019} state that traditional dropout is mostly ineffective on convolutional layers, creating training instability. They propose four alternative dropout methods (drop-neuron, drop-channel, drop-path and drop-layer) that have been specifically designed for convolutional networks, reporting an increase in performance from all methods. 
 
@@ -284,7 +284,7 @@ This model was further refined by \citet{osin_fast_2018} by evaluating different
 
 Expanding upon the late feature fusion network introduced by \citet{wagner_multispectral_2016}, \citet{guan_fusion_2019} proposed an illumination-aware approach to multispectral deep learning models. This approach is based on two-stream networks, as introduced by \citet{simonyan_two-stream_2014}. After the outputs of the RGB and LWIR networks are fused, they are fed into separate networks for daytime and nighttime images. The respective predictions are then merged using illumination-aware weights. This approach achieved state-of-the-art performance on the KAIST benchmark.
 
-\citet{wu_intraspectrum_2020} developed an approach for face recognition based on a novel spectrum pooling layer. The channels of the input are passed into individual CNNs. The spectrum pooling layer subsequently selects the outputs with the strongest discriminative abilities from the CNNs. The selected features are subsequently passed into a fully-connected layer. This approach achieves superior performance for multiple several face recognition datasets.
+\citet{wu_intraspectrum_2020} developed an approach for face recognition based on a novel spectrum pooling layer. The channels of the input image are passed into individual CNNs. The spectrum pooling layer subsequently selects the outputs of the CNNs with the strongest discriminative abilities. The selected features are then passed into a fully-connected layer. This approach achieves superior performance for several face recognition datasets.
 
 %==================================================================================================================================
 
@@ -1277,7 +1277,7 @@ To put these results into a relevant context, we compared the final classifier t
 
 The full training history is shown in Appendix \ref{appendix_baseline} (XXX insert). The VIS-only classifier achieved a final f1-score of $89\%$, significantly outperforming our best model. Our attempts to create a pre-trained late feature fusion model using the ImageNet data for the VIS branch and the FLIR dataset for the LWIR branch did not improve this baseline (XXX insert final score).
 
-Since larger training datasets usually result in more generalisable models and ImageNet contains over a million annotated samples, this result is unsurprising. As a consequence of the aforementioned increased performance of the multispectral model compared to the VIS-only variant, we deem it likely that the pre-traiend baseline could be beat given a large enough dataset.
+Since larger training datasets usually result in more generalisable models and ImageNet contains over a million annotated samples, this result is unsurprising. As a consequence of the aforementioned increased performance of the multispectral model compared to the VIS-only variant, we deem it likely that the pre-traiend baseline could be beaten given a large enough dataset.
 
 
 %----------------------------------------------------------------------------------------------------------------------------------

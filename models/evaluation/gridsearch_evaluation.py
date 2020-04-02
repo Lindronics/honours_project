@@ -24,6 +24,8 @@ font = {
     "fontname": "fbb",
     # "fontweight": "bold",
 }
+axis_font = {"size": "8"}
+
 for model in hists:
     fig, ((ax_loss, ax_acc), (ax_val_loss, ax_val_acc)) = plt.subplots(2, 2, dpi=150)
 
@@ -32,9 +34,14 @@ for model in hists:
             continue
 
         ax_loss.plot(hist["loss"], label=config)
+        ax_loss.set_xlabel("Training epoch", fontdict=axis_font)
         ax_acc.plot(hist["accuracy"], label=config)
+        ax_acc.set_xlabel("Training epoch", fontdict=axis_font)
+
         ax_val_loss.plot(hist["val_loss"], label=config)
+        ax_val_loss.set_xlabel("Training epoch", fontdict=axis_font)
         ax_val_acc.plot(hist["val_accuracy"], label=config)
+        ax_val_acc.set_xlabel("Training epoch", fontdict=axis_font)
 
     ax_loss.set_title("Training loss", fontdict=font)
     # ax_loss.legend()

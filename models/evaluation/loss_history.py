@@ -13,6 +13,7 @@ font = {
     "fontname": "fbb",
     # "fontweight": "bold",
 }
+axis_font = {"size": "8"}
 
 # fig, (ax_loss, ax_acc) = plt.subplots(1, 1, dpi=150)
 fig, ax_acc = plt.subplots(1, 1, dpi=150, figsize=(3.3, 2.2))
@@ -21,11 +22,13 @@ fig, ax_acc = plt.subplots(1, 1, dpi=150, figsize=(3.3, 2.2))
 ax_acc.plot(hists["accuracy"], label="Training")
 # ax_loss.plot(hists["val_loss"], label="Validation")
 ax_acc.plot(hists["val_accuracy"], label="Validation")
+ax_acc.set_xlabel("Training epoch", fontdict=axis_font)
+ax_acc.set_ylabel("Accuracy", fontdict=axis_font)
 
 # ax_loss.set_title("Loss", fontdict=font)
 
 # ax_acc.set_title("Accuracy", fontdict=font)
 ax_acc.legend()
 
-plt.savefig("stratified.pdf")
+plt.savefig("stratified.pdf", bbox_inches="tight")
 plt.show()

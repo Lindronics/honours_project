@@ -271,9 +271,9 @@ Furthermore, there are many applications of thermal imaging in agriculture and t
 
 \citet{wagner_multispectral_2016} evaluated early and late feature fusion methods for thermal multispectral pedestrian detection. The early fusion approach involves stacking the RGB and T channels pixel-wise into a tensor of depth four and feeding the result into a CaffeNet \citep{jia_caffe_2014} convolutional network. The late fusion approach feeds the RGB image and LWIR image into separate convolutional networks respectively and merging the outputs using fully-connected layers. They concluded that, unlike the early fusion approach, the late fusion model significantly outperforms the previous state of the art ACF+T+HOG baseline. 
 
-This model was further refined by \citet{osin_fast_2018} by evaluating different late feature fusion functions on a ResNet-based Single Shot MultiBox Detector (SSD) network \citep{liu_ssd_2016}. They achieved near real-time detection performance on embedded systems.
+This model was further refined by \citet{osin_fast_2018} by evaluating different late fusion functions on a ResNet-based Single Shot MultiBox Detector (SSD) network \citep{liu_ssd_2016}. They achieved near real-time detection performance on embedded systems.
 
-Expanding upon the late feature fusion network introduced by \citet{wagner_multispectral_2016}, \citet{guan_fusion_2019} proposed an illumination-aware approach to multispectral deep learning models. This approach is based on two-stream networks, as introduced by \citet{simonyan_two-stream_2014}. After the outputs of the RGB and LWIR networks are fused, they are fed into separate networks for daytime and nighttime images. The respective predictions are then merged using illumination-aware weights. This approach achieved state-of-the-art performance on the KAIST benchmark.
+Expanding upon the late fusion network introduced by \citet{wagner_multispectral_2016}, \citet{guan_fusion_2019} proposed an illumination-aware approach to multispectral deep learning models. This approach is based on two-stream networks, as introduced by \citet{simonyan_two-stream_2014}. After the outputs of the RGB and LWIR networks are fused, they are fed into separate networks for daytime and nighttime images. The respective predictions are then merged using illumination-aware weights. This approach achieved state-of-the-art performance on the KAIST benchmark.
 
 \citet{wu_intraspectrum_2020} developed an approach for face recognition based on a novel spectrum pooling layer. The channels of the input image are passed into individual CNNs. The spectrum pooling layer subsequently selects the outputs of the CNNs with the strongest discriminative abilities. The selected features are then passed into a fully-connected layer. This approach achieves superior performance for several face recognition datasets.
 
@@ -609,7 +609,7 @@ The metric is based on the assumption that the gradient of the channel differenc
     \caption{Red channel intensity vs green channel intensity.}
     \label{fig:gradient_distribution_red_green}
   \end{subfigure}
-  \caption{Distribution of gradients of the channel difference image before and after alignment using affine transformation.}
+  \caption{Distribution of gradients of the channel difference image before and after alignment using affine transformation. While the gradient distribution of the red and green channel difference gets sparser upon alignment \subref{fig:gradient_distribution_red_green}, it remains mostly unchanged for the VIS and LWIR channels \subref{fig:gradient_distribution}.}
 \end{figure}
 
 An attempt at smoothing both images before calculating the NTG was made by applying the Laplacian of Gaussian (LoG) filter with $\sigma=2$ to both images. As can be seen in Table \ref{table:registration_ntg}, this approach was not successful either. To verify that our implementation of the metric was indeed working correctly, we computed the NTG between the red and green channel of the visible-light image before and after applying a random affine transformation to the green channel. As shown in Table \ref{table:registration_ntg}, the metric is effective for the red-green-channel baseline. 
@@ -723,7 +723,7 @@ Following the conclusion of \citet{wagner_multispectral_2016} about the effectiv
   \quad
   \begin{subfigure}[h!]{0.3\textwidth}
     \includegraphics[width=\textwidth, page={3}, trim={6.5cm 2.2cm 6.5cm 1.5cm}, clip]{images/models/archs}
-    \caption{Late feature fusion.}
+    \caption{Late fusion.}
     \label{fig:arch_fusion}
   \end{subfigure}
   \caption{Multispectral CNN configurations that were implemented for each CNN architecture.}
@@ -811,7 +811,7 @@ The residual blocks are arranged in two groups of three. The convolutional kerne
 \section{Transfer learning using a pre-trained ResNet}
 \label{transfer_learning}
 
-An attempt was made to make use of transfer learning. We decided to evaluate an RGB-only, LWIR-only and feature fusion configuration of a pre-trained network. 
+An attempt was made to make use of transfer learning. We decided to evaluate an RGB-only, LWIR-only and late fusion configuration of a pre-trained network. 
 
 Obtaining an RGB-only network with pre-trained weights is easy. We used an implementation of ResNet 152 v2 \citep{he_identity_2016} with weights that were previously trained on the ImageNet dataset. Since ImageNet has 1000 classes, we had to replace the output layer of the network with a custom layer, to make labels and outputs match.
 
@@ -819,7 +819,7 @@ As discussed in Section \ref{transfer_learning_analysis}, limited resources are 
 
 To use the bounding box annotations for our classification problem, we treated each bounding box as an individual sample, cropping the images appropriately. To reduce noise, we removed samples with a resolution below $40 \times 40$. Only thermal images were used. We then trained an off-the-shelf implementation of ResNet 50 v2 on this dataset. We chose this shallower version of ResNet due to the limited amount of available data and time. It was deemed unlikely that using a more complex, such as ResNet 152 v2 model would benefit performance significantly.
 
-The feature fusion configuration of our transfer learning model, therefore, uses a ResNet 152 v2 for the RGB path, and a ResNet 52 v2 for the LWIR path.
+The late fusion configuration of our transfer learning model, therefore, uses a ResNet 152 v2 for the RGB path, and a ResNet 52 v2 for the LWIR path.
 
 %----------------------------------------------------------------------------------------------------------------------------------
 
@@ -917,8 +917,6 @@ The output of the decoder is then fed forward into four blocks of deconvolutiona
 
 Due to the lack of a discriminator, our autoencoder design does not satisfy the requirements of a generative adversarial network. However, autoencoders are commonly used for image processing tasks such as denoising and colourisation. As LWIR images can be considered to be less noisy than visible-light images (Section \ref{modality}) and both images share rough features such as edges, we deemed an autoencoder architecture to be appropriate for this generative task.
 
-A subset of the animals training dataset with 415 images of Shetland ponies was chosen. Mean squared error was selected as the loss function. The network was trained for 100 epochs with a batch size of 16. Training time averaged around 18 minutes on an NVIDIA Tesla P-100 GPU.
-
 \begin{figure}[ht]
   \centering
   \begin{subfigure}[h!]{0.22\textwidth}
@@ -939,9 +937,11 @@ A subset of the animals training dataset with 415 images of Shetland ponies was 
     \includegraphics[width=\textwidth]{images/autoencoder/train/lwir.png}
     \caption{Actual LWIR image}
   \end{subfigure}
-  \caption{Outputs of autoencoder and U-Net on training data.}
+  \caption{Outputs of autoencoder and U-Net on training data. The U-Net predicts images with more detailed textural information compared to the autoencoder.}
   \label{fig:autoencoder_pony_train}
 \end{figure}
+
+A subset of the animals training dataset with 415 images of Shetland ponies was chosen. Mean squared error was selected as the loss function. The network was trained for 100 epochs with a batch size of 16. Training time averaged around 18 minutes on an NVIDIA Tesla P-100 GPU.
 
 As can be seen in Figure \ref{fig:autoencoder_pony_train_autoencoder}, the network correctly identifies the pony from the training dataset and determines that it should have a higher local intensity in the LWIR waveband. However, when comparing the predicted to the actual LWIR image, it is apparent that the autoencoder lacks the ability to generate the fine textural details of the animal. This is likely due to the denoising property caused by the encoder's bottleneck.
 
@@ -1029,7 +1029,7 @@ At first, the whole animals dataset was divided into training and validation dat
 \begin{figure}[ht]
   \centering
     \includegraphics[width=0.4\textwidth]{images/evaluation/stratified/accuracy}
-  \caption{Training and validation accuracy over training epochs using a stratified train-validation split.}
+  \caption{Training and validation accuracy over training epochs using a stratified train-validation split. The model achieves near-perfect validation accuracy using this strategy.}
   \label{fig:acc_stratified}
 \end{figure}
 
@@ -1051,7 +1051,7 @@ As creating even more augmented samples (factor 10) did not seem to significantl
 
 We used the autoencoder from Section \ref{autoencoder_implementation} to predict the LWIR signatures of ten images retrieved from Wikimedia Commons (sources in List \ref{list:image_sources}). We then selected a subset of our training dataset, containing images of the \textit{pony}, \textit{alpaca} and \textit{chicken} classes. A second copy of this dataset was created, and the ten predicted images were appended to the \textit{pony} class.
 
-The custom ResNet in late feature-fusion configuration was trained on both datasets. The full classification scores can be inspected in Appendices \ref{table:auto_scores_normal} and \ref{table:auto_scores_auto}. 
+The custom ResNet in late fusion configuration was trained on both datasets. The full classification scores can be inspected in Appendices \ref{table:auto_scores_normal} and \ref{table:auto_scores_auto}. 
 
 \begin{figure}[ht]
   \centering
@@ -1065,7 +1065,7 @@ The custom ResNet in late feature-fusion configuration was trained on both datas
     \caption{With generated images.}
     \label{fig:auto_confusion_auto}
   \end{subfigure}
-  \caption{Confusion matrix of the custom ResNet in late feature-fusion configuration on a simplified training dataset including and excluding artificially generated samples.}
+  \caption{Confusion matrix of the custom ResNet in late fusion configuration on a simplified training dataset including and excluding artificially generated samples.}
   \label{fig:auto_confusion}
 \end{figure}
 
@@ -1099,7 +1099,7 @@ The custom ResNet implementation achieved the highest accuracy among the three m
 \begin{figure}[ht]
   \centering
   \includegraphics[width=0.9\textwidth]{images/evaluation/gridsearch/ResNet}
-  \caption{Cross-entropy loss and accuracy of different configurations of the ResNet implementation.}
+  \caption{Cross-entropy loss and accuracy of different configurations of the ResNet implementation. The late fusion network achieves the highest validation accuracy.}
   \label{fig:resnet_configs}
 \end{figure}
 
@@ -1134,7 +1134,7 @@ Table \ref{table:final_classifier_scores} shows the precision, recall and f1-sco
   \midrule
   \textbf{Weighted avg} & \textbf{0.83}      & \textbf{0.80}   & \textbf{0.80}     &  \\ \bottomrule
   \end{tabular}
-  \caption{Precision, recall and f1-score of the final late feature fusion ResNet model.}
+  \caption{Precision, recall and f1-score of the final late fusion ResNet model.}
   \label{table:final_classifier_scores}
 \end{table}
 
@@ -1191,7 +1191,7 @@ Saliency maps were first introduced by \citet{itti_model_1998} as a means of rep
 
 Gradient-weighted Class Activation Mapping (Grad-CAM) is a novel visualisation technique developed by \citet{selvaraju_grad-cam_2020}. It uses the gradients of a target class at the last convolutional layer of a network to generate a heatmap showing the most important regions for the classification of that class.
 
-Since the late feature fusion configuration of our ResNet has two parallel final convolutional layers, the gradient has to be computed for both layers. Figure \ref{fig:grad_cam} displays the Grad-CAM visualisation of four example images.
+Since the late fusion configuration of our ResNet has two parallel final convolutional layers, the gradient has to be computed for both layers. Figure \ref{fig:grad_cam} displays the Grad-CAM visualisation of four example images.
 
 \begin{figure}[ht]
   \centering
@@ -1218,7 +1218,7 @@ Since the late feature fusion configuration of our ResNet has two parallel final
     \caption{Desirable LWIR example.}
     \label{fig:grad_cam_lwir}
   \end{subfigure}
-  \caption{Grad-CAM visualisation of four example images. Warmer colours correspond to more attention by the last convolutional layer of the network. The left images are the VIS images and corresponding heatmaps. The LWIR image and heatmap can be seen in the right images.}
+  \caption{Grad-CAM visualisation of four example images. Warmer colours correspond to more attention by the last convolutional layer of the network. The left hand images in each pair represent the VIS images and corresponding heatmaps. The LWIR image and heatmap can be seen in the right hand images in each pair.}
   \label{fig:grad_cam}
 \end{figure}
 
@@ -1233,16 +1233,16 @@ The remaining two subfigures display examples where only either the VIS or LWIR 
 
 As discussed in Section \ref{modality}, the modality difference between VIS and LWIR images suggests that thermal imaging systems should perform better in low-light conditions compared to visible-light-only systems.
 
-To evaluate the relationship between classification performance and illumination, we calculated the mean and standard deviation of all pixel values of each image in the validation dataset. We then determined the cross-entropy loss of each prediction by the VIS-only, LWIR-only and late feature-fusion ResNets and plotted it as a function of mean and standard deviation. The results are shown in Figure \ref{fig:illumination}.
+To evaluate the relationship between classification performance and illumination, we calculated the mean and standard deviation of all pixel values of each image in the validation dataset. We then determined the cross-entropy loss of each prediction by the VIS-only, LWIR-only and late fusion ResNets and plotted it as a function of mean and standard deviation. The results are shown in Figure \ref{fig:illumination}.
 
 \begin{figure}[ht]
   \centering
   \includegraphics[width=0.9\textwidth]{images/evaluation/illumination}
-  \caption{Cross-entropy loss as a function of intensity mean and std of VIS and LWIR images in the validation dataset. The data has been smoothened with a running mean to show general trends.}
+  \caption{Cross-entropy loss as a function of intensity mean and std of VIS and LWIR images in the validation dataset. The data has been smoothened with a running mean to emphasise general trends.}
   \label{fig:illumination}
 \end{figure}
 
-The overall result defies the expected behaviour of the models. It can be seen that the LWIR-only network performs significantly worse than its VIS-only and late feature fusion counterparts on low-light images. This further supports the theory we formulated in Section \ref{tsne}. The LWIR-only network likely uses the darkness of the cat images as a biased feature of the cat class, giving it near-perfect performance.
+The overall result defies the expected behaviour of the models. It can be seen that the LWIR-only network performs significantly worse than its VIS-only and late fusion counterparts on low-light images. This further supports the theory we formulated in Section \ref{tsne}. The LWIR-only network likely uses the darkness of the cat images as a biased feature of the cat class, giving it near-perfect performance.
 
 Since the LWIR band is not sensitive to illumination, the cat pictures do not generally stand out compared to in the VIS images. To obtain more robust results, a dataset with more well-balanced illumination levels would have to be acquired. Furthermore, the LWIR-only network has a high loss on samples with low LWIR mean intensity. A possible explanation for this is the lack of visible features in these images. 
 
@@ -1280,7 +1280,7 @@ It can, therefore, be concluded that the model is working correctly in the mobil
   \begin{subfigure}[h!]{0.3\textwidth}
     \includegraphics[width=\textwidth, trim={0cm, 22cm, 0cm, 0cm}, clip]{images/app/screenshot_2.jpg}
   \end{subfigure}
-  \caption{Screenshots of the mobile application's predictions with the feature-fusion model. Due to exceptional circumstances, only pictures of animals could be evaluated instead of the animals themselves.}
+  \caption{Screenshots of the mobile application's predictions with the late fusion model. The top predictions display the correct classes. Due to exceptional circumstances, only pictures of animals could be evaluated instead of the animals themselves.}
   \label{fig:app_screenshots}
 \end{figure}
 
@@ -1288,7 +1288,7 @@ It can, therefore, be concluded that the model is working correctly in the mobil
 
 The application was installed on a OnePlus 7 Android device to evaluate the latency of real-time classification. TensorFlow Lite was configured to use the device's GPU for predictions. The RGB-only and feature-level fusion configurations of the custom ResNet were evaluated by running the application in classification mode and performing 1000 predictions. As visible in Figure \ref{fig:app_screenshots}, the application displays the mean and standard deviation of classification times since launch. The following values are readings from this output.
 
-Whereas the RGB-only model took an average of $40.99 ms$, $\sigma = 4.55 ms$ for a single prediction, the feature-fusion model performed a prediction every $70.24 ms$, $\sigma = 6.79 ms$. This equates to $14.24$ predictions per second, which is significantly higher than the sensor frame rate of $8.7 Hz$. 
+Whereas the RGB-only model took an average of $40.99 ms$, $\sigma = 4.55 ms$ for a single prediction, the late fusion model performed a prediction every $70.24 ms$, $\sigma = 6.79 ms$. This equates to $14.24$ predictions per second, which is significantly higher than the sensor frame rate of $8.7 Hz$. 
 Infrequent stuttering of the image feed in both the camera and classifier activities are a result of the sensor occasionally closing the shutter and automatically recalibrating, as outlined in the user guide\footnote{\url{http://www.flirmedia.com/flir-one/flir-one-pro/user-guides/flir-one-pro-user-guide.html}}.
 
 Finally, the battery impact of running the application was evaluated by running the classifier activity for 20 minutes. No other applications were active on the device simultaneously. According to Android's battery usage statistics (Figure \ref{fig:app_battery}), our application used around $8\%$ of the device's $3700 mAh$ battery capacity over the course of the $20 min$. This implies a theoretical maximum usage time of $4.17 h$, assuming the usage statistics are accurate. Based on the results of this evaluation, we conclude that the multispectral model is suitable for real-time classification tasks on edge devices.
@@ -1350,7 +1350,7 @@ Finally, for applications involving a continuous video feed, such as the mobile 
 \begin{figure}[ht]
   \centering
   \includegraphics[width=0.6\textwidth]{images/models/keras/fusion.png}
-  \caption{Architecture of AlexNet in late feature fusion configuration.}
+  \caption{Architecture of AlexNet in late fusion configuration.}
 \end{figure}
 
 %==================================================================================================================================
@@ -1377,7 +1377,7 @@ Finally, for applications involving a continuous video feed, such as the mobile 
   \midrule
   \textbf{Weighted avg} & \textbf{0.78}      & \textbf{0.73}   & \textbf{0.73}     &  \\ \bottomrule
   \end{tabular}
-  \caption{Precision, recall and f1-score of the late feature fusion ResNet model without affine data augmentation.}
+  \caption{Precision, recall and f1-score of the late fusion ResNet model without affine data augmentation.}
   \label{table:appendix_affine_1}
 \end{table}
 
@@ -1397,7 +1397,7 @@ Finally, for applications involving a continuous video feed, such as the mobile 
   \midrule
   \textbf{Weighted avg} & \textbf{0.84}      & \textbf{0.78}   & \textbf{0.78}     &  \\ \bottomrule
   \end{tabular}
-  \caption{Precision, recall and f1-score of the late feature fusion ResNet model with affine data augmentation (factor 2).}
+  \caption{Precision, recall and f1-score of the late fusion ResNet model with affine data augmentation (factor 2).}
   \label{table:appendix_affine_2}
 \end{table}
 
@@ -1417,7 +1417,7 @@ Finally, for applications involving a continuous video feed, such as the mobile 
   \midrule
   \textbf{Weighted avg} & \textbf{0.85}      & \textbf{0.79}   & \textbf{0.79}     &  \\ \bottomrule
   \end{tabular}
-  \caption{Precision, recall and f1-score of the late feature fusion ResNet model with affine data augmentation (factor 5).}
+  \caption{Precision, recall and f1-score of the late fusion ResNet model with affine data augmentation (factor 5).}
   \label{table:appendix_affine_3}
 \end{table}
 
@@ -1438,7 +1438,7 @@ Finally, for applications involving a continuous video feed, such as the mobile 
     \item{\url{https://commons.wikimedia.org/wiki/File:Fell_ponies,_West_Fell.jpg}}
     \item{\url{https://commons.wikimedia.org/w/index.php?title=Special:Search&limit=20&offset=420&profile=default&search=shetland+pony&advancedSearch-current=%7B%7D&ns0=1&ns6=1&ns12=1&ns14=1&ns100=1&ns106=1#/media/File:Jielbeaumadier_cheval_5_scva_paris_2012.jpeg}}
   \end{enumerate}
-  \caption{Image sources for the autoencoder. All images retrieved under the Creative Commons licence.}
+  \caption{Image sources for the autoencoder. All images retrieved under the Creative Commons licence (CC BY-SA 2.0).}
   \label{list:image_sources}
 \end{captionedList}
 
@@ -1453,7 +1453,7 @@ Finally, for applications involving a continuous video feed, such as the mobile 
   \midrule
   \textbf{Weighted avg} & \textbf{0.85}      & \textbf{0.82}   & \textbf{0.82}     &  \\ \bottomrule
   \end{tabular}
-  \caption{Precision, recall and f1-score of the custom ResNet in late feature fusion configuration on the simplified dataset including artificially generated samples.}
+  \caption{Precision, recall and f1-score of the custom ResNet in late fusion configuration on the simplified dataset including artificially generated samples.}
   \label{table:auto_scores_normal}
 \end{table}
 
@@ -1468,7 +1468,7 @@ Finally, for applications involving a continuous video feed, such as the mobile 
   \midrule
   \textbf{Weighted avg} & \textbf{0.86}      & \textbf{0.83}   & \textbf{0.82}     &  \\ \bottomrule
   \end{tabular}
-  \caption{Precision, recall and f1-score of the custom ResNet in late feature fusion configuration on the simplified dataset including artificially generated samples.}
+  \caption{Precision, recall and f1-score of the custom ResNet in late fusion configuration on the simplified dataset including artificially generated samples.}
   \label{table:auto_scores_auto}
 \end{table}
 

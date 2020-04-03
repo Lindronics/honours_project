@@ -313,9 +313,9 @@ As outlined in Section \ref{imaging}, LWIR and visible light are both forms of e
 
 \citet{davis_background-subtraction_2007} state that thermal cameras are especially effective for object detection tasks compared to VIS cameras in low-light settings. Conversely, given sufficient illumination, visible-light cameras perform better than thermal sensors if the thermal properties of objects are similar to their background. Furthermore, they state a low signal-to-noise ratio and white-black polarity calibration issues as common problems of thermal cameras.
 
-\subsection{Noisiness}
+\subsection{Textural features}
 
-To evaluate the relative noisiness of thermal and visible-light images, a test image was taken in an indoor setting. The LWIR channel and the greyscale representation of the RBG channels can be seen in Figures \ref{fig:fourier_lwir_spatial} and \ref{fig:fourier_vis_spatial}. It is apparent that the greyscale image contains more textural details than the LWIR image. For instance, the painting above the fireplace appears as a simple gradient in the thermal band.
+To evaluate the different textural properties of thermal and visible-light images, a test image was taken in an indoor setting. The LWIR channel and the greyscale representation of the RBG channels can be seen in Figures \ref{fig:fourier_lwir_spatial} and \ref{fig:fourier_vis_spatial}. It is apparent that the greyscale image contains more textural details than the LWIR image. For instance, the painting above the fireplace appears as a simple gradient in the thermal band.
 
 \begin{figure}[ht]
   \centering
@@ -347,7 +347,7 @@ We applied a fast Fourier transform \citep{cooley_fast_1969} to both images. Fou
 
 Figures \ref{fig:fourier_lwir_freq} and \ref{fig:fourier_vis_freq} show the magnitude component of the aforementioned image in the frequency domain. The centre has been shifted to represent the zero frequency of the image. The distance of a point to the centre represents its frequency and the intensity its magnitude. 
 
-It can be seen that the visible-light image has a significantly higher portion of high-frequency components than its LWIR counterpart. Hence, the VIS image can be considered to be noisier than the LWIR image. This effect does not change significantly when downsampling the VIS image to the resolution of $160 \times 120$. The difference in noisiness might have an impact on the effects of convolutional filters on the LWIR and VIS images.
+It can be seen that the visible-light image has a significantly higher portion of high-frequency components than its LWIR counterpart. Hence, the VIS image can be considered to be noisier than the LWIR image. This effect does not change significantly when downsampling the VIS image to the resolution of $160 \times 120$. The difference in texture details might have an impact on the effects of convolutional filters on the LWIR and VIS images.
 
 \subsection{Environmental conditions}
 
@@ -915,7 +915,7 @@ Each encoder block has a convolutional layer, followed by a leaky ReLU activatio
 
 The output of the decoder is then fed forward into four blocks of deconvolutional layers followed by leaky ReLU activation to attempt a reconstruction of the LWIR image. Each deconvolutional layer tries to upsample the input by predicting appropriate pixel values.
 
-Due to the lack of a discriminator, our autoencoder design does not satisfy the requirements of a generative adversarial network. However, autoencoders are commonly used for image processing tasks such as denoising and colourisation. As LWIR images can be considered to be less noisy than visible-light images (Section \ref{modality}) and both images share rough features such as edges, we deemed an autoencoder architecture to be appropriate for this generative task.
+Due to the lack of a discriminator, our autoencoder design does not satisfy the requirements of a generative adversarial network. However, autoencoders are commonly used for image processing tasks such as denoising and colourisation. As LWIR images have fewer high-frequency components than visible-light images (Section \ref{modality}) and both images share rough features such as edges, we deemed an autoencoder architecture to be appropriate for this generative task.
 
 \begin{figure}[ht]
   \centering
@@ -981,7 +981,7 @@ After successful training of the networks, two images of ponies were retrieved f
     \includegraphics[width=\textwidth]{images/autoencoder/pony_2/unet.png}
     \caption{U-Net prediction}
   \end{subfigure}
-  \caption{Predicted LWIR signature of images of shetland ponies. Image sources in List \ref{list:image_sources}.}
+  \caption{Predicted LWIR signature of images of shetland ponies. Original images: "Shetland ponies at Sandwick" by Andrew Gray under CC BY-SA 2.0. URLs in List \ref{list:image_sources}.}
   \label{fig:autoencoder_pony}
 \end{figure}
 
@@ -1182,8 +1182,9 @@ As can be seen in Figure \ref{fig:test_tsne_input}, the cat images clearly stand
 
 This interpretation is further supported by the observation that the strict separation of the cat cluster persists throughout the VIS branch of the network, as shown in \ref{fig:test_tsne_vis}. The LWIR band, however, is not sensitive to illumination. Therefore, the LWIR branch of the network is unable to use the overall brightness of the image to make inferences about the classes. This explains why the distinctive cat cluster is not visible in Figure \ref{fig:test_tsne_lwir}.
 
-A similar effect can be observed for the \textit{Hamburg chicken} class. A large Hamburg chicken cluster stands out in the t-SNE of the input image as well as the final convolutional layers of the VIS and LWIR branches. A likely explanation for this phenomenon is that many images of Hamburg chicken are partly occluded by a grid. Since this is unique to this class, it can be assumed that the model uses the grid as a feature to identify Hamburg chicken, resulting in undesirable overfitting on the environment.
+A similar effect can be observed for the \textit{Hamburg chicken} class. A large Hamburg chicken cluster stands out in the t-SNE of the input image as well as the final convolutional layers of the VIS and LWIR branches. A likely explanation for this phenomenon is that many images of Hamburg chicken are partly occluded by a grid. Since this is unique to this class, it can be assumed that the model uses the grid as a feature to identify Hamburg chicken, resulting in undesirable background-related bias.
 
+The \textit{alpaca} class demonstrates the effectiveness of the late fusion approach. Neither the VIS nor the LWIR branch are able to completely isolate and group together the alpaca images. However, the fully-connected part of the network is able to interpret the merged output features returned by the convolutional branches and accurately distinguish the class.
 
 \subsection{Saliency analysis}
 
@@ -1306,7 +1307,7 @@ The classifier has been successfully deployed to a mobile edge device and can be
 
 However, our model was not able to beat the second proposed baseline of a state-of-the-art VIS-only classifier that was pre-trained on the ImageNet dataset. Attempts to perform transfer learning on an LWIR classifier did not manage to improve our model's performance. We conclude that the lack of available thermal datasets remains a significant problem for the development of LWIR-based computer vision systems.
 
-Furthermore, our t-SNE and saliency analysis of the final model reveals problems with bias and overfitting on the environment. These issues are likely a result of a noisy and insufficiently diverse dataset. 
+Furthermore, our t-SNE and saliency analysis of the final model reveals problems with background-related bias. These issues are likely a result of a noisy and insufficiently diverse dataset. 
 
 Nonetheless, our evaluation suggests that our multi-branch network architecture increases the system's robustness by providing more redundant features (XXX rephrase). We conclude that thermal multispectral imaging can significantly improve the performance of deep learning models for the recognition of animals.
 
@@ -1566,7 +1567,7 @@ Finally, for applications involving a continuous video feed, such as the mobile 
 \begin{figure}[ht]
   \centering
   \includegraphics[width=0.4\textwidth, trim={0cm 32cm 0cm 0cm}, clip]{images/app/battery}
-  \caption{Battery usage statistics of running the mobile application in classification mode for 20 minutes. The application reduced the battery charge by $8\%$.}
+  \caption{Battery usage statistics of running the mobile application in classification mode for 20 minutes. The application reduced the battery charge by $8\%$ during the 20 minutes.}
   \label{fig:app_battery}
 \end{figure}
 

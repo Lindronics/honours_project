@@ -37,9 +37,10 @@
     % never been used together. It was found that  
     % ABC was 20\% better than XYZ, though it caused rabies in half of subjects.''
     Many conventional image recognition systems are constrained by the limitations of wavelengths visible to the human eye.
-    This project explores the benefits and drawbacks of incorporating thermal images into image classification models. Several neural network architectures for multispectral images based on state-of-the art models were evaluated on a multi-class dataset of animals.
-    The final model significantly outperforms a comparable visible-light-only system, increasing the classification f1-score from $74\%$ to $80\%$. The proposed system is unable to beat a state-of-the-art model that has been pre-trained on ImageNet and transfer-learned on the custom animals dataset.
-    The model was successfully deployed to an Android mobile application, enabling real-time classification of animals for devices equipped with a thermal camera.
+    This project explores the benefits and drawbacks of incorporating thermal images into image classification models. A multispectral dataset consisting of eight classes of animals and 2317 total samples was captured using a FLIR One Pro thermal camera.
+    Early fusion and late fusion multispectral neural network architectures based on popular image classifiers, such as ResNet, were evaluated on the dataset.
+    The final model significantly outperforms a comparable visible-light-only system, increasing the classification f1-score from 74\% to 80\%. The proposed network is unable to beat a state-of-the-art model that has been pre-trained on ImageNet and transfer-learned on the custom animals dataset.
+    The model was successfully deployed to an Android mobile application, enabling real-time classification of animals for devices equipped with a FLIR thermal camera.
 \end{abstract}
 
 %==============================================================================
@@ -97,21 +98,17 @@
 
 \section{Motivation}
 
-Deep convolutional neural networks have achieved impressive results on image classification tasks. The majority of image classification systems is trained on conventional visible light images. Conventional cameras are usually built to capture images primarily in wavelengths visible to the human eye. Therefore, many computer vision systems are inherently limited by the physical constraints of human vision. 
-
-To further improve the performance of image classification systems beyond these constraints, further input sources, such as additional wavelengths and depth perception can be introduced.
+Deep convolutional neural networks have achieved impressive results on image classification tasks. The majority of image classification systems is trained on conventional visible light images. Conventional cameras are usually built to capture images primarily in wavelengths visible to the human eye. Therefore, many computer vision systems are inherently limited by the physical constraints of human vision. To further improve the performance of image classification systems beyond these constraints, further input sources, such as additional wavelengths and depth perception can be introduced.
 
 Thermal cameras have become significantly more affordable in recent years. This makes it increasingly feasible to equip computer vision systems with thermal cameras. Thermal imaging promises to reveal properties of objects that remain hidden to the human eye, extending the sensing capabilities of an image classifier.
 
-The development of autonomous systems, such as self-driving cars, is drastically increasing the demand for robust and precise object recognition and classification models. These systems often operate in real-time. Therefore, low latency without sacrificing accuracy is required to be able to make fast androbust decisions.
+The development of autonomous systems, such as self-driving cars or image-based surveillance systems, is drastically increasing the demand for robust and precise object recognition and classification models. These systems often operate in real-time. Therefore, low latency without sacrificing accuracy is required to be able to make fast and robust decisions.
 
 %----------------------------------------------------------------------------------------------------------------------------------
 
 \section{Aim}
 
-The primary aim of this project is to explore the benefits and drawbacks of incorporating a thermal imaging system into a deep learning image classification model.
-
-We shall demonstrate our findings on a multi-class classification task involving eight classes of animals. To achieve this, we will:
+The primary aim of this project is to explore different strategies for incorporating thermal images into image classification models and evaluating the benefits and drawbacks on a custom-made dataset. We shall demonstrate our findings on a multi-class classification task involving eight classes of animals. To achieve this, we will:
 
 \begin{itemize}
   \item review existing solutions for multispectral image classification systems (Section \ref{background}),
@@ -126,7 +123,7 @@ Furthermore, we will develop a mobile application for Android devices, allowing 
 
 \section{Potential applications}
 
-A thermal multispectral animal recognition model could be used for a variety of possible applications. Being able to detect and classify animals in both day and night scenarios as well as in partially occluded settings could be beneficial for tracking wildlife. This could be beneficial for research applications or autonomously tracking endangered species.
+A thermal multispectral animal recognition model could be used for a variety of possible applications. Being able to detect and classify animals in both day and night scenarios as well as in partially occluded settings could be beneficial for tracking wildlife. This could be used for research applications or autonomously tracking endangered species.
 
 Furthermore, stationary systems could be used for security applications such as intruder detection in remote places, where an alarm should only be triggered if the intruder is of a certain species. 
 
@@ -1103,7 +1100,7 @@ The custom ResNet implementation achieved the highest accuracy among the three m
 
 \begin{figure}[ht]
   \centering
-  \includegraphics[width=0.8\textwidth]{images/evaluation/gridsearch/ResNet}
+  \includegraphics[width=0.9\textwidth]{images/evaluation/gridsearch/ResNet}
   \caption{Cross-entropy loss and accuracy of different configurations of the ResNet implementation.}
   \label{fig:resnet_configs}
 \end{figure}
@@ -1241,7 +1238,7 @@ To evaluate the relationship between classification performance and illumination
 
 \begin{figure}[ht]
   \centering
-  \includegraphics[width=0.8\textwidth]{images/evaluation/illumination}
+  \includegraphics[width=0.9\textwidth]{images/evaluation/illumination}
   \caption{Cross entropy loss as a function of intensity mean and std of VIS and LWIR images in the validation dataset. The data has been smoothened with a running mean to show general trends.}
   \label{fig:illumination}
 \end{figure}

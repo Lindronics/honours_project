@@ -30,12 +30,6 @@
 %==============================================================================
 %% ABSTRACT
 \begin{abstract}
-    % Every abstract follows a similar pattern. Motivate; set aims; describe work; explain results.
-    % \vskip 0.5em
-    % ``XYZ is bad. This project investigated ABC to determine if it was better. 
-    % ABC used XXX and YYY to implement ZZZ. This is particularly interesting as XXX and YYY have
-    % never been used together. It was found that  
-    % ABC was 20\% better than XYZ, though it caused rabies in half of subjects.''
     Many conventional image recognition systems are constrained by the limitations of wavelengths visible to the human eye.
     This project explores the benefits and drawbacks of incorporating thermal images into image classification models. A multispectral dataset consisting of eight classes of animals and 2317 total samples was captured using a FLIR One Pro thermal camera.
     Early fusion and late fusion multispectral neural network architectures based on popular image classifiers, such as ResNet, were evaluated on the dataset.
@@ -511,9 +505,9 @@ Figure \ref{fig:dataset_classes} shows example VIS and LWIR images from the trai
 
 \subsection{Data augmentation}
 
-Due to the limited amount of time and resources available to the project, generating a dataset with sufficient scope and size is challenging. Since the performance of machine learning models is usually directly tied to the size and quality of the available dataset, an insufficient dataset might make it impossible to train an accurate and robust classifier \citep{fawzi_adaptive_2016}. Therefore, data augmentation was employed to artificially increase the amount of usable training samples.
+Due to the limited amount of time and resources available to the project, generating a dataset with sufficient scope and size proved to be challenging. Since the performance of machine learning models is usually directly tied to the size and quality of the available dataset, an insufficient dataset can make it impossible to train an accurate and robust classifier \citep{fawzi_adaptive_2016}. Therefore, data augmentation was employed to artificially increase the amount of usable training samples.
 
-\citet{mikolajczyk_data_2018} make the distinction between white-box and black-box data augmentation methods. While the latter use a form of deep learning known as Generative Adversarial Networks (GAN) to synthesise new training samples, white-box methods involve more traditional techniques, such as affine transformations. An affine transformation or affine map can accurately represent a composition of a translation and a linear map (e.g. scaling, rotation and shearing). A transformation $f(\vec{x})$ can be expressed as follows:
+\citet{mikolajczyk_data_2018} made the distinction between white-box and black-box data augmentation methods. While the latter use a form of deep learning known as Generative Adversarial Networks (GAN) to synthesise new training samples, white-box methods involve more traditional techniques, such as affine transformations. An affine transformation or affine map can accurately represent a composition of a translation and a linear map (e.g. scaling, rotation and shearing). A transformation $f(\vec{x})$ can be expressed as follows:
 
 \begin{equation}
   f(\vec{x}) = A \vec{x} + \vec{b},
@@ -522,9 +516,9 @@ Due to the limited amount of time and resources available to the project, genera
 
 where $\vec{x}$ represents the coordinates of a point to be translated, $A$ is a $2 \times 2$ linear map, and $\vec{b}$ is the translation vector. $f(\vec{x})$ can be applied to the coordinates $\vec{x}$ of every pixel, yielding a transformed image. If necessary, interpolation strategies are used to fill in gaps between the new pixels.
 
-After evaluating various methods of data augmentation on a subset of the ImageNet dataset, \citet{perez_effectiveness_2017} conclude that traditional affine transformations alone can be very effective at improving classification performance, although GAN-based methods are promising and might yield better results.
+After evaluating various methods of data augmentation on a subset of the ImageNet dataset, \citet{perez_effectiveness_2017} concluded that traditional affine transformations alone can be very effective at improving classification performance, although GAN-based methods are promising and might yield better results.
 
-Due to the relatively easy implementation, this project, therefore, primarily uses white-box data augmentation. However, the design and implementation of a deep-learning model generating LWIR from visible light images is discussed in Section \ref{autoencoder_implementation}. This model could be used to generate new LWIR data samples from visible light images retrieved from other sources, such as existing VIS-only computer vision datasets.
+Due to the relatively easy implementation, this project made heavy use of white-box data augmentation. However, the design and implementation of a deep convolutional autoencoder for generating LWIR from visible light images is discussed in Section \ref{autoencoder_implementation}. This model could be used to generate new LWIR data samples from visible light images retrieved from other sources, such as existing VIS-only image classification datasets.
 
 Figure \ref{fig:augmentation_affine} shows different affine transformations that were used to augment the captured dataset. The most natural transformation in this scenario is a horizontal flip, as we can assume that the objects to be classified are symmentric along the horizontal axis and the images have all been captured with similar camera orientations. Moreover, we employed randomized zooms to try to account for the varying distances that the animals were photographed from. We decided to limit the zoom factor to a small enough range to guarantee that the images still showed the whole object. Finally, we applied random rotations in the range from $-20^{\circ}$ to $20^{\circ}$ to account for slightly different camera orientations.
 
@@ -550,9 +544,9 @@ Figure \ref{fig:augmentation_affine} shows different affine transformations that
   \label{fig:augmentation_affine}
 \end{figure}
 
-Another possible way of augmenting the data before classification is artificially drawing obstacles over the images. This approach could possibly help the model generalise better on the dataset, as a significant amount of samples from certain classes is obstructed by metal grids or foliage. However, this would require further investigation into the varying properties of visible light and LWIR images and their interaction with different types of obstacles. Hence, this approach was not implemented in this project. Instead, we decided to remove a significant part of obstructed samples from the final dataset and focused on working with higher-quality data. 
+Another possible way of augmenting the data before classification is artificially drawing obstacles over the images. This approach could possibly help the model generalise better on the dataset, as a significant amount of samples from certain classes is obstructed by metal grids or foliage. However, this would require further investigation into the varying properties of visible light and LWIR images and their interaction with different types of obstacles. Hence, this approach was not implemented in this project. Instead, we decided to remove a significant part of obstructed samples from the final dataset and focused on working with less noisy data. 
 
-A limitation that remains with all non-generative data augmentation techniques is that the augmented samples are not fully independent from each other. The classifier only learns a very limited amount of new features from augmented samples. White-box data augmentation can, therefore, only mitigate the problem of insufficient independent samples. To achieve better generalisability, obtaining more data is preferable to augmenting existing data.
+A limitation that remains with all non-generative data augmentation techniques is that the augmented samples are not fully independent from each other. The classifier only learns a very limited amount of new features from augmented samples. White-box data augmentation can, therefore, only slightly mitigate the problem of insufficient independent samples. To achieve better generalisability, obtaining more data is preferable to augmenting existing data.
 
 %----------------------------------------------------------------------------------------------------------------------------------
 
@@ -844,8 +838,6 @@ The application comprises of a camera activity and a classifier activity that ar
 
 The classifier activity shows the top three predictions of the current image at the top of the screen. Both activities contain a toggle switch to enable and disable image registration. When activated, the affine transformation from Equation \ref{trans} is applied to the VIS images from the FLIR camera, before displaying them or feeding them into the classifier.
 
-(XXX screenshots appendix)
-
 %==================================================================================================================================
 \chapter{Implementation}
 \label{implementation}
@@ -908,6 +900,8 @@ The script works by counting the number of samples per class and determining the
 
 \subsubsection{Traditional autoencoder}
 
+
+
 A deep convolutional autoencoder was created to predict the LWIR signature of objects from the corresponding visible light image. The architecture of the network is shown in Figure \ref{fig:autoencoder_architecture}. The network consists of an encoder and a decoder that each contain four blocks of layers.
 
 \begin{figure}[ht]
@@ -921,7 +915,7 @@ Each encoder block has a convolutional layer, followed by a leaky ReLU activatio
 
 The output of the decoder is then fed forward into four blocks of deconvolutional layers followed by leaky ReLU activation to attempt a reconstruction the LWIR image. Each deconvolutional layer tries to upsample the input by predicting appropriate pixel values.
 
-Due to the lack of a discriminator, our autoencoder design does not satisfy the requirements of a generative adversarial network. However, autoencoders are commonly used for image processing tasks such as denoising and colorisation. As LWIR images are generally less noisy than visible light images (XXX proof) and both images share rough features such as edges, we deemed an autoencoder architecture to be appropriate for this generative task.
+Due to the lack of a discriminator, our autoencoder design does not satisfy the requirements of a generative adversarial network. However, autoencoders are commonly used for image processing tasks such as denoising and colorisation. As LWIR images can be considered to be less noisy than visible light images (Section \ref{modality}) and both images share rough features such as edges, we deemed an autoencoder architecture to be appropriate for this generative task.
 
 A subset of the animals training dataset with 415 images of Shetland ponies was chosen. Mean squared error was selected as the loss function. The network was trained for 100 epochs with a batch size of 16. Training time averaged around 18 minutes on an NVIDIA Tesla P-100 GPU.
 
@@ -1022,7 +1016,10 @@ Finally, the \lstinline{ClassifierActivity} initialises an instance of \lstinlin
 \chapter{Evaluation}
 \label{evaluation}
 
+To evaluate whether the addition of LWIR data can improve the performance of image classifiers on our dataset, we resorted to an evaluation comprising of three stages. Firstly, in Section \ref{eval_strategies}, we assessed the effectiveness of the model-invariant regularisation strategies we developed. Secondly, in Section \ref{eval_arch}, the relative accuracy of the proposed models and configurations was evaluated. Finally, we performed an in-depth analysis on the model with the highest performance in Section \ref{eval_final} and compared it to the pre-defined baselines.
+
 \section{Training strategies}
+\label{eval_strategies}
 
 \subsection{Training-validation split}
 \label{eval_train_val_split}
@@ -1052,7 +1049,7 @@ As creating even more augmented samples (factor 10) did not seem to significantl
 
 \subsubsection{Generation of artificial data}
 
-We used the autoencoder from Section \ref{autoencoder_implementation} to predict the LWIR signatures of ten images retrieved from Wikimedia Commons (Appendix \ref{appendix_augmentation}). We then selected a subset of our training dataset, containing images of the \textit{pony}, \textit{alpaca} and \textit{chicken} classes. A second copy of this dataset was created and the ten predicted images were appended to the \textit{pony} class.
+We used the autoencoder from Section \ref{autoencoder_implementation} to predict the LWIR signatures of ten images retrieved from Wikimedia Commons (sources in List \ref{list:image_sources}). We then selected a subset of our training dataset, containing images of the \textit{pony}, \textit{alpaca} and \textit{chicken} classes. A second copy of this dataset was created and the ten predicted images were appended to the \textit{pony} class.
 
 The custom ResNet in late feature-fusion configuration was trained on both datasets. The full classification scores can be inspected in Appendices \ref{table:auto_scores_normal} and \ref{table:auto_scores_auto}. 
 
@@ -1079,6 +1076,7 @@ This behaviour can possibly be explained by the altered class balance of the dat
 %----------------------------------------------------------------------------------------------------------------------------------
 
 \section{Network architecture and configuration}
+\label{eval_arch}
 
 \subsection{Experimental setup}
 
@@ -1114,6 +1112,7 @@ Among all configurations, the late fusion (\textit{fusion}) model achieved the h
 %----------------------------------------------------------------------------------------------------------------------------------
 
 \section{Final classifier}
+\label{eval_final}
 
 To obtain reliable scores for the selected model, we ran a 10-fold cross validation on the late fusion ResNet and averaged the results. Since the validation dataset had to be kept completely separate from the training dataset, as discussed in Section \ref{eval_train_val_split}, the k-fold split was performed only on the training dataset. During each fold, the non-selected samples were discarded instead of being used for validation.
 
@@ -1301,13 +1300,13 @@ Finally, the battery impact of running the application was evaluated by running 
 
 This dissertation explored the benefits and drawbacks of multispectral image classification with a thermal and visible light camera. A classifier based on the ResNet deep learning architecture was developed, achieving a validation f1-score of $80\%$.
 
-Our evaluation demonstrates that a model based on late feature-level fusion of the thermal and visible light features, similar to \citet{wagner_multispectral_2016} clearly outperforms the VIS-only baseline. This is the case even in settings with sufficient illumination.
+Our evaluation demonstrates that a model based on late fusion of the thermal and visible light features, similar to \citet{wagner_multispectral_2016} clearly outperforms the VIS-only baseline. This is the case even in settings with sufficient illumination.
 
 The classifier has been successfully deployed to a mobile edge device and can be run in real-time with tolerable latency. This demonstrates the suitability of the system for mobile environments with low computational power, such as phones and self-driving cars.
 
 However, our model was not able to beat the second proposed baseline of a state-of-the art VIS-only classifier that was pre-trained on the ImageNet dataset. Attempts to perform transfer learning on an LWIR classifier did not manage to improve our model's performance. We conclude that the lack of available thermal datasets remains a signficant problem for the development of LWIR-based computer vision systems.
 
-Furthermore, our t-SNE and saliency analysis of the final model reveals problems with bias and overfitting on the environment. These issues are likely a result of a noisy and insufficiently diverse dataset.
+Furthermore, our t-SNE and saliency analysis of the final model reveals problems with bias and overfitting on the environment. These issues are likely a result of a noisy and insufficiently diverse dataset. 
 
 Nonetheless, our evaluation suggests that our multi-branch network architecture increases the system's robustness by providing more redundant features (XXX rephrase). We conclude that thermal multispectral imaging can significantly improve the performance of deep learning models for the recognition of animals.
 
@@ -1319,9 +1318,9 @@ We attempted to increase the generalisability of our classifier by generating ar
 
 Moreover, many generalisation problems of our model are likely a result of poorly framed input images. Furthermore, the framing of objects is likely to be noisy when using the mobile application. A more robust approach for this usage scenario could involve the development of an object detection model. Such a model would support the detection of multiple objects in a single image at varying distances and positions. State-of-the-art architectures such as YOLO \citep{redmon_you_2016, redmon_yolov3_2018} promise low inference times and might be suitable for this task. 
 
-Finally, for applications with stationary systems such as intruder detection or wildlife tracking, a model (XXX).
+Our review of existing image registration metrics concluded that the problem of quantifying the alignment of VIS and LWIR images has not yet been conclusively solved. Further investigation into robust registration metrics for thermal and visible light images might be necessary to accelerate future research into the benefits and drawbacks of thermal multispectral imaging.
 
-(XXX) registration
+Finally, for applications involving a continuous video feed, such as the mobile application, video surveillance systems or self-driving cars, additional robustness could be added to the model by processing sequences of data instead of single images. Promising approaches for this problem include deep recurrent neural networks and long short-term memory (LSTM) architectures \citep{hochreiter_long_1997}.
 
 %==================================================================================================================================
 %
@@ -1440,7 +1439,7 @@ Finally, for applications with stationary systems such as intruder detection or 
     \item{\url{https://commons.wikimedia.org/w/index.php?title=Special:Search&limit=20&offset=420&profile=default&search=shetland+pony&advancedSearch-current=%7B%7D&ns0=1&ns6=1&ns12=1&ns14=1&ns100=1&ns106=1#/media/File:Jielbeaumadier_cheval_5_scva_paris_2012.jpeg}}
   \end{enumerate}
   \caption{Image sources for the autoencoder. All images retrieved under the Creative Commons licence.}
-  \label{image_sources}
+  \label{list:image_sources}
 \end{captionedList}
 
 \begin{table}[H]

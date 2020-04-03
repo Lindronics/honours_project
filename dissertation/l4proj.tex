@@ -92,7 +92,7 @@
 
 \section{Motivation}
 
-Deep convolutional neural networks have achieved impressive results on image classification tasks. The majority of image classification systems is trained on conventional visible-light images. Conventional cameras are usually built to capture images primarily in wavelengths visible to the human eye. Therefore, many computer vision systems are inherently limited by the physical constraints of human vision. To further improve the performance of image classification systems beyond these constraints, further input sources, such as additional wavelengths and depth perception, can be introduced.
+Deep convolutional neural networks have achieved impressive results on image classification tasks. Most image classification systems are trained on conventional visible-light images. Conventional cameras are usually built to capture images primarily in wavelengths visible to the human eye. Therefore, many computer vision systems are inherently limited by the physical constraints of human vision. To further improve the performance of image classification systems beyond these constraints, further input sources, such as additional wavelengths and depth perception, can be introduced.
 
 Thermal cameras have become significantly more affordable in recent years. This makes it increasingly feasible to equip computer vision systems with thermal cameras. Thermal imaging promises to reveal properties of objects that remain hidden to the human eye, extending the sensing capabilities of an image classifier.
 
@@ -208,7 +208,7 @@ Convolutional layers in neural networks consist of multiple kernels that are app
 
 \subsection{Overfitting and dropout}
 
-In practice, many machine learning models are very good at correctly predicting training samples, but produce frequent errors when attempting to predict unknown samples. This property is called overfitting. Conversely, if the model performs poorly on both training and validation data, one speaks of underfitting. If a model is underfitted or overfitted, it is generally deemed to have low generalisability \citep{burkov_hundred-page_2019}. 
+In practice, many machine learning models are good at correctly predicting training samples, but produce frequent errors when attempting to predict unknown samples. This property is called overfitting. Conversely, if the model performs poorly on both training and validation data, one speaks of underfitting. If a model is underfitted or overfitted, it is generally deemed to have low generalisability \citep{burkov_hundred-page_2019}. 
 
 Due to the ability of neural networks with sufficient depth to approximate any multidimensional function, they are naturally susceptible to overfitting \citep{tetko_neural_1995}. It is, therefore, necessary to reduce the generalisation error of a deep learning model by employing strategies to combat overfitting. Such methods are known as regularisation techniques \citep{goodfellow_deep_2016}.
 
@@ -286,7 +286,7 @@ Expanding upon the late feature fusion network introduced by \citet{wagner_multi
 
 Collecting a multispectral dataset of sufficient quality is significantly more challenging than a dataset consisting solely of visible-light images. Specialised equipment is needed to obtain samples. Using two sensors to capture the different channels introduces problems such as channel misalignment and inability to perform an optical zoom. This makes it harder to frame the objects of interest properly.
 
-Furthermore, the majority of image classification tasks use traditional visible-light imaging only. As a result, the research and resources that are available for use are much more limited.
+Furthermore, most image classification tasks use traditional visible-light imaging only. As a result, the research and resources that are available for use are much more limited.
 
 \subsection{Sensory equipment}
 \label{sensory_equipment}
@@ -302,7 +302,7 @@ The FLIR camera is, therefore, able to perceive and record electromagnetic waves
 
 Firstly, the two cameras are not spatially aligned. Furthermore, the "zoom level" or focal length of the sensors does not appear to match. A misalignment of the channels is likely to have an adverse impact on the performance of a convolutional network \citep{chappelow_improving_2008}. Therefore, the issue of image registration of the two camera outputs arises. The strategy we introduced to perform robust registration of the VIS and LWIR images is outlined in Section \ref{image_registration}.
 
-Secondly, the vastly different resolutions of the sensors could cause problems too, as convolutional filters might struggle to detect edges and other features consistently across all channels. A possible strategy to avoid this issue is to resize the images to a common resolution. However, this means that valuable information in the VIS image might be lost and overall accuracy might be reduced. It is, therefore, necessary to evaluate the degree of information loss upon size reduction of the visible-light image.
+Secondly, the different resolutions of the sensors could cause problems too, as convolutional filters might struggle to detect edges and other features consistently across all channels. A possible strategy to avoid this issue is to resize the images to a common resolution. However, this means that valuable information in the VIS image might be lost and overall accuracy might be reduced. It is, therefore, necessary to evaluate the degree of information loss upon size reduction of the visible-light image.
 
 %----------------------------------------------------------------------------------------------------------------------------------
 
@@ -405,7 +405,7 @@ Initially, a dataset consisting of 13 classes and 1042 samples was captured at T
 
 Due to the difficulty of obtaining well-framed and unobstructed images, the data contains significant noise. Some images contain more than one animal. Furthermore, some animals were housed in closed-off shelters and were only visible behind a metal grid. This is problematic, as a classifier is likely to learn the various obstructions as features of specific classes. This can negatively impact generalisability, as the model might not be able to predict unobstructed images of these classes correctly.
 
-Therefore, each subset was labeled as either \textit{single}, \textit{multi} or \textit{obstructed} to allow greater flexibility when selecting data for training and validation. Moreover, no distinction between genders was made. This primarily impacts the peacock class, as male and female peacocks have a very distinct appearance. Alpacas and chicken are both represented in the dataset with more than colour.
+Therefore, each subset was labeled as either \textit{single}, \textit{multi} or \textit{obstructed} to allow greater flexibility when selecting data for training and validation. Moreover, no distinction between genders was made. Multiple colour variations of alpacas and chickens are represented in the dataset.
 
 \begin{table}[ht]
   \centering
@@ -516,7 +516,7 @@ Due to the limited amount of time and resources available to the project, genera
 
 where $\vec{x}$ represents the coordinates of a point to be translated, $A$ is a $2 \times 2$ linear map, and $\vec{b}$ is the translation vector. $f(\vec{x})$ can be applied to the coordinates $\vec{x}$ of every pixel, yielding a transformed image. If necessary, interpolation strategies are used to fill in gaps between the new pixels.
 
-After evaluating various methods of data augmentation on a subset of the ImageNet dataset, \citet{perez_effectiveness_2017} concluded that traditional affine transformations alone can be very effective at improving classification performance, although GAN-based methods are promising and might yield better results.
+After evaluating various methods of data augmentation on a subset of the ImageNet dataset, \citet{perez_effectiveness_2017} concluded that traditional affine transformations alone can be effective at improving classification performance, although GAN-based methods are promising and might yield better results.
 
 Due to the relatively easy implementation, this project made heavy use of white-box data augmentation. However, the design and implementation of a deep convolutional autoencoder for generating LWIR from visible-light images is discussed in Section \ref{autoencoder_implementation}. This model could be used to generate new LWIR data samples from visible-light images retrieved from other sources, such as existing VIS-only image classification datasets.
 
@@ -612,7 +612,7 @@ The metric is based on the assumption that the gradient of the channel differenc
   \caption{Distribution of gradients of the channel difference image before and after alignment using affine transformation.}
 \end{figure}
 
-An attempt at smoothing both images before calculating the NTG was made by applying the Laplacian of Gaussian (LoG) filter with $\sigma=2$ to both images. As can be seen in Table \ref{table:registration_ntg}, this approach was not successful either. To verify that our implementation of the metric was indeed working correctly, we computed the NTG between the red and green channel of the visible-light image before and after applying a random affine transformation to the green channel. As shown in Table \ref{table:registration_ntg}, the metric is very effective for the red-green-channel baseline. 
+An attempt at smoothing both images before calculating the NTG was made by applying the Laplacian of Gaussian (LoG) filter with $\sigma=2$ to both images. As can be seen in Table \ref{table:registration_ntg}, this approach was not successful either. To verify that our implementation of the metric was indeed working correctly, we computed the NTG between the red and green channel of the visible-light image before and after applying a random affine transformation to the green channel. As shown in Table \ref{table:registration_ntg}, the metric is effective for the red-green-channel baseline. 
 
 \begin{table}[ht]
   \centering
@@ -767,7 +767,7 @@ AlexNet was first introduced by \citet{krizhevsky_imagenet_2012}, winning the Im
 
 The architecture of AlexNet consists of an initial convolutional layer with a relatively large kernel size of $11 \times 11$, feeding into a max pooling layer. This is followed by a second block of convolutional and pooling layers. The kernel size of the second convolutional layer is $5 \times 5$. Subsequently, three convolutional layers with $3 \times 3$ kernels are applied, followed by another pooling layer. Finally, the output is fed into two subsequent fully connected layers, followed by an output layer with a softmax activation function.
 
-We decided to evaluate an implementation of AlexNet due to various factors. Firstly, the model has delivered good results on many image classification tasks. Simultaneously, its architecture can be considered shallow compared to most modern-day networks. This makes it likely that AlexNet will be able to run with low latency on a mobile edge device. Finally, the first convolutional layer of AlexNet has a very large kernel compared to most modern-day networks. This might help mitigate the misalignment problem discussed in Section \ref{mean_distance}.
+We decided to evaluate an implementation of AlexNet due to various factors. Firstly, the model has delivered good results on many image classification tasks. Simultaneously, its architecture can be considered shallow compared to most modern-day networks. This makes it likely that AlexNet will be able to run with low latency on a mobile edge device. Finally, the first convolutional layer of AlexNet has a large kernel compared to most modern-day networks. This might help mitigate the misalignment problem discussed in Section \ref{mean_distance}.
 
 \begin{figure}[ht]
   \centering
@@ -862,7 +862,7 @@ We computed the Grad-CAM visualisations of our networks using Keras-vis \citep{k
 
 Training a deep neural network is a time-consuming process. However, many of the operations that get executed when fitting and evaluating a deep learning model benefit from hardware-accelerated vectorised computation. Therefore, training and evaluation of a neural network can be several orders of magnitude faster on a GPU than on a CPU due to the GPU's ability for parallelised computations \citep{shi_benchmarking_2016}. 
 
-Hence, Google Colaboratory (Colab) was used for the majority of the experimentation process and design of models. Colab is a cloud-hosted service that allows the execution of Jupyter Notebooks on free-to-use GPU runtimes. Therefore, we were able to leverage the power of an Nvidia Tesla P4 GPU with 8 GB of VRAM.
+Hence, Google Colaboratory (Colab) was used for most of the experimentation process and design of models. Colab is a cloud-hosted service that allows the execution of Jupyter Notebooks on free-to-use GPU runtimes. Therefore, we were able to leverage the power of an Nvidia Tesla P4 GPU with 8 GB of VRAM.
 
 For more computationally expensive tasks, we made use of the GPU cluster provided by the faculty's Information, Data \& Analysis research section. The cluster provides access to nodes with more powerful resources than Colab, including 512 GB of RAM and multiple Nvidia GeForce RTX 2080 Ti GPUs with 24 GB of VRAM.
 
@@ -874,7 +874,7 @@ The cluster uses Openshift and the Kubernetes container management framework to 
 
 \subsection{Data loading}
 
-Due to the limited amount of memory that Colab provides, it is impossible to pre-load the entire training dataset into memory for training. For this reason, a data loader class was implemented that supported the lazy loading of data batches. When constructing the loader, a batch size can be specified, in addition to whether image samples shall be registered, and the target image resolution. 
+Due to the limited amount of memory that Colab provides, it is impossible to pre-load the entire training dataset into memory for training. Thus, a data loader class was implemented that supported the lazy loading of data batches. When constructing the loader, a batch size can be specified, in addition to whether image samples shall be registered, and the target image resolution. 
 
 Since the data loader extends Keras' \lstinline{Sequence} class, it fully integrates with the \lstinline{Model} training API. When constructed, it loads a list of all samples, containing image paths and class labels. It then enumerates the classes.
 
@@ -943,7 +943,7 @@ A subset of the animals training dataset with 415 images of Shetland ponies was 
   \label{fig:autoencoder_pony_train}
 \end{figure}
 
-As can be seen in Figure \ref{fig:autoencoder_pony_train_autoencoder}, the network correctly identifies the pony from the training dataset and determines that it should have a higher local intensity in the LWIR waveband. However, when comparing the predicted to the actual LWIR image, it is apparent that the autoencoder lacks the ability to generate the fine textural details of the animal. This is very likely due to the denoising property caused by the encoder's bottleneck.
+As can be seen in Figure \ref{fig:autoencoder_pony_train_autoencoder}, the network correctly identifies the pony from the training dataset and determines that it should have a higher local intensity in the LWIR waveband. However, when comparing the predicted to the actual LWIR image, it is apparent that the autoencoder lacks the ability to generate the fine textural details of the animal. This is likely due to the denoising property caused by the encoder's bottleneck.
 
 \subsubsection{U-Net}
 
@@ -1033,7 +1033,7 @@ At first, the whole animals dataset was divided into training and validation dat
   \label{fig:acc_stratified}
 \end{figure}
 
-This result is most likely due to the similarity of many images within individual subsets, as explained in Section \ref{classes_samples}. Since training and validation samples are drawn from the same raw dataset, it is likely that each subset is represented in both groups. Therefore, we conclude that it is very likely that the model is significantly overfitted on the captured data and that the validation accuracy is not representative of the classifier's performance on chaotic new data. 
+This result is most likely due to the similarity of many images within individual subsets, as explained in Section \ref{classes_samples}. Since training and validation samples are drawn from the same raw dataset, it is likely that each subset is represented in both groups. Therefore, we conclude that it is likely that the model is significantly overfitted on the captured data and that the validation accuracy is not representative of the classifier's performance on chaotic new data. 
 
 Fitting the model on the training dataset as defined in Section \ref{classes_samples}, validation scores dropped significantly. This was in accordance with our expectations, as the samples from the training and validation datasets are mostly independent. Therefore, the model is not able to overfit on the whole dataset anymore, and the validation score is more representative of the potential performance on new data.
 
@@ -1138,7 +1138,7 @@ Table \ref{table:final_classifier_scores} shows the precision, recall and f1-sco
   \label{table:final_classifier_scores}
 \end{table}
 
-The chicken and muscovy duck classes suffer especially from low precision. This means that many samples are wrongly classified as those classes. A possible explanation for this is the wide variety of environments within the chicken and muscovy duck datasets. As outlined in Table \ref{table:train_test_dataset}, the amount of subsets used for the training dataset is very high for both classes. It is likely that the model is biased in favour of these classes due to the great variety of backgrounds. 
+The chicken and muscovy duck classes suffer especially from low precision. This means that many samples are wrongly classified as those classes. A possible explanation for this is the wide variety of environments within the chicken and muscovy duck datasets. As outlined in Table \ref{table:train_test_dataset}, the amount of subsets used for the training dataset is the highest for both classes. It is likely that the model is biased in favour of these classes due to the great variety of backgrounds. 
 
 From the confusion matrix in Figure \ref{fig:confusion}, it can be seen that there is some degree of confusion between similar classes, such as \textit{alpaca} and \textit{pony}, or \textit{silkie chicken} and \textit{muscovy duck}. The \textit{chicken} class is an exception to this rule, reinforcing the theory that the model is biased towards this class.
 
@@ -1147,7 +1147,7 @@ From the confusion matrix in Figure \ref{fig:confusion}, it can be seen that the
 
 To further analyse these findings, we made use of t-distributed stochastic neighbour embedding (t-SNE), which was first introduced by \citet{maaten_visualizing_2008}. t-SNE is a dimensionality reduction technique for the visualisation of high-dimensional data. By flattening each image into a single vector, we obtain high-dimensional data points that t-SNE can be applied to. The result is a 2-D representation of the images that can be easily plotted and inspected. The same process can be applied to the outputs of the layers of the neural network.
 
-Figure \ref{fig:test_tsne} shows the result of applying t-SNE to the validation dataset. In all four visualisations, most samples are concentrated in small clusters. These clusters most likely correspond to the subsets of the validation dataset. Images that were captured in quick temporal succession are likely to be very similar, which is why they are very close together in the t-SNE visualisation. Figure \ref{fig:test_tsne_fc} demonstrates that, overall, the network successfully separates the samples into distinct classes.
+Figure \ref{fig:test_tsne} shows the result of applying t-SNE to the validation dataset. In all four visualisations, most samples are concentrated in small clusters. These clusters most likely correspond to the subsets of the validation dataset. Images that were captured in quick temporal succession are likely to be nearly identical, which is why they are close together in the t-SNE visualisation. Figure \ref{fig:test_tsne_fc} demonstrates that, overall, the network successfully separates the samples into distinct classes.
 
 \begin{figure}[ht]
   \centering
@@ -1248,7 +1248,7 @@ Since the LWIR band is not sensitive to illumination, the cat pictures do not ge
 
 \subsection{Comparison against the baseline}
 
-As shown in Figure \ref{fig:resnet_configs}, the final late fusion model outperforms the visible-light-only baseline. Validation accuracy converges after around 50 epochs and remains fairly stable. The final f1-score of $80\%$ is a significant improvement over the $74\%$ achieved by the VIS-only network. We, therefore, conclude that the use of a late fusion multispectral architecture can be beneficial for the performance of an image classifier.
+As shown in Figure \ref{fig:resnet_configs}, the final late fusion model outperforms the visible-light-only baseline. Validation accuracy converges after around 50 epochs and remains stable. The final f1-score of $80\%$ is a significant improvement over the $74\%$ achieved by the VIS-only network. We, therefore, conclude that the use of a late fusion multispectral architecture can be beneficial for the performance of an image classifier.
 
 To put these results into a relevant context, we compared the final classifier to a second, state-of-the-art VIS-only baseline. This model is an instance of ResNet152 v2 that has been pre-trained on the ImageNet dataset and transfer-trained on our dataset, as described in Section \ref{transfer_learning}.
 
@@ -1534,7 +1534,7 @@ Finally, for applications involving a continuous video feed, such as the mobile 
 \begin{figure}[ht]
   \centering
   \includegraphics[width=0.8\textwidth]{images/evaluation/confusion/final}
-  \caption{Confusion matrix of the final late fusion ResNet model. (XXX move or describe)}
+  \caption{Confusion matrix of the final late fusion ResNet model.}
   \label{fig:confusion}
 \end{figure}
 

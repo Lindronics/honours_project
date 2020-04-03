@@ -410,7 +410,7 @@ Whereas the latter approach appears more robust, it introduces a variety of prob
 \subsection{Classes and samples}
 \label{classes_samples}
 
-Initially, a dataset consisting of 13 classes and 1042 samples was captured using the camera functionality of the mobile application. The app captures images in quick temporal succession, effectively like a video. Thus, many images are relatively similiar, as they were captured within only a few milliseconds difference. To distinguish between different bursts of images, samples were grouped into distinct subsets, each subset representing a batch of similar images.
+Initially, a dataset consisting of 13 classes and 1042 samples was captured at Tollcross Children's Farm, Glasgow using the camera functionality of the mobile application. The app captures images in quick temporal succession, effectively like a video. Thus, many images are relatively similiar, as they were captured within only a few milliseconds difference. To distinguish between different bursts of images, samples were grouped into distinct subsets, each subset representing a batch of similar images.
 
 Due to the difficulty of obtaining well-framed and unobstructed images, the data contains significant noise. Some images contain more than one animal. Furthermore, some animals were housed in closed-off shelters and were only visible behind a metal grid. This is problematic, as a classifier is likely to learn the various obstructions as features of specific classes. This can negatively impact generalisability, as the model might not be able to correctly predict unobstructed images of these classes.
 
@@ -896,7 +896,7 @@ While this approach was necessary to fit the model on the whole training dataset
 \subsection{Grid search}
 \label{gridsearch_impl}
 
-To evaluate the performance of the four different models and the five configurations, a grid search was run over all 20 possible combinations. For this purpose, we derived all models from a custom-built superclass \lstinline{AbstractModel}, to ensure that they implement a common API. This enabled us to iterate over all models and all configurations, training and evaluating every combination.
+To evaluate the performance of the three different models and the five configurations, a grid search was run over all 15 possible combinations. For this purpose, we derived all models from a custom-built superclass \lstinline{AbstractModel}, to ensure that they implement a common API. This enabled us to iterate over all models and all configurations, training and evaluating every combination.
 
 \subsection{Affine data augmentation}
 \label{augmentation_impl}
@@ -1091,57 +1091,36 @@ The combination of batch size and learning rate was previously determined as an 
 
 Furthermore, smaller batch sizes make the training process more stochastic. More steps are taken during training. However, the smaller amount of samples per batch means that steps are less likely to be in the direction of the global minimum. On the other hand, it is more likely that the model can avoid getting stuck in local minima.
 
-The effect of varying batch sizes is highly dependent on the specific properties of the dataset, optimiser and model. Whereas \citet{masters_revisiting_2018} achieved better generalisability on the CIFAR-10 dataset \citep{krizhevsky_learning_2009} using ResNet with smaller batch sizes, \citet{radiuk_impact_2017} reported higher testing accuracies on the same data using ResNet with larger batch sizes.
+The effect of varying batch sizes is highly dependent on the specific properties of the dataset, optimiser and model. Whereas \citet{masters_revisiting_2018} achieved better generalisability on the CIFAR-10 dataset \citep{krizhevsky_learning_2009} using ResNet with smaller batch sizes, \citet{radiuk_impact_2017} reported higher testing accuracies on the same data using LeNet \citep{lecun_gradient-based_1998} with larger batch sizes. Our evaluation yielded an optimal batch size of 32 for the custom ResNet. The detailed results are shown in Figure \ref{fig:batch_size}.
 
-Our evaluation (XXX) (results shown in Figure \ref{fig:batch_size}) 
-
-Adam was published by \citet{kingma_adam_2014} and is generally considered to yield good performance for deep learning algorithms \citep{alom_history_2018}.
+Adam was published by \citet{kingma_adam_2014} and is generally considered to yield robust performance for deep learning algorithms \citep{alom_history_2018}.
 
 \subsection{Grid search results}
 
 The complete loss and accuracy history of all models and configurations are shown in Appendix \ref{appendix_grid_search}. Overall, the custom CNN achieved the lowest performance out of the three models. This is unsurprising, given the small number of trainable parameters compared to the other two models.
 
+The custom ResNet implementation achieved the highest accuracy among the three models. The results for the ResNet can be seen in Figure \ref{fig:resnet_configs}. For all configurations some overfitting can be observed, as the training losses and accuracies converge at near perfect values. Moreover, we observe that for most configurations the validation loss initially drops faster than training loss. This is likely a result of the dropout layers, which are applied only when training.
+
 \begin{figure}[ht]
   \centering
   \includegraphics[width=0.8\textwidth]{images/evaluation/gridsearch/ResNet}
-  \caption{Training and validation loss and accuracy of different configurations of the ResNet implementation.}
+  \caption{Cross-entropy loss and accuracy of different configurations of the ResNet implementation.}
   \label{fig:resnet_configs}
 \end{figure}
 
-The custom ResNet implementation achieved the highest accuracy among the three models. The results for the ResNet can be seen in Figure \ref{fig:resnet_configs}. For all configurations some overfitting can be observed, as the training losses and accuracies converge at near perfect values. Moreover, we observe that 
+The LWIR-only configuration appears to be the least effective overall. It is possible that the lack of detailed textural information in the LWIR images makes it harder for the classifier to make a distinction between the different classes of animals.
 
-The LWIR-only configuration appears to be the least effective overall. 
+The early fusion (\textit{stacked}) and score-level fusion (\textit{voting}) models achieve a validation accuracy similar to the RGB-only model. However, the validation loss of the early fusion classifier is converging towards that of the LWIR-only one.
 
-(XXX)
-
-Among all configurations, the late feature fusion model achieved the highest accuracy. Furthermore, cross-entropy loss is comparatively low. This result confirms our theory that late feature fusion based approach proposed by \citet{wagner_multispectral_2016} can be applied to our multi-class classification problem. Thus, we selected this configuration as our final classifier. 
-
-% \subsection{Batch size}
-
-% (XXX TODO: REWORK NEEDED)
-
-% An influential hyperparameter for training neural networks is batch size \citep{ioffe_batch_2015}. The batch size during training determines how many samples are used for each optimisation step. Generally, smaller batch sizes result in the training loss converging in fewer epochs, while larger batch sizes offer better computational efficiency due to parallelisability \cite{devarakonda_adabatch_2018}.
-
-% Furthermore, smaller batch sizes make the training process more stochastic. More steps are taken during training. However, the lower amount of samples per batch means that steps are less likely to be in the direction of the global minimum. On the other hand, it is more likely that the model can avoid getting stuck in local minima. \citet{smith_dont_2018} state that increasing the batch size can help the optimisation algorithm converge on the global minimum, instead of bouncing around the optimum. \citet{radiuk_impact_2017} conclude that SGD performs better with larger batch sizes on the MNIST and CIFAR-10 datasets.
-
-% To evaluate the effect of different batch sizes on the validation accuracy of our model, we trained our implementation of ResNet in fusion configuration with batch sizes of 2, 8, 32, and 128. We chose the Adam optimizer with an initial learning rate of $10^{-6}$. The results can be seen in Figure \ref{fig:batch_size}.
-
-% \begin{figure}[ht]
-%   \centering
-%   \includegraphics[width=0.8\textwidth]{images/evaluation/batch_size/history}
-%   \caption{Training and validation loss and accuracy with varying batch sizes.}
-%   \label{fig:batch_size}
-% \end{figure}
-
-% As expected, when training with smaller batch sizes, we can observe a much faster convergence of loss and accuracy. Furthermore, the validation accuracy with the lower batch sizes appears to be higher than that of larger batch sizes. However, lower batch sizes also have a larger validation loss. This can be an indicator for overfitting. Accuracy is a discrete measure, whereas cross-entropy takes probabilities and confidence into consideration.
+Among all configurations, the late fusion (\textit{fusion}) model achieved the highest accuracy. Furthermore, the cross-entropy loss is comparatively low. This result confirms our theory that late feature fusion based approach proposed by \citet{wagner_multispectral_2016} can be applied to our multi-class classification problem. We selected this configuration as our final classifier due to its superior validation accuracy. 
 
 %----------------------------------------------------------------------------------------------------------------------------------
 
 \section{Final classifier}
 
-To obtain reliable scores for the selected model, we ran a 10-fold cross validation on the late feature fusion ResNet and averaged the results. Since the validation dataset had to be kept completely separate from the training dataset as a result of Section \ref{eval_train_val_split}, the k-fold split was performed only on the training dataset. During each fold, the non-selected samples were discarded instead of being used for validation.
+To obtain reliable scores for the selected model, we ran a 10-fold cross validation on the late fusion ResNet and averaged the results. Since the validation dataset had to be kept completely separate from the training dataset, as discussed in Section \ref{eval_train_val_split}, the k-fold split was performed only on the training dataset. During each fold, the non-selected samples were discarded instead of being used for validation.
 
-Table \ref{table:final_classifier_scores} shows the precision, recall and f1-score of each class. The classes with the highest f1-score are \textit{goose}, \textit{cat} and \textit{hamburg chicken}. The classes with the lowest f1-score are and \textit{pony} and \textit{muscovy duck}. The pony class stands out with particularly low recall. Only half of all pony samples were classified correctly.
+Table \ref{table:final_classifier_scores} shows the precision, recall and f1-score of each class. The classes with the highest f1-score are \textit{goose}, \textit{cat} and \textit{hamburg chicken}. The classes with the lowest f1-score are and \textit{pony} and \textit{muscovy duck}. The pony class stands out with particularly low recall. Only half of all pony samples were classified as such.
 
 \begin{table}[ht]
   \centering
@@ -1163,15 +1142,9 @@ Table \ref{table:final_classifier_scores} shows the precision, recall and f1-sco
   \label{table:final_classifier_scores}
 \end{table}
 
-The chicken and muscovy duck classes suffer especially from low precision. This means that many samples are wrongly classified as those classes. A possible explanation for this is the high variety of environments within the chicken and muscovy duck datasets. As outlined in Table \ref{table:train_test_dataset}, the amount of subsets used for the training dataset is very high for both classes. It is possible that the model is biased in favour of these  classes due to the high variety of backgrounds.
+The chicken and muscovy duck classes suffer especially from low precision. This means that many samples are wrongly classified as those classes. A possible explanation for this is the high variety of environments within the chicken and muscovy duck datasets. As outlined in Table \ref{table:train_test_dataset}, the amount of subsets used for the training dataset is very high for both classes. It is likely that the model is biased in favour of these classes due to the high variety of backgrounds. 
 
-\begin{figure}[ht]
-  \centering
-  \includegraphics[width=0.6\textwidth]{images/evaluation/confusion/final}
-  \caption{Confusion matrix of the final late fusion ResNet model. (XXX move or describe)}
-  \label{fig:confusion}
-\end{figure}
-
+From the confusion matrix in Figure \ref{fig:confusion}, it can be seen that there is some degree of confusion between similar classes, such as \textit{alpaca} and \textit{pony}, or \textit{silkie chicken} and \textit{muscovy duck}. The \textit{chicken} class is an exception to this rule, reinforcing the theory that the model is biased towards this class.
 
 \subsection{t-SNE}
 \label{tsne}
@@ -1213,7 +1186,7 @@ As can be seen in Figure \ref{fig:test_tsne_input}, the cat images clearly stand
 
 This interpretation is further supported by the observation that the strict separation of the cat cluster persists throughout the VIS branch of the network, as shown in \ref{fig:test_tsne_vis}. The LWIR band, however, is not sensitive to illumination. Therefore, the LWIR branch of the network is unable to use the overall brightness of the image to make inferences about the classes. This explains why the distinctive cat cluster is not visible in Figure \ref{fig:test_tsne_lwir}.
 
-A similar effect can be observed for the hamburg chicken class. Unlike for the cat class, a large hamburg chicken cluster stands out in the t-SNE of the input image as well as the final convolutional layers of the VIS and LWIR branches. A likely explanation for this pheonomenon is that many images of hamburg chicken are partly occluded by a grid. Since this is unique to this class, it can be assumed that the model uses the grid as a feature to identify hamburg chicken, resulting in undesirable overfitting on the environment.
+A similar effect can be observed for the \textit{hamburg chicken} class. A large hamburg chicken cluster stands out in the t-SNE of the input image as well as the final convolutional layers of the VIS and LWIR branches. A likely explanation for this pheonomenon is that many images of hamburg chicken are partly occluded by a grid. Since this is unique to this class, it can be assumed that the model uses the grid as a feature to identify hamburg chicken, resulting in undesirable overfitting on the environment.
 
 
 \subsection{Saliency analysis}
@@ -1511,7 +1484,7 @@ Finally, for applications with stationary systems such as intruder detection or 
 \begin{figure}[ht]
   \centering
   \includegraphics[width=0.9\textwidth]{images/evaluation/batch_size/history}
-  \caption{Training and validation loss and accuracy with varying batch sizes.}
+  \caption{Cross-entropy loss and accuracy of the custom ResNet with varying batch sizes.}
   \label{fig:batch_size}
 \end{figure}
 
@@ -1530,21 +1503,21 @@ Finally, for applications with stationary systems such as intruder detection or 
 \begin{figure}[ht]
   \centering
   \includegraphics[width=0.9\textwidth]{images/evaluation/gridsearch/CustomNet}
-  \caption{Training and validation loss and accuracy of different configurations of the custom net.}
+  \caption{Cross-entropy loss and accuracy of different configurations of the custom net.}
   \label{fig:customnet_configs}
 \end{figure}
 
 \begin{figure}[ht]
   \centering
   \includegraphics[width=0.9\textwidth]{images/evaluation/gridsearch/AlexNet}
-  \caption{Training and validation loss and accuracy of different configurations of the AlexNet implementation.}
+  \caption{Cross-entropy loss and accuracy of different configurations of the AlexNet implementation.}
   \label{fig:alexnet_configs}
 \end{figure}
 
 \begin{figure}[ht]
   \centering
   \includegraphics[width=0.9\textwidth]{images/evaluation/gridsearch/ResNet}
-  \caption{Training and validation loss and accuracy of different configurations of the ResNet implementation.}
+  \caption{Cross-entropy loss and accuracy of different configurations of the ResNet implementation.}
   \label{fig:resnet_configs_app}
 \end{figure}
 
@@ -1554,8 +1527,19 @@ Finally, for applications with stationary systems such as intruder detection or 
 \begin{figure}[ht]
   \centering
   \includegraphics[width=0.8\textwidth]{images/evaluation/baseline}
-  \caption{Training and validation loss and accuracy of different configurations of the transfer learned baseline.}
+  \caption{Cross-entropy loss and accuracy of different configurations of the transfer learned baseline.}
   \label{fig:baseline_configs}
+\end{figure}
+
+%==================================================================================================================================
+
+\chapter{Confusion matrix}
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.8\textwidth]{images/evaluation/confusion/final}
+  \caption{Confusion matrix of the final late fusion ResNet model. (XXX move or describe)}
+  \label{fig:confusion}
 \end{figure}
 
 %==================================================================================================================================

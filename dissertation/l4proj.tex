@@ -368,7 +368,7 @@ When creating an image classifier for a new application, it is then possible to 
 
 Since the features learned by early layers are often applicable across many classes and images (e.g. edge or texture features), the network generalises better, as it has been trained on an overall larger dataset. Therefore, transfer learning makes it feasible to train complex models on smaller amounts of data than usual \citep{kwasniewska_deep_2017}.
 
-For multispectral models, this highly effective approach becomes more difficult, as much fewer datasets are available to be used off-the-shelf. Datasets for visible light and thermal data, such as the KAIST Pedestrian Detection Benchmark \citep{hwang_multispectral_2015} are available. However, They usually lack the number of classes and overall size of traditional computer vision datasets and are, therefore, less suitable for transfer learning tasks.
+For multispectral models, this highly effective approach becomes more difficult, as much fewer datasets are available to be used off-the-shelf. Datasets for visible light and thermal data, such as the KAIST Pedestrian Detection Benchmark \citep{hwang_multispectral_2015} are available. However, They usually lack the number of classes and the overall size of traditional computer vision datasets and are, therefore, less suitable for transfer learning tasks.
 
 Pre-training a multispectral classifier on a VIS-only dataset is not directly possible due to the incompatible input tensor shapes ($h \times w \times 3$ compared to $h \times w \times 4$) and the resulting difference in trainable weights. Moreover, the modality gap outlined in Section \ref{modality} makes it likely that this approach would be unfeasible even if the tensor shapes were compatible.
 
@@ -850,7 +850,7 @@ The mobile application was developed using Android Studio and the Java programmi
 
 \subsection{Deep learning and image processing}
 
-All neural networks were implemented using the TensorFlow deep learning framework \citep{abadi_TensorFlow_2016}. TensorFlow was chosen over alternatives such as PyTorch due to its built-in Keras API and due to its compatiblity with TensorFlow Lite. Keras is a high-level neural networks API that was developed by \citet{chollet_keras_2015} to enable fast experimentation. Keras was used in conjunction with other modules provided by the TensorFlow library. 
+All neural networks were implemented using the TensorFlow deep learning framework \citep{abadi_TensorFlow_2016}. TensorFlow was chosen over alternatives such as PyTorch due to its built-in Keras API and its compatibility with TensorFlow Lite. Keras is a high-level neural networks API that was developed by \citet{chollet_keras_2015} to enable fast experimentation. Keras was used in conjunction with other modules provided by the TensorFlow library. 
 
 TensorFlow Lite is a set of tools aimed towards running deep learning models on mobile and internet of things (IoT) devices. It provides a Java API that can be used for Android application development and was, therefore, selected for the deployment of the model onto a mobile device.
 
@@ -862,7 +862,7 @@ We computed the Grad-CAM visualisations of our networks using Keras-vis \citep{k
 
 Training a deep neural network is a time-consuming process. However, many of the operations that get executed when fitting and evaluating a deep learning model benefit from hardware-accelerated vectorised computation. Therefore, training and evaluation of a neural network can be several orders of magnitude faster on a GPU than on a CPU due to the GPU's ability for parallelised computations \citep{shi_benchmarking_2016}. 
 
-Hence, Google Colaboratory (Colab) was used for the majority of the experimentation process and design of models. Colab is a cloud-hosted service that allows the execution of Jupyter Notebooks on free-to-use GPU runtimes. Therefore, we were able to leverage the power of a Nvidia Tesla P4 GPU with 8 GB of VRAM.
+Hence, Google Colaboratory (Colab) was used for the majority of the experimentation process and design of models. Colab is a cloud-hosted service that allows the execution of Jupyter Notebooks on free-to-use GPU runtimes. Therefore, we were able to leverage the power of an Nvidia Tesla P4 GPU with 8 GB of VRAM.
 
 For more computationally expensive tasks, we made use of the GPU cluster provided by the faculty's Information, Data \& Analysis research section. The cluster provides access to nodes with more powerful resources than Colab, including 512 GB of RAM and multiple Nvidia GeForce RTX 2080 Ti GPUs with 24 GB of VRAM.
 
@@ -874,13 +874,13 @@ The cluster uses Openshift and the Kubernetes container management framework to 
 
 \subsection{Data loading}
 
-Due to the limited amount of memory that Colab provides, it is impossible to pre-load the entire training dataset into memory for training. For this reason, a data loader class was implemented that supported lazy loading of data batches. When constructing the loader, a batch size can be specified, in addition to whether image samples shall be registered, and the target image resolution. 
+Due to the limited amount of memory that Colab provides, it is impossible to pre-load the entire training dataset into memory for training. For this reason, a data loader class was implemented that supported the lazy loading of data batches. When constructing the loader, a batch size can be specified, in addition to whether image samples shall be registered, and the target image resolution. 
 
 Since the data loader extends Keras' \lstinline{Sequence} class, it fully integrates with the \lstinline{Model} training API. When constructed, it loads a list of all samples, containing image paths and class labels. It then enumerates the classes.
 
-When \lstinline{model.fit()} is called with the data loader as data source, Keras will use the \lstinline{__getitem__()} function of the data loader repeatedly to lazily load batches of images into memory. The data loader will register images if specified and convert them into a tensor of shape $(batch\_size \times height \times width \times 4)$. Finally, it will return a tuple containing the image tensor and the one-hot representation of the numeric class labels.
+When \lstinline{model.fit()} is called with the data loader as the data source, Keras will use the \lstinline{__getitem__()} function of the data loader repeatedly to lazily load batches of images into memory. The data loader will register images if specified and convert them into a tensor of shape $(batch\_size \times height \times width \times 4)$. Finally, it will return a tuple containing the image tensor and the one-hot representation of the numeric class labels.
 
-While this approach was necessary to fit the model on the whole training dataset, we found that it noticably slowed down training speeds. This is most likely due to slow I/O bottlenecking the loading speed. Instead of having to load the dataset into memory once in the beginning, loading has to be performed for every training epoch. An attempt was made to use TensorFlow's data API instead of OpenCV for loading and pre-processing to load the data directly into VRAM. However, the performance improvement was negligible. Therefore, when running evaluations on the GPU cluster, we resorted to pre-loading all batches into memory, using our data loader class.
+While this approach was necessary to fit the model on the whole training dataset, we found that it noticeably slowed down training speeds. This is most likely due to slow I/O bottlenecking the loading speed. Instead of having to load the dataset into memory once in the beginning, loading has to be performed for every training epoch. An attempt was made to use TensorFlow's data API instead of OpenCV for loading and pre-processing to load the data directly into VRAM. However, the performance improvement was negligible. Therefore, when running evaluations on the GPU cluster, we resorted to pre-loading all batches into memory, using our data loader class.
 
 \subsection{Grid search}
 \label{gridsearch_impl}
@@ -913,9 +913,9 @@ A deep convolutional autoencoder was created to predict the LWIR signature of ob
 
 Each encoder block has a convolutional layer, followed by a leaky ReLU activation function and a subsequent max pooling layer for downsampling. The $320 \times 240 \times 1$ input images are thus processed and downsampled to a $20 \times 15 \times 32$ tensor containing a compact, latent representation of the features in the original image.
 
-The output of the decoder is then fed forward into four blocks of deconvolutional layers followed by leaky ReLU activation to attempt a reconstruction the LWIR image. Each deconvolutional layer tries to upsample the input by predicting appropriate pixel values.
+The output of the decoder is then fed forward into four blocks of deconvolutional layers followed by leaky ReLU activation to attempt a reconstruction of the LWIR image. Each deconvolutional layer tries to upsample the input by predicting appropriate pixel values.
 
-Due to the lack of a discriminator, our autoencoder design does not satisfy the requirements of a generative adversarial network. However, autoencoders are commonly used for image processing tasks such as denoising and colorisation. As LWIR images can be considered to be less noisy than visible-light images (Section \ref{modality}) and both images share rough features such as edges, we deemed an autoencoder architecture to be appropriate for this generative task.
+Due to the lack of a discriminator, our autoencoder design does not satisfy the requirements of a generative adversarial network. However, autoencoders are commonly used for image processing tasks such as denoising and colourisation. As LWIR images can be considered to be less noisy than visible-light images (Section \ref{modality}) and both images share rough features such as edges, we deemed an autoencoder architecture to be appropriate for this generative task.
 
 A subset of the animals training dataset with 415 images of Shetland ponies was chosen. Mean squared error was selected as the loss function. The network was trained for 100 epochs with a batch size of 16. Training time averaged around 18 minutes on an NVIDIA Tesla P-100 GPU.
 
@@ -947,7 +947,7 @@ As can be seen in Figure \ref{fig:autoencoder_pony_train_autoencoder}, the netwo
 
 \subsubsection{U-Net}
 
-U-Net was first introduced by \citet{ronneberger_u-net_2015} to improve performance of biomedical image segmentation systems. Similarly to a conventional autoencoder, it features a contracting path that downsamples or encodes the input, and a symmetric expanding path that upsamples or decodes the input. Additionally, for each deconvolutional layer, the output of the corresponding opposite convolutional layer is concatenated to the layer's input map. These connections can be seen in Figure \ref{fig:unet_architecture}, which visualises our custom U-Net implementation. 
+U-Net was first introduced by \citet{ronneberger_u-net_2015} to improve performance of biomedical image segmentation systems. Similarly to a conventional autoencoder, it features a contracting path that downsamples or encodes the input and a symmetric expanding path that upsamples or decodes the input. Additionally, for each deconvolutional layer, the output of the corresponding opposite convolutional layer is concatenated to the layer's input map. These connections can be seen in Figure \ref{fig:unet_architecture}, which visualises our custom U-Net implementation. 
 
 \begin{figure}[ht]
   \centering
@@ -956,7 +956,7 @@ U-Net was first introduced by \citet{ronneberger_u-net_2015} to improve performa
   \label{fig:unet_architecture}
 \end{figure}
 
-We chose to evaluate this architecture because it combines the denoising features of a traditional autoencoder with the ability to generate finer textures due to its skip connections. \citet{osin_fast_2018} utilise a modified U-Net to perform semantic segmentation on thermal multispectral images. Similar to the traditional autoencoder, the U-Net was trained for 100 epochs on the the same dataset. 
+We chose to evaluate this architecture because it combines the denoising features of a traditional autoencoder with the ability to generate finer textures due to its skip connections. \citet{osin_fast_2018} utilise a modified U-Net to perform semantic segmentation on thermal multispectral images. Similar to the traditional autoencoder, the U-Net was trained for 100 epochs on the same dataset. 
 
 Figure \ref{fig:autoencoder_pony_train_unet} displays the predicted LWIR image for the pony from the training dataset. Unlike the autoencoder, the U-Net is able to accurately represent the texture of the animal in the LWIR waveband.
 
@@ -981,13 +981,13 @@ After successful training of the networks, two images of ponies were retrieved f
     \includegraphics[width=\textwidth]{images/autoencoder/pony_2/unet.png}
     \caption{U-Net prediction}
   \end{subfigure}
-  \caption{Predicted LWIR signature of images of shetland ponies. Image sources in List \ref{image_sources}.}
+  \caption{Predicted LWIR signature of images of shetland ponies. Image sources in List \ref{list:image_sources}.}
   \label{fig:autoencoder_pony}
 \end{figure}
 
-It appears as if the traditional autoencoder is more successful at generating LWIR images with plausible shapes than the U-Net. Various artifacts can be spotted in the U-Net image. Overall, the shape of the pony is not accurately represented. It is likely that the U-Net is more likely to overfit on the training data.
+It appears as if the traditional autoencoder is more successful at generating LWIR images with plausible shapes than the U-Net. Various artefacts can be spotted in the U-Net image. Overall, the shape of the pony is not accurately represented. The U-Net is likely more overfitted on the training data.
 
-Upon inspection of the bottom image, it can be seen that the white patch of the pony is also apparent in the autoencoder prediction. We conclude that the model is overfit on dark ponies and is, therefore, unable to detect the patch as a normal part of the animal. Nonetheless, it seems possible that the autoencoder prediction might be accurate enough to be able to generate additional training data for a classifier.
+Upon inspection of the bottom image, it can be seen that the white patch of the pony is also apparent in the autoencoder prediction. We conclude that the model is overfitted on dark ponies and is, therefore, unable to detect the patch as a normal part of the animal. Nonetheless, it seems possible that the autoencoder prediction might be accurate enough to be able to generate additional training data for a classifier.
 
 %----------------------------------------------------------------------------------------------------------------------------------
 
@@ -1007,7 +1007,7 @@ Both activities share common functionality by extending \lstinline{AbstractCamer
 
 The \lstinline{CameraActivity} is designed to enable users to capture multispectral datasets. It contains a button for starting and stopping a recording. In addition, it uses an instance of the \lstinline{ImageWriter} class to save the captured frames to device storage and add them to the gallery.
 
-Finally, the \lstinline{ClassifierActivity} initialises an instance of \lstinline{ModelHandler}. This class loads the TensorFlow Lite model and the class labels and performs real-time predictions on the images provided by the \lstinline{CameraHandler}. Screenshots of the finished application are attached in Figure \ref{fig:app_activities}.
+Finally, the \lstinline{ClassifierActivity} initialises an instance of \lstinline{ModelHandler}. This class loads the TensorFlow Lite model and the class labels and performs real-time predictions on the images provided by the \lstinline{CameraHandler}. Screenshots of the complete application are attached in Figure \ref{fig:app_activities}.
 
 
 
@@ -1016,7 +1016,7 @@ Finally, the \lstinline{ClassifierActivity} initialises an instance of \lstinlin
 \chapter{Evaluation}
 \label{evaluation}
 
-To evaluate whether the addition of LWIR data can improve the performance of image classifiers on our dataset, we resorted to an evaluation comprising of three stages. Firstly, in Section \ref{eval_strategies}, we assessed the effectiveness of the model-invariant regularisation strategies we developed. Secondly, in Section \ref{eval_arch}, the relative accuracy of the proposed models and configurations was evaluated. Finally, we performed an in-depth analysis on the model with the highest performance in Section \ref{eval_final} and compared it to the pre-defined baselines.
+To evaluate whether the addition of LWIR data can improve the performance of image classifiers on our dataset, we resorted to an evaluation comprising of three stages. Firstly, in Section \ref{eval_strategies}, we assessed the effectiveness of the model-invariant regularisation strategies we developed. Secondly, in Section \ref{eval_arch}, the relative accuracy of the proposed models and configurations was evaluated. Finally, we performed an in-depth analysis of the model with the highest performance in Section \ref{eval_final} and compared it to the pre-defined baselines.
 
 \section{Training strategies}
 \label{eval_strategies}
@@ -1024,7 +1024,7 @@ To evaluate whether the addition of LWIR data can improve the performance of ima
 \subsection{Training-validation split}
 \label{eval_train_val_split}
 
-At first, the whole animals dataset was divided into training and validation data using stratified sampling and a validation split of $20\%$. When fitting the custom ResNet in late fusion mode using this split, near perfect training and validation accuracy was achieved, as can be seen in Figure \ref{fig:acc_stratified}.  
+At first, the whole animals dataset was divided into training and validation data using stratified sampling and a validation split of $20\%$. When fitting the custom ResNet in late fusion mode using this split, near-perfect training and validation accuracy was achieved, as can be seen in Figure \ref{fig:acc_stratified}.  
 
 \begin{figure}[ht]
   \centering
@@ -1033,15 +1033,15 @@ At first, the whole animals dataset was divided into training and validation dat
   \label{fig:acc_stratified}
 \end{figure}
 
-This result is most likely due to the similarity of many images within individual subsets as explained in Section \ref{classes_samples}. Since training and validation samples are drawn from the same raw dataset, it is likely that each subset is represented in both groups. Therefore, we conclude that it is very likely that the model is significantly overfitted on the captured data and that the validation accuracy is not representative of the classifier's performance on chaotic new data. 
+This result is most likely due to the similarity of many images within individual subsets, as explained in Section \ref{classes_samples}. Since training and validation samples are drawn from the same raw dataset, it is likely that each subset is represented in both groups. Therefore, we conclude that it is very likely that the model is significantly overfitted on the captured data and that the validation accuracy is not representative of the classifier's performance on chaotic new data. 
 
-Fitting the model on the training dataset as defined in Section \ref{classes_samples}, validation scores dropped significantly. This was in accordance with our expectations, as the samples from the training and validation datasets are mostly independent. Therefore, the model is not able to overfit on the whole dataset anymore and the validation score is more representative of the potential performance on new data.
+Fitting the model on the training dataset as defined in Section \ref{classes_samples}, validation scores dropped significantly. This was in accordance with our expectations, as the samples from the training and validation datasets are mostly independent. Therefore, the model is not able to overfit on the whole dataset anymore, and the validation score is more representative of the potential performance on new data.
 
 \subsection{Data augmentation}
 
 \subsubsection{Affine transformation}
 
-The data augmentation strategy as described in Section \ref{augmentation_impl} was evaluated by applying the augmentation script to the training dataset twice, with a multiplication factor of 2 and 5 respectively. The augmented datasets, thus, contain around 2 and 5 times as many samples than the original dataset. Furthermore, the class imbalances were equalised by the script by creating more samples of the underrepresented classes.
+The data augmentation strategy, as described in Section \ref{augmentation_impl} was evaluated by applying the augmentation script to the training dataset twice, with a multiplication factor of 2 and 5 respectively. The augmented datasets, thus, contain around 2 and 5 times as many samples than the original dataset. Furthermore, the class imbalances were equalised by the script by creating more samples of the underrepresented classes.
 
 The custom ResNet in fusion mode was trained on the original and the two augmented datasets for 80 epochs. The complete classification reports can be inspected in Appendix \ref{appendix_augmentation_affine}. The overall f1-score increased from $0.73$ without any augmentation to $0.78$ with augmentation with a factor of 2. For the factor-5-dataset, a slight increase of the f1-score to $0.79$ was determined. 
 
@@ -1049,7 +1049,7 @@ As creating even more augmented samples (factor 10) did not seem to significantl
 
 \subsubsection{Generation of artificial data}
 
-We used the autoencoder from Section \ref{autoencoder_implementation} to predict the LWIR signatures of ten images retrieved from Wikimedia Commons (sources in List \ref{list:image_sources}). We then selected a subset of our training dataset, containing images of the \textit{pony}, \textit{alpaca} and \textit{chicken} classes. A second copy of this dataset was created and the ten predicted images were appended to the \textit{pony} class.
+We used the autoencoder from Section \ref{autoencoder_implementation} to predict the LWIR signatures of ten images retrieved from Wikimedia Commons (sources in List \ref{list:image_sources}). We then selected a subset of our training dataset, containing images of the \textit{pony}, \textit{alpaca} and \textit{chicken} classes. A second copy of this dataset was created, and the ten predicted images were appended to the \textit{pony} class.
 
 The custom ResNet in late feature-fusion configuration was trained on both datasets. The full classification scores can be inspected in Appendices \ref{table:auto_scores_normal} and \ref{table:auto_scores_auto}. 
 
@@ -1080,9 +1080,9 @@ This behaviour can possibly be explained by the altered class balance of the dat
 
 \subsection{Experimental setup}
 
-To determine the multispectral configuration with the best performance out of all proposed models, we ran a grid search as described in Section \ref{gridsearch_impl}. All models were trained for 80 epochs with a batch size of 32 samples, using the Adam optimiser with a learning rate of $10^{-6}$. 
+To determine the multispectral configuration with the best performance out of all proposed models, we ran a grid search, as described in Section \ref{gridsearch_impl}. All models were trained for 80 epochs with a batch size of 32 samples, using the Adam optimiser with a learning rate of $10^{-6}$. 
 
-The combination of batch size and learning rate was previously determined as an appropriate compromise between a fast convergence and stability of the loss function. Generally, smaller batch sizes result in the training loss converging in fewer epochs, while larger batch sizes offer better computational efficiency due to parallelisability \citep{devarakonda_adabatch_2018}. 
+The combination of batch size and learning rate was previously determined as an appropriate compromise between fast convergence and stability of the loss function. Generally, smaller batch sizes result in the training loss converging in fewer epochs, while larger batch sizes offer better computational efficiency due to parallelisability \citep{devarakonda_adabatch_2018}. 
 
 Furthermore, smaller batch sizes make the training process more stochastic. More steps are taken during training. However, the smaller amount of samples per batch means that steps are less likely to be in the direction of the global minimum. On the other hand, it is more likely that the model can avoid getting stuck in local minima.
 
@@ -1094,7 +1094,7 @@ Adam was published by \citet{kingma_adam_2014} and is generally considered to yi
 
 The complete loss and accuracy history of all models and configurations are shown in Appendix \ref{appendix_grid_search}. Overall, the custom CNN achieved the lowest performance out of the three models. This is unsurprising, given the small number of trainable parameters compared to the other two models.
 
-The custom ResNet implementation achieved the highest accuracy among the three models. The results for the ResNet can be seen in Figure \ref{fig:resnet_configs}. For all configurations some overfitting can be observed, as the training losses and accuracies converge at near perfect values. Moreover, we observe that for most configurations the validation loss initially drops faster than training loss. This is likely a result of the dropout layers, which are applied only when training.
+The custom ResNet implementation achieved the highest accuracy among the three models. The results for the ResNet can be seen in Figure \ref{fig:resnet_configs}. For all configurations, some overfitting can be observed, as the training losses and accuracies converge at near-perfect values. Moreover, we observe that, for most configurations, the validation loss initially drops faster than training loss. This is likely a result of the dropout layers, which are applied only when training.
 
 \begin{figure}[ht]
   \centering
@@ -1107,14 +1107,14 @@ The LWIR-only configuration appears to be the least effective overall. It is pos
 
 The early fusion (\textit{stacked}) and score-level fusion (\textit{voting}) models achieve a validation accuracy similar to the RGB-only model. However, the validation loss of the early fusion classifier is converging towards that of the LWIR-only one.
 
-Among all configurations, the late fusion (\textit{fusion}) model achieved the highest accuracy. Furthermore, the cross-entropy loss is comparatively low. This result confirms our theory that late feature fusion based approach proposed by \citet{wagner_multispectral_2016} can be applied to our multi-class classification problem. We selected this configuration as our final classifier due to its superior validation accuracy. 
+Among all configurations, the late fusion (\textit{fusion}) model achieved the highest accuracy. Furthermore, the cross-entropy loss is comparatively low. This result confirms our theory that late-fusion-based approach proposed by \citet{wagner_multispectral_2016} can be applied to our multi-class classification problem. We selected this configuration as our final classifier due to its superior validation accuracy. 
 
 %----------------------------------------------------------------------------------------------------------------------------------
 
 \section{Final classifier}
 \label{eval_final}
 
-To obtain reliable scores for the selected model, we ran a 10-fold cross validation on the late fusion ResNet and averaged the results. Since the validation dataset had to be kept completely separate from the training dataset, as discussed in Section \ref{eval_train_val_split}, the k-fold split was performed only on the training dataset. During each fold, the non-selected samples were discarded instead of being used for validation.
+To obtain reliable scores for the selected model, we ran a 10-fold cross-validation on the late fusion ResNet and averaged the results. Since the validation dataset had to be kept entirely separate from the training dataset, as discussed in Section \ref{eval_train_val_split}, the k-fold split was performed only on the training dataset. During each fold, the non-selected samples were discarded instead of being used for validation.
 
 Table \ref{table:final_classifier_scores} shows the precision, recall and f1-score of each class. The classes with the highest f1-score are \textit{goose}, \textit{cat} and \textit{hamburg chicken}. The classes with the lowest f1-score are and \textit{pony} and \textit{muscovy duck}. The pony class stands out with particularly low recall. Only half of all pony samples were classified as such.
 
@@ -1138,7 +1138,7 @@ Table \ref{table:final_classifier_scores} shows the precision, recall and f1-sco
   \label{table:final_classifier_scores}
 \end{table}
 
-The chicken and muscovy duck classes suffer especially from low precision. This means that many samples are wrongly classified as those classes. A possible explanation for this is the high variety of environments within the chicken and muscovy duck datasets. As outlined in Table \ref{table:train_test_dataset}, the amount of subsets used for the training dataset is very high for both classes. It is likely that the model is biased in favour of these classes due to the high variety of backgrounds. 
+The chicken and muscovy duck classes suffer especially from low precision. This means that many samples are wrongly classified as those classes. A possible explanation for this is the wide variety of environments within the chicken and muscovy duck datasets. As outlined in Table \ref{table:train_test_dataset}, the amount of subsets used for the training dataset is very high for both classes. It is likely that the model is biased in favour of these classes due to the great variety of backgrounds. 
 
 From the confusion matrix in Figure \ref{fig:confusion}, it can be seen that there is some degree of confusion between similar classes, such as \textit{alpaca} and \textit{pony}, or \textit{silkie chicken} and \textit{muscovy duck}. The \textit{chicken} class is an exception to this rule, reinforcing the theory that the model is biased towards this class.
 
@@ -1182,7 +1182,7 @@ As can be seen in Figure \ref{fig:test_tsne_input}, the cat images clearly stand
 
 This interpretation is further supported by the observation that the strict separation of the cat cluster persists throughout the VIS branch of the network, as shown in \ref{fig:test_tsne_vis}. The LWIR band, however, is not sensitive to illumination. Therefore, the LWIR branch of the network is unable to use the overall brightness of the image to make inferences about the classes. This explains why the distinctive cat cluster is not visible in Figure \ref{fig:test_tsne_lwir}.
 
-A similar effect can be observed for the \textit{hamburg chicken} class. A large hamburg chicken cluster stands out in the t-SNE of the input image as well as the final convolutional layers of the VIS and LWIR branches. A likely explanation for this pheonomenon is that many images of hamburg chicken are partly occluded by a grid. Since this is unique to this class, it can be assumed that the model uses the grid as a feature to identify hamburg chicken, resulting in undesirable overfitting on the environment.
+A similar effect can be observed for the \textit{Hamburg chicken} class. A large Hamburg chicken cluster stands out in the t-SNE of the input image as well as the final convolutional layers of the VIS and LWIR branches. A likely explanation for this phenomenon is that many images of Hamburg chicken are partly occluded by a grid. Since this is unique to this class, it can be assumed that the model uses the grid as a feature to identify Hamburg chicken, resulting in undesirable overfitting on the environment.
 
 
 \subsection{Saliency analysis}
@@ -1233,16 +1233,16 @@ The remaining two subfigures display examples where only either the VIS or LWIR 
 
 As discussed in Section \ref{modality}, the modality difference between VIS and LWIR images suggests that thermal imaging systems should perform better in low-light conditions compared to visible-light-only systems.
 
-To evaluate the relationship between classification performance and illumination, we calculated the mean and standard deviation of all pixel values of each image in the validation dataset. We then determined the cross entropy loss of each prediction by the VIS-only, LWIR-only and late feature-fusion ResNets and plotted it as a function of mean and standard deviation. The results are shown in Figure \ref{fig:illumination}.
+To evaluate the relationship between classification performance and illumination, we calculated the mean and standard deviation of all pixel values of each image in the validation dataset. We then determined the cross-entropy loss of each prediction by the VIS-only, LWIR-only and late feature-fusion ResNets and plotted it as a function of mean and standard deviation. The results are shown in Figure \ref{fig:illumination}.
 
 \begin{figure}[ht]
   \centering
   \includegraphics[width=0.9\textwidth]{images/evaluation/illumination}
-  \caption{Cross entropy loss as a function of intensity mean and std of VIS and LWIR images in the validation dataset. The data has been smoothened with a running mean to show general trends.}
+  \caption{Cross-entropy loss as a function of intensity mean and std of VIS and LWIR images in the validation dataset. The data has been smoothened with a running mean to show general trends.}
   \label{fig:illumination}
 \end{figure}
 
-The overall result defies the expected behaviour of the models. It can be seen that the LWIR-only network performs significantly worse than its VIS-only and late feature fusion counterparts on low-light images. This further supports the theory we formulated in Section \ref{tsne}. The LWIR-only network likely uses the darkness of the cat images as a biased feature of the cat class, giving it near perfect performance.
+The overall result defies the expected behaviour of the models. It can be seen that the LWIR-only network performs significantly worse than its VIS-only and late feature fusion counterparts on low-light images. This further supports the theory we formulated in Section \ref{tsne}. The LWIR-only network likely uses the darkness of the cat images as a biased feature of the cat class, giving it near-perfect performance.
 
 Since the LWIR band is not sensitive to illumination, the cat pictures do not generally stand out compared to in the VIS images. To obtain more robust results, a dataset with more well-balanced illumination levels would have to be acquired. Furthermore, the LWIR-only network has a high loss on samples with low LWIR mean intensity. A possible explanation for this is the lack of visible features in these images. 
 
@@ -1254,7 +1254,7 @@ To put these results into a relevant context, we compared the final classifier t
 
 The full training history is shown in Figure \ref{fig:baseline_configs}. The transfer-learned VIS-only classifier achieved a final f1-score of $92\%$, significantly outperforming our best model. Our attempts to create a late fusion model that has been pre-trained using the ImageNet data for the VIS branch and the FLIR dataset for the LWIR branch did not improve this baseline. The final f1-score of the transfer learned late fusion model remains unchanged compared to the VIS-only model at $0.92$.
 
-Since larger training datasets usually result in more generalisable models and ImageNet contains over a million annotated samples, this result is unsurprising. As our late fusion model significantly outperformed the VIS-only variant when trained from scratch on the same data, we deem it likely that the pre-traiend VIS-only baseline could be beaten given a large enough dataset.
+Since larger training datasets usually result in more generalisable models and ImageNet contains over a million annotated samples, this result is unsurprising. As our late fusion model significantly outperformed the VIS-only variant when trained from scratch on the same data, we deem it likely that the pre-trained VIS-only baseline could be beaten given a large enough dataset.
 
 
 %----------------------------------------------------------------------------------------------------------------------------------
@@ -1263,7 +1263,7 @@ Since larger training datasets usually result in more generalisable models and I
 
 \subsection{Functionality validation}
 
-To verify whether the deployment of the model to the mobile application is functional, a live evaluation on the actual animals was planned. The intention was to point the phone with the FLIR camera at the objects to evaluate the quality of the predictions. Since unforseen circumstances emerged as a result of the SARS-CoV-2 epidemic, this evaluation could not be performed.
+To verify whether the deployment of the model to the mobile application is functional, a live evaluation on the actual animals was planned. The intention was to point the phone with the FLIR camera at the objects to evaluate the quality of the predictions. Since unforeseen circumstances emerged as a result of the SARS-CoV-2 epidemic, this evaluation could not be performed.
 
 Instead, we qualitatively evaluated the deployment of the final model by pointing the phone and sensor at pictures from the existing validation dataset. Figure \ref{fig:app_screenshots} shows screenshots of the mobile application during this evaluation. A sample image was drawn from each class. Out of all eight images, the app gave six correct predictions.
 
@@ -1291,7 +1291,7 @@ The application was installed on a OnePlus 7 Android device to evaluate the late
 Whereas the RGB-only model took an average of $40.99 ms$, $\sigma = 4.55 ms$ for a single prediction, the feature-fusion model performed a prediction every $70.24 ms$, $\sigma = 6.79 ms$. This equates to $14.24$ predictions per second, which is significantly higher than the sensor frame rate of $8.7 Hz$. 
 Infrequent stuttering of the image feed in both the camera and classifier activities are a result of the sensor occasionally closing the shutter and automatically recalibrating, as outlined in the user guide\footnote{\url{http://www.flirmedia.com/flir-one/flir-one-pro/user-guides/flir-one-pro-user-guide.html}}.
 
-Finally, the battery impact of running the application was evaluated by running the classifier activity for 20 minutes. No other applications were active on the device simultaneously. According to Android's battery usage statistics (Figure \ref{fig:app_battery}), our application used around $8\%$ of the device's $3700 mAh$ battery capacity over the course of the $20 min$. This implies a theoretical maximum usage time of $4.17 h$, assuming the usage statistics are accurate. Based on the results of this evaluation, we conclude that the the multispectral model is suitable for real-time classification tasks on edge devices.
+Finally, the battery impact of running the application was evaluated by running the classifier activity for 20 minutes. No other applications were active on the device simultaneously. According to Android's battery usage statistics (Figure \ref{fig:app_battery}), our application used around $8\%$ of the device's $3700 mAh$ battery capacity over the course of the $20 min$. This implies a theoretical maximum usage time of $4.17 h$, assuming the usage statistics are accurate. Based on the results of this evaluation, we conclude that the multispectral model is suitable for real-time classification tasks on edge devices.
 
 %==================================================================================================================================
 \chapter{Conclusion}
@@ -1300,11 +1300,11 @@ Finally, the battery impact of running the application was evaluated by running 
 
 This dissertation explored the benefits and drawbacks of multispectral image classification with a thermal and visible-light camera. A classifier based on the ResNet deep learning architecture was developed, achieving a validation f1-score of $80\%$.
 
-Our evaluation demonstrates that a model based on late fusion of the thermal and visible-light features, similar to \citet{wagner_multispectral_2016} clearly outperforms the VIS-only baseline. This is the case even in settings with sufficient illumination.
+Our evaluation demonstrates that a model based on late fusion of the thermal and visible-light features, similar to \citet{wagner_multispectral_2016}, clearly outperforms the VIS-only baseline. This is the case even in settings with sufficient illumination.
 
 The classifier has been successfully deployed to a mobile edge device and can be run in real-time with tolerable latency. This demonstrates the suitability of the system for mobile environments with low computational power, such as phones and self-driving cars.
 
-However, our model was not able to beat the second proposed baseline of a state-of-the art VIS-only classifier that was pre-trained on the ImageNet dataset. Attempts to perform transfer learning on an LWIR classifier did not manage to improve our model's performance. We conclude that the lack of available thermal datasets remains a signficant problem for the development of LWIR-based computer vision systems.
+However, our model was not able to beat the second proposed baseline of a state-of-the-art VIS-only classifier that was pre-trained on the ImageNet dataset. Attempts to perform transfer learning on an LWIR classifier did not manage to improve our model's performance. We conclude that the lack of available thermal datasets remains a significant problem for the development of LWIR-based computer vision systems.
 
 Furthermore, our t-SNE and saliency analysis of the final model reveals problems with bias and overfitting on the environment. These issues are likely a result of a noisy and insufficiently diverse dataset. 
 
@@ -1314,7 +1314,7 @@ Nonetheless, our evaluation suggests that our multi-branch network architecture 
 
 \section{Future work}
 
-We attempted to increase the generalisability of our classifier by generating artificial LWIR data using a convolutional autoencoder. Since the scale of this experiment was limited, no reliable conclusion about the effectiveness of this strategy could be drawn. To further evaluate the feasibility of incorporating artifically generated data into the training process, a generative adversarial network could be designed and applied to a sufficiently large visible-light dataset.
+We attempted to increase the generalisability of our classifier by generating artificial LWIR data using a convolutional autoencoder. Since the scale of this experiment was limited, no reliable conclusion about the effectiveness of this strategy could be drawn. To further evaluate the feasibility of incorporating artificially generated data into the training process, a generative adversarial network could be designed and applied to a sufficiently large visible-light dataset.
 
 Moreover, many generalisation problems of our model are likely a result of poorly framed input images. Furthermore, the framing of objects is likely to be noisy when using the mobile application. A more robust approach for this usage scenario could involve the development of an object detection model. Such a model would support the detection of multiple objects in a single image at varying distances and positions. State-of-the-art architectures such as YOLO \citep{redmon_you_2016, redmon_yolov3_2018} promise low inference times and might be suitable for this task. 
 

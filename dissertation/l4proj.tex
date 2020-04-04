@@ -846,13 +846,13 @@ The classifier activity shows the top three predictions of the current image at 
 
 \subsection{Mobile application development}
 
-The mobile application was developed using Android Studio and the Java programming language. To communicate with the FLIR sensor, we used the FLIR Thermal SDK for Android. A continuous delivery (CD) build pipeline was set up using GitHub Actions to verify that changes to the application do not include build-breaking bugs. To achieve this, the pipeline automatically downloads software dependencies, such as the FLIR SDK, compiles the application and provides a downloadable and installable APK file.
+The mobile application was developed using Android Studio\footnote{\url{https://developer.android.com/studio/}} and the Java programming language. To communicate with the FLIR sensor, we used the FLIR Thermal SDK\footnote{\url{https://developer.flir.com/}} for Android. A continuous delivery (CD) build pipeline was set up using GitHub Actions to verify that changes to the application do not include build-breaking bugs. The pipeline automatically downloads software dependencies, such as the FLIR SDK, compiles the application and provides a downloadable and installable APK file.
 
 \subsection{Deep learning and image processing}
 
 All neural networks were implemented using the TensorFlow deep learning framework \citep{abadi_TensorFlow_2016}. TensorFlow was chosen over alternatives such as PyTorch due to its built-in Keras API and its compatibility with TensorFlow Lite. Keras is a high-level neural networks API that was developed by \citet{chollet_keras_2015} to enable fast experimentation. Keras was used in conjunction with other modules provided by the TensorFlow library. 
 
-TensorFlow Lite is a set of tools aimed towards running deep learning models on mobile and internet of things (IoT) devices. It provides a Java API that can be used for Android application development and was, therefore, selected for the deployment of the model onto a mobile device.
+TensorFlow Lite is a set of tools aimed towards running deep learning models on mobile and internet of things (IoT) devices. It provides a Java API that can be used for Android application development. The model was deployed to the mobile application using TensorFlow Lite.
 
 To perform the various image processing tasks required for this project, we made use of scikit-image \citep{van_der_walt_scikit-image_2014} and the Python implementation of OpenCV \citep{bradski_opencv_2000}. Furthermore, the Java implementation of OpenCV was used for the Android application, making it possible to perform affine transformations on captured images on the edge device.
 
@@ -860,11 +860,11 @@ We computed the Grad-CAM visualisations of our networks using Keras-vis \citep{k
 
 \subsection{Hardware and environment}
 
-Training a deep neural network is a time-consuming process. However, many of the operations that get executed when fitting and evaluating a deep learning model benefit from hardware-accelerated vectorised computation. Therefore, training and evaluation of a neural network can be several orders of magnitude faster on a GPU than on a CPU due to the GPU's ability for parallelised computations \citep{shi_benchmarking_2016}. 
+Training a deep neural network is a time-consuming process. However, due to hardware acceleration, training and inference times can be significantly decreased by using a GPU instead of a CPU \citep{shi_benchmarking_2016}. 
 
-Hence, Google Colaboratory (Colab) was used for most of the experimentation process and design of models. Colab is a cloud-hosted service that allows the execution of Jupyter Notebooks on free-to-use GPU runtimes. Therefore, we were able to leverage the power of an Nvidia Tesla P4 GPU with 8 GB of VRAM.
+Hence, Google Colaboratory\footnote{\url{https://colab.research.google.com/}} (Colab) was used for most of the experimentation process. Colab is a cloud-hosted service that allows the execution of Jupyter Notebooks on free-to-use GPU runtimes. Therefore, we were able to leverage the power of an Nvidia Tesla P4 GPU with 8 GB of VRAM.
 
-For more computationally expensive tasks, we made use of the GPU cluster provided by the faculty's Information, Data \& Analysis research section. The cluster provides access to nodes with more powerful resources than Colab, including 512 GB of RAM and multiple Nvidia GeForce RTX 2080 Ti GPUs with 24 GB of VRAM.
+For more computationally expensive tasks, we made use of the GPU cluster provided by the faculty's \textit{Information, Data \& Analysis} research section. The cluster provides access to nodes with more powerful resources than Colab, including 512 GB of RAM and multiple Nvidia GeForce RTX 2080 Ti GPUs with 24 GB of VRAM.
 
 The cluster uses Openshift and the Kubernetes container management framework to assign resources to jobs. To be able to run computations on the cluster, we created a custom Docker image with all our software requirements, including TensorFlow and OpenCV. When scheduling a job, a container instance is created from this image that executes the supplied training script.
 
@@ -874,25 +874,19 @@ The cluster uses Openshift and the Kubernetes container management framework to 
 
 \subsection{Data loading}
 
-Due to the limited amount of memory that Colab provides, it is impossible to pre-load the entire training dataset into memory for training. Thus, a data loader class was implemented that supported the lazy loading of data batches. When constructing the loader, a batch size can be specified, in addition to whether image samples shall be registered, and the target image resolution. 
+Due to the limited amount of memory available on Colab, it was impossible to pre-load the entire training dataset into memory for training. Thus, a data loader class was implemented that supports the lazy loading of data batches. Since the data loader extends Keras' \lstinline{Sequence} class, it fully integrates with the \lstinline{Model} training API. Images are loaded on-demand during the training process, keeping the memory footprint low. Furthermore, the data loader has the ability to register images if specified.
 
-Since the data loader extends Keras' \lstinline{Sequence} class, it fully integrates with the \lstinline{Model} training API. When constructed, it loads a list of all samples, containing image paths and class labels. It then enumerates the classes.
-
-When \lstinline{model.fit()} is called with the data loader as the data source, Keras will use the \lstinline{__getitem__()} function of the data loader repeatedly to lazily load batches of images into memory. The data loader will register images if specified and convert them into a tensor of shape $(batch\_size \times height \times width \times 4)$. Finally, it will return a tuple containing the image tensor and the one-hot representation of the numeric class labels.
-
-While this approach was necessary to fit the model on the whole training dataset, we found that it noticeably slowed down training speeds. This is most likely due to slow I/O bottlenecking the loading speed. Instead of having to load the dataset into memory once in the beginning, loading has to be performed for every training epoch. An attempt was made to use TensorFlow's data API instead of OpenCV for loading and pre-processing to load the data directly into VRAM. However, the performance improvement was negligible. Therefore, when running evaluations on the GPU cluster, we resorted to pre-loading all batches into memory, using our data loader class.
+While this approach was necessary to fit the model on the whole training dataset, we found that it noticeably slowed down training speeds. This is most likely due to slow I/O bottlenecking the loading speed. Instead of loading the dataset into memory once in the beginning, I/O has to be performed during each training epoch. Therefore, when running evaluations on the GPU cluster, we resorted to pre-loading all batches into memory, which is also supported by the data loader class.
 
 \subsection{Grid search}
 \label{gridsearch_impl}
 
-To evaluate the performance of the three different models and the five configurations, a grid search was run over all 15 possible combinations. For this purpose, we derived all models from a custom-built superclass \lstinline{AbstractModel}, to ensure that they implement a common API. This enabled us to iterate over all models and all configurations, training and evaluating every combination.
+To evaluate the performance of the three different models and the five configurations, a grid search was run over all 15 possible combinations. For this purpose, we derived all models from a custom-built superclass \lstinline{AbstractModel}, to ensure that they implement a common API. This enabled us to iterate over all models and all configurations in a simple loop, training and evaluating every combination.
 
 \subsection{Affine data augmentation}
 \label{augmentation_impl}
 
-Various tools are available to perform real-time data augmentation as part of the training pipeline. However, to achieve the highest possible level of control, a custom data augmentation function was designed. The function accepts a multiplication factor $n$ and leverages TensorFlow's \lstinline{ImageDataGenerator} to apply random affine transformations to images in the dataset.
-
-The script works by counting the number of samples per class and determining the class with the highest support. Each sample in that class is then augmented $n$ times. Finally, all remaining classes are being augmented until their sample size reaches that of the max class. The aim of this algorithm is to provide an even dataset without class imbalances.
+Various tools are available to perform real-time data augmentation as part of the training pipeline. However, to achieve the highest possible level of control, a custom data augmentation function was designed. The function accepts a multiplication factor $n$ and leverages TensorFlow's \lstinline{ImageDataGenerator} to apply random affine transformations to images in the dataset. Moreover, it is capable of equalising the class imbalance of the dataset by randomly oversampling underrepresented classes.
 
 
 \subsection{Predicting LWIR images using an autoencoder}
@@ -900,20 +894,16 @@ The script works by counting the number of samples per class and determining the
 
 \subsubsection{Traditional autoencoder}
 
-
-
 A deep convolutional autoencoder was created to predict the LWIR signature of objects from the corresponding visible-light image. The architecture of the network is shown in Figure \ref{fig:autoencoder_architecture}. The network consists of an encoder and a decoder that each contain four blocks of layers.
 
 \begin{figure}[ht]
   \centering
-  \includegraphics[width=0.9\textwidth]{images/models/autoencoder}
+  \includegraphics[width=0.8\textwidth]{images/models/autoencoder}
   \caption{Neural network architecture of the autoencoder. Created using PlotNeuralNet \citep{iqbal_harisiqbal88plotneuralnet_2018}.}
   \label{fig:autoencoder_architecture}
 \end{figure}
 
-Each encoder block has a convolutional layer, followed by a leaky ReLU activation function and a subsequent max pooling layer for downsampling. The $320 \times 240 \times 1$ input images are thus processed and downsampled to a $20 \times 15 \times 32$ tensor containing a compact, latent representation of the features in the original image.
-
-The output of the decoder is then fed forward into four blocks of deconvolutional layers followed by leaky ReLU activation to attempt a reconstruction of the LWIR image. Each deconvolutional layer tries to upsample the input by predicting appropriate pixel values.
+Each encoder block has a convolutional layer, followed by a ReLU activation function and a subsequent max pooling layer for downsampling. The input images are processed and downsampled to a $20 \times 15 \times 32$ tensor containing a compact, latent representation of the features in the original image. The output of the decoder is then fed into four blocks of deconvolutional layers followed by ReLU activation to attempt a reconstruction of the LWIR image. Each deconvolutional layer tries to upsample the input by predicting appropriate pixel values.
 
 Due to the lack of a discriminator, our autoencoder design does not satisfy the requirements of a generative adversarial network. However, autoencoders are commonly used for image processing tasks such as denoising and colourisation. As LWIR images have fewer high-frequency components than visible-light images (Section \ref{modality}) and both images share rough features such as edges, we deemed an autoencoder architecture to be appropriate for this generative task.
 
@@ -941,53 +931,56 @@ Due to the lack of a discriminator, our autoencoder design does not satisfy the 
   \label{fig:autoencoder_pony_train}
 \end{figure}
 
-A subset of the animals training dataset with 415 images of Shetland ponies was chosen. Mean squared error was selected as the loss function. The network was trained for 100 epochs with a batch size of 16. Training time averaged around 18 minutes on an NVIDIA Tesla P-100 GPU.
+A subset of the animals training dataset containing 415 images of Shetland ponies was chosen. Mean squared error was selected as the loss function. The network was trained for 100 epochs with a batch size of 16.
 
-As can be seen in Figure \ref{fig:autoencoder_pony_train_autoencoder}, the network correctly identifies the pony from the training dataset and determines that it should have a higher local intensity in the LWIR waveband. However, when comparing the predicted to the actual LWIR image, it is apparent that the autoencoder lacks the ability to generate the fine textural details of the animal. This is likely due to the denoising property caused by the encoder's bottleneck.
+As can be seen in Figure \ref{fig:autoencoder_pony_train_autoencoder}, the model correctly identifies the pony from the training dataset and determines that it should have a higher local intensity in the LWIR waveband. However, when comparing the predicted to the actual LWIR image, it is apparent that the autoencoder lacks the ability to generate the fine textural details of the animal. This is likely a result of the denoising property caused by the encoder's bottleneck.
 
 \subsubsection{U-Net}
 
-U-Net was first introduced by \citet{ronneberger_u-net_2015} to improve performance of biomedical image segmentation systems. Similarly to a conventional autoencoder, it features a contracting path that downsamples or encodes the input and a symmetric expanding path that upsamples or decodes the input. Additionally, for each deconvolutional layer, the output of the corresponding opposite convolutional layer is concatenated to the layer's input map. These connections can be seen in Figure \ref{fig:unet_architecture}, which visualises our custom U-Net implementation. 
+First introduced by \citet{ronneberger_u-net_2015}, U-Net aims to improve the performance of biomedical image segmentation systems. Similarly to a conventional autoencoder, it features a contracting path that downsamples or encodes the input and a symmetric expanding path that upsamples or decodes the input. Additionally, for each deconvolutional layer, the output of the corresponding opposite convolutional layer is concatenated to the layer's input map. These connections can be seen in Figure \ref{fig:unet_architecture}, which visualises our custom U-Net implementation. 
 
 \begin{figure}[ht]
   \centering
-  \includegraphics[width=0.9\textwidth]{images/models/unet}
+  \includegraphics[width=0.82\textwidth]{images/models/unet}
   \caption{Neural network architecture of the U-Net. Created using PlotNeuralNet \citep{iqbal_harisiqbal88plotneuralnet_2018}.}
   \label{fig:unet_architecture}
 \end{figure}
 
-We chose to evaluate this architecture because it combines the denoising features of a traditional autoencoder with the ability to generate finer textures due to its skip connections. \citet{osin_fast_2018} utilise a modified U-Net to perform semantic segmentation on thermal multispectral images. Similar to the traditional autoencoder, the U-Net was trained for 100 epochs on the same dataset. 
+We chose to evaluate this architecture because it combines the denoising features of a traditional autoencoder with the ability to generate finer textures due to its skip connections. \citet{osin_fast_2018} utilise a modified U-Net to perform semantic segmentation on thermal multispectral images. The U-Net was trained for 100 epochs on the same dataset as the traditional autoencoder. 
 
 Figure \ref{fig:autoencoder_pony_train_unet} displays the predicted LWIR image for the pony from the training dataset. Unlike the autoencoder, the U-Net is able to accurately represent the texture of the animal in the LWIR waveband.
 
 \subsubsection{Results on unknown data}
 
-After successful training of the networks, two images of ponies were retrieved from Wikimedia Commons. They were then fed into the network in an attempt to generate the corresponding LWIR images. The respective outputs can be seen in Figure \ref{fig:autoencoder_pony}.
+After training the networks, two images of ponies were retrieved from Wikimedia Commons. They were then fed into the network in an attempt to generate the corresponding LWIR images. The respective outputs can be seen in Figure \ref{fig:autoencoder_pony}.
 
 \begin{figure}[ht]
   \centering
   \begin{subfigure}[h!]{0.22\textwidth}
-    \includegraphics[width=\textwidth]{images/autoencoder/pony_1/gray.png}
-    \includegraphics[width=\textwidth]{images/autoencoder/pony_2/gray.png}
+    \includegraphics[width=\textwidth, trim={0cm, 1cm, 0cm, 1cm}, clip]{images/autoencoder/pony_1/gray.png}
+
+    \includegraphics[width=\textwidth, trim={0cm, 1cm, 0cm, 1cm}, clip]{images/autoencoder/pony_2/gray.png}
     \caption{Original images}
   \end{subfigure}
   \begin{subfigure}[h!]{0.22\textwidth}
-    \includegraphics[width=\textwidth]{images/autoencoder/pony_1/auto.png}
-    \includegraphics[width=\textwidth]{images/autoencoder/pony_2/auto.png}
+    \includegraphics[width=\textwidth, trim={0cm, 1cm, 0cm, 1cm}, clip]{images/autoencoder/pony_1/auto.png}
+
+    \includegraphics[width=\textwidth, trim={0cm, 1cm, 0cm, 1cm}, clip]{images/autoencoder/pony_2/auto.png}
     \caption{Autoencoder prediction}
   \end{subfigure}
   \begin{subfigure}[h!]{0.22\textwidth}
-    \includegraphics[width=\textwidth]{images/autoencoder/pony_1/unet.png}
-    \includegraphics[width=\textwidth]{images/autoencoder/pony_2/unet.png}
+    \includegraphics[width=\textwidth, trim={0cm, 1cm, 0cm, 1cm}, clip]{images/autoencoder/pony_1/unet.png}
+
+    \includegraphics[width=\textwidth, trim={0cm, 1cm, 0cm, 1cm}, clip]{images/autoencoder/pony_2/unet.png}
     \caption{U-Net prediction}
   \end{subfigure}
   \caption{Predicted LWIR signature of images of shetland ponies. Original images: "Shetland ponies at Sandwick" by Andrew Gray under CC BY-SA 2.0. URLs in List \ref{list:image_sources}.}
   \label{fig:autoencoder_pony}
 \end{figure}
 
-It appears as if the traditional autoencoder is more successful at generating LWIR images with plausible shapes than the U-Net. Various artefacts can be spotted in the U-Net image. Overall, the shape of the pony is not accurately represented. The U-Net is likely more overfitted on the training data.
+It appears as if the traditional autoencoder is more successful at generating LWIR images with plausible shapes than the U-Net. Various artefacts can be spotted in the U-Net image. Overall, the shape of the pony is not accurately represented. 
 
-Upon inspection of the bottom image, it can be seen that the white patch of the pony is also apparent in the autoencoder prediction. We conclude that the model is overfitted on dark ponies and is, therefore, unable to detect the patch as a normal part of the animal. Nonetheless, it seems possible that the autoencoder prediction might be accurate enough to be able to generate additional training data for a classifier.
+The white patch of the pony in the bottom image is also apparent in the autoencoder prediction. We conclude that the model is overfitted on dark ponies and is, therefore, unable to detect the patch as a part of the animal. Nonetheless, it seems possible that the autoencoder prediction might be accurate enough to generate additional training data for a classifier.
 
 %----------------------------------------------------------------------------------------------------------------------------------
 

@@ -31,10 +31,10 @@
 %% ABSTRACT
 \begin{abstract}
     Many conventional image recognition systems are constrained by the limitations of wavelengths visible to the human eye.
-    This project explores the benefits and drawbacks of incorporating thermal images into image classification models. A multispectral dataset consisting of eight classes of animals and 2317 total samples was captured using a FLIR One Pro thermal camera.
+    This project explores the benefits and drawbacks of incorporating thermal images into deep convolutional neural networks for image classification. A multispectral dataset consisting of eight classes of animals and 2317 total samples was captured using a FLIR One Pro thermal camera.
     Early fusion and late fusion multispectral neural network architectures based on popular image classifiers, such as ResNet, were evaluated on the dataset.
-    The final model significantly outperforms a comparable visible-light-only system, increasing the classification f1-score from 74\% to 80\%. The proposed network is unable to beat a state-of-the-art model that has been pre-trained on ImageNet and transfer-learned on the custom animals dataset.
-    The model was successfully deployed to an Android mobile application, enabling real-time classification of animals for devices equipped with a FLIR thermal camera.
+    The final model significantly outperforms a comparable visible-light-only system, increasing the classification f1-score from 74\% to 80\%. The proposed network is unable to beat a state-of-the-art model that was pre-trained on ImageNet and transfer-learned on the custom animals dataset.
+    The final classifier was successfully deployed to an Android mobile application, enabling real-time classification of animals for devices equipped with a FLIR thermal camera.
 \end{abstract}
 
 %==============================================================================
@@ -92,11 +92,11 @@
 
 \section{Motivation}
 
-Deep convolutional neural networks have achieved impressive results on image classification tasks. Most image classification systems are trained on conventional visible-light images. Conventional cameras are usually built to capture images primarily in wavelengths visible to the human eye. Therefore, many computer vision systems are inherently limited by the physical constraints of human vision. To further improve the performance of image classification systems beyond these constraints, further input sources, such as additional wavelengths and depth perception, can be introduced.
+Deep convolutional neural networks have achieved impressive results on image classification tasks in recent years. Most image classification systems are trained on conventional visible-light images. Conventional cameras are usually built to capture images primarily in wavelengths visible to the human eye. Therefore, many computer vision systems are inherently limited by the physical constraints of human vision. To further improve the performance of image classifiers beyond these constraints, the incorporation of further input sources, such as additional wavelengths and depth perception, can be considered.
 
 Thermal cameras have become significantly more affordable in recent years. This makes it increasingly feasible to equip computer vision systems with thermal cameras. Thermal imaging promises to reveal properties of objects that remain hidden to the human eye, extending the sensing capabilities of an image classifier.
 
-The development of autonomous systems, such as self-driving cars or image-based surveillance systems, is drastically increasing the demand for robust and precise object recognition and classification models. These systems often operate in real-time. Therefore, low latency without sacrificing accuracy is required to be able to make fast and robust decisions.
+Recent advancements in the development of autonomous systems, such as self-driving cars or image-based surveillance systems, are increasing the demand for robust and precise object recognition and classification models. These systems often operate in real-time. Therefore, low latency without sacrificing accuracy is required to be able to make fast and robust decisions.
 
 %----------------------------------------------------------------------------------------------------------------------------------
 
@@ -111,17 +111,17 @@ The primary aim of this project is to explore different strategies for incorpora
   \item analyse the performance of our model compared to conventional, visible-light-only image classifiers (Section \ref{evaluation}).
 \end{itemize}
 
-Furthermore, we will develop a mobile application for Android devices, allowing the real-time classification of multispectral images from a mobile edge device (Section \ref{implementation}). This shall demonstrate the feasibility of running the model in situations with low-latency requirements.
+Furthermore, we will develop a mobile application for Android devices, allowing the real-time classification of multispectral images on a mobile edge device (Section \ref{implementation}). This shall demonstrate the feasibility of running the model in situations with low-latency requirements.
 
 %----------------------------------------------------------------------------------------------------------------------------------
 
 \section{Potential applications}
 
-A thermal multispectral animal recognition model could be used for a variety of possible applications. Being able to detect and classify animals in both day and night scenarios as well as in partially occluded settings could be beneficial for tracking wildlife. This could be used for research applications or autonomously tracking endangered species.
+A thermal multispectral animal recognition model could be used for a variety of possible applications. Being able to detect and classify animals in both day and night scenarios as well as in partially occluded settings could be beneficial for tracking wildlife. This could be used for research applications or autonomously monitoring the population of endangered species.
 
-Furthermore, stationary systems could be used for security applications such as intruder detection in remote places, where an alarm should only be triggered if the intruder is of a particular species, such as bears or humans.
+Furthermore, stationary systems could be used for security applications such as intruder detection in remote places. In such situations, users might only want an alarm to be triggered if the intruder is of a particular species, such as bears or humans.
 
-Finally, the system has potential for educational applications. As modern-day mobile devices are equipped with an increasing amount of sensors, thermal multispectral imaging systems might become widely available to smartphone users. A mobile application for classifying animals in real-time could be useful for teaching various species to users.
+Finally, the system has potential for educational applications. As modern-day mobile devices are equipped with an increasing number of sensors, thermal multispectral imaging systems might become widely available to smartphone users. A mobile application for classifying animals in real-time could help users identify and learn about different species of animals.
 
 %==================================================================================================================================
 \chapter{Background}
@@ -132,14 +132,15 @@ Finally, the system has potential for educational applications. As modern-day mo
 
 \subsection{Electromagnetic radiation}
 
-Visible light and infrared are forms of electromagnetic radiation. Visible light (VIS) has wavelengths roughly between $400$ and $700 nm$. The hue of visible light is determined by its wavelength. Colours, as perceived by human vision, are the result of a spectral distribution of wavelengths of the light that enters the eye. 
+Visible light and infrared are forms of electromagnetic radiation. Visible light (VIS) has wavelengths roughly between $400$ and $700 nm$. The hue of visible light is determined by its wavelength. Colours, as perceived by human vision, are the result of a spectral distribution of wavelengths of the light that enters the eye. Most conventional camera sensors sample visible light in the red, green and blue (RGB) wavebands.
 
 Infrared light (IR), with wavelengths between $700 nm$ and $1 mm$, is generally invisible to humans. It is commonly subdivided into near infrared (NIR), short-wavelength infrared (SWIR), medium-wavelength infrared (MWIR), long-wavelength infrared (LWIR), and far infrared (FIR) \citep[p. 28]{byrnes_unexploded_2008}, as can be seen in Figure \ref{fig:em_spectrum}.
 
 \begin{figure}[ht]
   \centering
   \begin{subfigure}[h!]{0.8\textwidth}
-    \includegraphics[width=\textwidth, trim={1.5cm 4cm 2cm 4cm}, clip=true]{images/EM_spectrum.pdf}
+    % \includegraphics[width=\textwidth, trim={1.5cm 4cm 2cm 4cm}, clip=true]{images/EM_spectrum.pdf}
+    \includegraphics[width=\textwidth]{images/EM_spectrum.png}
   \end{subfigure}
   \caption{The electromagnetic spectrum with detailled view of visible light and infrared. IR subdivisions modelled after \citet[p. 28]{byrnes_unexploded_2008}.}
   \label{fig:em_spectrum}
@@ -147,21 +148,22 @@ Infrared light (IR), with wavelengths between $700 nm$ and $1 mm$, is generally 
 
 \subsection{Thermal infrared radiation}
 
-Black-body radiation is defined as thermal electromagnetic radiation emitted by an idealized opaque, non-reflective body \citep{young_sears_2012}. It has a continuous frequency spectrum that is dependent on the temperature of the body \citep{kogure_thermodynamic_2007}. The spectrum has a characteristic peak, which is inversely proportional to the temperature $T [K]$ according to Wien's displacement law:
+Black-body radiation is defined as ``thermal electromagnetic radiation emitted by an idealized opaque, non-reflective body'' \citep{young_sears_2012}. It has a continuous frequency spectrum that is dependent on the temperature of the body \citep{kogure_thermodynamic_2007}. The spectrum has a characteristic peak, which is inversely proportional to the temperature $T [K]$ according to Wien's displacement law:
 
 \begin{equation}
   \lambda_{peak} = \frac{2.898 \times 10^{-3}}{T} [m],
 \end{equation}
 
-Bodies at a room temperature of $300 K$ emit electromagnetic radiation with a peak at $9.7 \mu m$ \citep{jarc_graz_2007}, falling into the LWIR range. To account for different non-ideal surfaces, the material-specific emissivity constant $\epsilon \in [0..1]$ is introduced to describe the share of radiation that is emitted by a body compared to an ideal black body. The total energy radiated by a body per unit surface and time is expressed by the Stefan-Boltzmann law:
+Bodies at a room temperature of $300 K$ emit electromagnetic radiation with a peak at $9.7 \mu m$ \citep{jarc_graz_2007}, which falls into the LWIR range. To account for different non-ideal surfaces, the material-specific emissivity constant $\epsilon \in [0..1]$ is introduced to describe the share of radiation that is emitted by a body compared to an ideal black body. The total energy radiated by a body per unit surface and time is expressed by the Stefan-Boltzmann law:
 
 \begin{equation}
   W = \epsilon \sigma T^4,
 \end{equation}
 
-where $\sigma$ is a proportionality constant. Thus, if the emissivity of a body is known, this law can be applied to determine its temperature based on the amount of LWIR-radiation received by a camera. This is the theoretical foundation for thermal imaging. 
+where $\sigma$ is a proportionality constant. Thus, if the emissivity of a body is known, this law can be applied to determine its temperature based on the amount of LWIR-radiation received by a camera. This is the theoretical foundation for thermal imaging. The modality of thermal imaging, hence, differs significantly from that of visible-light imaging.
 
-In practice, the material and corresponding emissivity are often undetermined. Therefore, the received infrared radiation contains an unknown share of reflected radiation, adding noise to the measurement. This can be somewhat mitigated by estimating the value of $\epsilon$.
+In practice, the material and corresponding emissivity of an object are often undetermined. Therefore, the received infrared radiation contains an unknown share of reflected radiation, adding noise to the measurement.
+
 
 \subsection{Spectral imaging}
 
@@ -170,16 +172,14 @@ A distinction is made between hyperspectral and multispectral imaging techniques
 
 If an image is acquired at many (tens or hundreds) regularly sampled wavebands, one speaks of a hyperspectral image, sometimes referred to as a hypercube. Hyperspectral images have many powerful applications, including agriculture and food quality \citep{dale_hyperspectral_2013} and medical applications \citep{lu_medical_2014}. However, capturing hyperspectral images requires advanced sensing equipment. Furthermore, hypercubes are difficult to process due to the high amount of information and, therefore, often require the application of computationally expensive preprocessing techniques, such as dimensionality-reduction \citep{qin_hyperspectral_2013}.
 
-Multispectral images comprise of a few discrete wavebands. As opposed to hyperspectral images, it is usually not possible to extract a full continuous spectrum of an individual pixel from multispectral images \citep{abdul_multi-disnet_2019}. Whereas conventional visible-light cameras usually output images in the red, green, and blue channels (RGB), a multispectral system might comprise of additional wavebands, such as near infrared or long-wavelength infrared.
+Multispectral images comprise of a few discrete wavebands. As opposed to hyperspectral images, it is usually not possible to extract a full continuous spectrum of an individual pixel from multispectral images \citep{abdul_multi-disnet_2019}. Whereas conventional visible-light cameras usually output images in the red, green, and blue channels, a multispectral system might comprise of additional wavebands, such as near infrared or long-wavelength infrared.
 
 
 %----------------------------------------------------------------------------------------------------------------------------------
 
 \section{Deep learning}
 
-Deep learning is a branch of machine learning based on the concept of artificial neural networks (ANN). ANNs leverage the idea of artificial neurons, which are an abstract model derived from biological neurons. 
-
-An artificial neuron consists of an input vector $\vec{x}$, a vector of weights $\vec{w}$, a bias $b$, an activation function $\varphi$, and an output scalar $y$. The input vector is multiplied with the weights element-wise. The sum of the result is computed and passed into the activation function, yielding the output. The output of an artificial neuron can, therefore, be computed as follows:
+Deep learning is a branch of machine learning based on the concept of artificial neural networks (ANN). ANNs leverage the idea of artificial neurons, which are an abstract model derived from biological neurons. An artificial neuron consists of an input vector $\vec{x}$, a vector of weights $\vec{w}$, a bias $b$, an activation function $\varphi$, and an output scalar $y$. The input vector is multiplied with the weights element-wise. The sum of the result is computed and passed into the activation function, yielding the output. The output of an artificial neuron can, therefore, be computed as follows:
 
 \begin{equation}
   y_j = \varphi (b + \sum_{i=0}^n x_i w_{ij}).
@@ -187,7 +187,7 @@ An artificial neuron consists of an input vector $\vec{x}$, a vector of weights 
 
 Common choices for activation functions are sigmoid functions or rectified linear unit (ReLU), although various alternatives have been proposed \citep{ramachandran_searching_2017}.
 
-In conventional ANNs, neurons are usually grouped into fully-connected layers. For each neuron in layer $j$, $\vec{x}$ represents the outputs of all neurons of the previous layer $j-1$. A traditional feed-forward neural network thus consists of an input layer, a sequence of multiple so-called hidden layers of artificial neurons, and an output layer. The behaviour of all neurons in a layer can be expressed as simple matrix multiplication, making it highly computationally efficient.
+In conventional feed-forward ANNs, neurons are usually grouped into fully-connected layers. For each neuron in layer $j$, $\vec{x}$ represents the outputs of all neurons of the previous layer $j-1$. A traditional feed-forward neural network, such as the multi-layer-perceptron, consists of an input layer, a sequence of multiple so-called hidden layers of artificial neurons, and an output layer. The behaviour of all neurons in a layer can be expressed as simple matrix multiplication, making it highly computationally efficient.
 
 As proven by the universal approximation theorem, feed-forward neural networks can act as universal function approximators \citep{hornik_approximation_1991}. By defining a differentiable loss function for the output of the model, the coefficients of a neural network can be trained using the backpropagation algorithm \citep{rumelhart_learning_1986}. Backpropagation calculates the gradient of the loss function with respect to the weights of the layers in the model. Subsequently, it updates the weights following an optimisation algorithm such as gradient descent. This process is performed layer by layer, starting from the final layer of the network and moving backwards.
 
@@ -199,11 +199,11 @@ Convolutional neural networks (CNN) are a specialised type of neural network tha
   S(i, j) = (K \ast I) (i, j) = \sum_m \sum_n I(i-m, j-n) K(m, n),
 \end{equation}
 
-where $I$ denotes the $i \times j$ input tensor, $K$ is the $m \times n$ convolutional kernel (alternatively referred to as filter), and S is the $i \times j$ output or feature map. Depending on the kernel weights, convolution can be used for various image processing tasks, such as smoothing or edge detection.
+where $I$ denotes the $i \times j$ input tensor, $K$ is the $m \times n$ convolutional kernel (alternatively referred to as filter), and S is the output or feature map. Depending on the kernel weights, convolution can be used for various image processing tasks, such as smoothing or edge detection.
 
-\citet{lecun_backpropagation_1989} first used backpropagation to automatically learn the coefficients of convolutional filters as part of an image classification task. The kernels of a CNN are trained to recognise and aggregate important spatial features of an image. This is an advantage over fully-connected networks, as they are agnostic towards spatial relations of the input.
+\citet{lecun_backpropagation_1989} first used backpropagation to automatically learn the coefficients of convolutional filters as part of an image classification task. The kernels of a CNN are trained to recognise and aggregate important spatial features of an image. This is an advantage over fully-connected networks, which are agnostic towards spatial relations of the input.
 
-Convolutional layers in neural networks consist of multiple kernels that are applied to the input, usually resulting in an output tensor of depth equal to the number of filters. The amount of trainable coefficients of a convolutional layer is generally much lower than that of a fully-connected layer, making CNNs more computationally efficient. This enables the design of much deeper neural networks \citep{goodfellow_deep_2016}. CNNs with increasingly deep architectures have been shown to be highly effective on image classification and detection tasks, significantly outperforming conventional fully-connected networks \citep{krizhevsky_imagenet_2012, szegedy_going_2015, he_deep_2016}.
+Convolutional layers in neural networks consist of multiple kernels that are applied to the input, resulting in an output tensor of depth equal to the number of filters. The amount of trainable coefficients of a convolutional layer is generally much lower than that of a fully-connected layer, making CNNs more computationally efficient. This enables the design of much deeper neural networks \citep{goodfellow_deep_2016}. CNNs with increasingly deep architectures have been shown to be highly effective on image classification and detection tasks, significantly outperforming conventional fully-connected networks \citep{krizhevsky_imagenet_2012, szegedy_going_2015, he_deep_2016}.
 
 
 \subsection{Overfitting and dropout}
@@ -212,7 +212,7 @@ In practice, many machine learning models are good at correctly predicting train
 
 Due to the ability of neural networks with sufficient depth to approximate any multidimensional function, they are naturally susceptible to overfitting \citep{tetko_neural_1995}. It is, therefore, necessary to reduce the generalisation error of a deep learning model by employing strategies to combat overfitting. Such methods are known as regularisation techniques \citep{goodfellow_deep_2016}.
 
-Dropout is a technique for addressing the problem of overfitting in ANNs that was introduced by \citet{srivastava_dropout_2014}. It attempts to reduce interdependent learning amongst neurons in a network. This is achieved by ignoring a random fraction of inputs to a given layer for each iteration during the training phase. A feature is ignored (dropped out) by setting it to 0.
+Dropout is a strategy for addressing the problem of overfitting in ANNs that was introduced by \citet{srivastava_dropout_2014}. It attempts to reduce interdependent learning amongst neurons in a network. This is achieved by ignoring a random fraction of inputs to a given layer for each iteration during the training phase. A feature is ignored (dropped out) by setting it to 0.
 
 Since nodes can not over-rely on specific inputs due to them being disabled during many training iterations, the network is forced to learn redundant connections. The model can learn more independent features, making it more robust. During the validation and prediction phase, no dropout is applied. Therefore, nodes are able to use all inputs for predictions.
 
@@ -247,7 +247,7 @@ To visualise the classification errors generated by a supervised machine learnin
 
 \subsubsection{Pedestrian detection}
 
-One of the most actively researched applications for deep learning and thermal imaging is pedestrian detection. Autonomous systems such as self-driving cars need to be provided with accurate environmental information to guarantee safe operation. Traditional VIS-only models are often not able to provide this accuracy \citep{zhang_how_2016}, especially under challenging conditions such as insufficient illumination, partial object occlusion or weak contrasts between objects and background in the visible light spectrum. 
+One of the most actively researched applications for deep learning and thermal imaging is pedestrian detection. Autonomous systems such as self-driving cars require accurate environmental information to guarantee safe operation. Traditional VIS-only models are often not able to provide this accuracy \citep{zhang_how_2016}. This is especially the case under challenging conditions such as insufficient illumination, partial object occlusion or weak contrasts between objects and background in the visible light spectrum. 
 
 The KAIST Pedestrian Detection Benchmark \citep{hwang_multispectral_2015} was introduced to provide a prediction benchmark for thermal multispectral detection models. In recent years, many novel models and methodologies have been proposed, continuously improving the state of the art \citep{wagner_multispectral_2016, konig_fully_2017, guan_fusion_2019}.
 
@@ -269,7 +269,7 @@ Furthermore, there are many applications of thermal imaging in agriculture and t
 
 \citet{dollar_fast_2014} proposed a novel object detector based on aggregated channel features (ACF), achieving high object detection performance on visible-light images. This approach has been adapted to multispectral data, additionally incorporating the thermal channel T, and histograms of oriented gradients (HOG) features \citep{dalal_histograms_2005} extracted from the thermal channel. This model serves as a baseline for the KAIST dataset.
 
-\citet{wagner_multispectral_2016} evaluated early and late feature fusion methods for thermal multispectral pedestrian detection. The early fusion approach involves stacking the RGB and T channels pixel-wise into a tensor of depth four and feeding the result into a CaffeNet \citep{jia_caffe_2014} convolutional network. The late fusion approach feeds the RGB image and LWIR image into separate convolutional networks respectively and merging the outputs using fully-connected layers. They concluded that, unlike the early fusion approach, the late fusion model significantly outperforms the previous state of the art ACF+T+HOG baseline. 
+\citet{wagner_multispectral_2016} evaluated early and late feature fusion methods for thermal multispectral pedestrian detection. The early fusion approach involves stacking the RGB and T channels pixel-wise into a tensor of depth four and feeding the result into a CaffeNet \citep{jia_caffe_2014} convolutional network. The late fusion approach feeds the RGB image and LWIR image into separate convolutional networks respectively and merging the outputs using fully-connected layers. They concluded that, unlike the early fusion approach, the late fusion model significantly outperforms the previous state-of-the-art ACF+T+HOG baseline. 
 
 This model was further refined by \citet{osin_fast_2018} by evaluating different late fusion functions on a ResNet-based Single Shot MultiBox Detector (SSD) network \citep{liu_ssd_2016}. They achieved near real-time detection performance on embedded systems.
 
@@ -286,12 +286,12 @@ Expanding upon the late fusion network introduced by \citet{wagner_multispectral
 
 Collecting a multispectral dataset of sufficient quality is significantly more challenging than a dataset consisting solely of visible-light images. Specialised equipment is needed to obtain samples. Using two sensors to capture the different channels introduces problems such as channel misalignment and inability to perform an optical zoom. This makes it harder to frame the objects of interest properly.
 
-Furthermore, most image classification tasks use traditional visible-light imaging only. As a result, the research and resources that are available for use are much more limited.
+Furthermore, most image classification solutions use traditional visible-light imaging only. As a result, the amount of research and resources that are available for use are limited. Many problems emerging from thermal multispectral imaging have not been conclusively solved and need to be addressed.
 
 \subsection{Sensory equipment}
 \label{sensory_equipment}
 
-Even though thermal cameras have become significantly more affordable in recent years, their resolution remains much lower than that of conventional visible-light cameras. The FLIR One Pro \footnote{\url{https://www.flir.com/products/flir-one-pro/}}, which was used for this project, is composed of two sensors:
+Even though thermal cameras have become significantly more affordable in recent years, their resolution remains much lower than that of conventional visible-light cameras. The FLIR One Pro\footnote{\url{https://www.flir.com/products/flir-one-pro/}}, which was used for this project, is composed of two sensors:
 
 \begin{itemize}
   \item A conventional camera for visible-light images with a resolution of $1440 \times 1080$ px.
@@ -302,20 +302,20 @@ The FLIR camera is, therefore, able to perceive and record electromagnetic waves
 
 Firstly, the two cameras are not spatially aligned. Furthermore, the "zoom level" or focal length of the sensors does not appear to match. A misalignment of the channels is likely to have an adverse impact on the performance of a convolutional network \citep{chappelow_improving_2008}. Therefore, the issue of image registration of the two camera outputs arises. The strategy we introduced to perform robust registration of the VIS and LWIR images is outlined in Section \ref{image_registration}.
 
-Secondly, the different resolutions of the sensors could cause problems too, as convolutional filters might struggle to detect edges and other features consistently across all channels. A possible strategy to avoid this issue is to resize the images to a common resolution. However, this means that valuable information in the VIS image might be lost and overall accuracy might be reduced. It is, therefore, necessary to evaluate the degree of information loss upon size reduction of the visible-light image.
+Secondly, the different resolutions of the sensors could cause problems too, as convolutional filters might struggle to detect edges and other features consistently across all channels. A possible strategy to avoid this issue is to resize the images to a common resolution. However, this means that valuable information in the VIS image might be lost and overall accuracy might be reduced. 
 
 %----------------------------------------------------------------------------------------------------------------------------------
 
 \section{Modality gap between LWIR and VIS images}
 \label{modality}
 
-As outlined in Section \ref{imaging}, LWIR and visible light are both forms of electromagnetic radiation. However, the properties of LWIR and VIS images differ significantly. \citet{sarfraz_deep_2017} refer to visible light as reflection-dominant and LWIR as emission-dominant radiation, resulting in a modality gap between the two corresponding sensing techniques. \citet{choi_thermal_2012} consider this modality gap a challenging problem for computer vision algorithms.
+As outlined in Section \ref{imaging}, LWIR and visible light are both forms of electromagnetic radiation. However, the properties of LWIR and VIS images differ significantly. \citet{sarfraz_deep_2017} refer to visible light as reflection-dominant and LWIR as emission-dominant radiation, resulting in the modality gap between the two corresponding sensing techniques. \citet{choi_thermal_2012} state this modality gap as a challenging problem for image classification algorithms.
 
-\citet{davis_background-subtraction_2007} state that thermal cameras are especially effective for object detection tasks compared to VIS cameras in low-light settings. Conversely, given sufficient illumination, visible-light cameras perform better than thermal sensors if the thermal properties of objects are similar to their background. Furthermore, they state a low signal-to-noise ratio and white-black polarity calibration issues as common problems of thermal cameras.
+\citet{davis_background-subtraction_2007} assert that thermal cameras are especially effective for object detection tasks compared to VIS cameras in low-light settings. Conversely, given sufficient illumination, visible-light cameras perform better than thermal sensors if the thermal properties of objects are similar to their background. Furthermore, they state a low signal-to-noise ratio and white-black polarity calibration issues as common problems of thermal cameras.
 
 \subsection{Textural features}
 
-To evaluate the different textural properties of thermal and visible-light images, a test image was taken in an indoor setting. The LWIR channel and the greyscale representation of the RBG channels can be seen in Figures \ref{fig:fourier_lwir_spatial} and \ref{fig:fourier_vis_spatial}. It is apparent that the greyscale image contains more textural details than the LWIR image. For instance, the painting above the fireplace appears as a simple gradient in the thermal band.
+To evaluate the different textural properties of thermal and visible-light images, a test image was taken in an indoor setting. The LWIR channel and the greyscale representation of the RGB channels can be seen in Figures \ref{fig:fourier_lwir_spatial} and \ref{fig:fourier_vis_spatial}. It is apparent that the greyscale image contains more textural details than the LWIR image. For instance, the painting above the fireplace appears as a simple gradient in the thermal band.
 
 \begin{figure}[ht]
   \centering
@@ -339,15 +339,15 @@ To evaluate the different textural properties of thermal and visible-light image
       \caption{VIS frequency domain magnitude}
       \label{fig:fourier_vis_freq}
     \end{subfigure}
-  \caption{Fast discrete Fourier transform of an example LWIR and VIS image. The VIS image contains more detailed textural information, making it \textit{noisier}, as can be seen in the frequency domain.}
+  \caption{Fast discrete Fourier transform of an example LWIR and VIS image. The VIS image contains more detailed textural information and has a larger portion of high-frequency components, as can be seen in the frequency domain.}
   \label{fig:fourier}
 \end{figure}
 
 We applied a fast Fourier transform \citep{cooley_fast_1969} to both images. Fourier transforms are a method for decomposing a signal into its sinusoidal components. The original image is considered to be in the spatial domain, whereas the transformed signal represents the same information in the frequency domain. It consists of the two complex components magnitude and phase. In this case, translating into the frequency domain allows the analysis and modification of the image's geometric structure. 
 
-Figures \ref{fig:fourier_lwir_freq} and \ref{fig:fourier_vis_freq} show the magnitude component of the aforementioned image in the frequency domain. The centre has been shifted to represent the zero frequency of the image. The distance of a point to the centre represents its frequency and the intensity its magnitude. 
+Figures \ref{fig:fourier_lwir_freq} and \ref{fig:fourier_vis_freq} show the magnitude component of the aforementioned images in the frequency domain. The centre has been shifted to represent the zero frequency of the image. Each point represents a frequency component of the image. The distance of the point to the centre represents the frequency of the component and the intensity its magnitude. 
 
-It can be seen that the visible-light image has a significantly higher portion of high-frequency components than its LWIR counterpart. Hence, the VIS image can be considered to be noisier than the LWIR image. This effect does not change significantly when downsampling the VIS image to the resolution of $160 \times 120$. The difference in texture details might have an impact on the effects of convolutional filters on the LWIR and VIS images.
+It can be seen that the visible-light image has a significantly higher portion of high-frequency components than its LWIR counterpart. This effect does not change significantly when downsampling the VIS image to the resolution of $160 \times 120$. The difference in texture details might have an impact on the effects of convolutional filters on the LWIR and VIS images.
 
 \subsection{Environmental conditions}
 
@@ -364,24 +364,24 @@ Due to limited access to the animals, a robust evaluation of the relative perfor
 
 A large amount of existing datasets is available for traditional image classification tasks. The ImageNet dataset \citep{deng_imagenet_2009}, which is used as a benchmark for many image classification models, contains over a million labelled images that can be used to train a model. Many successful deep learning models, such as AlexNet \citep{krizhevsky_imagenet_2012} and ResNet \citep{he_deep_2016} have been applied to datasets such as ImageNet.
 
-When creating an image classifier for a new application, it is then possible to make use of a model that has been pre-trained on another dataset, such as ImageNet. This model can subsequently be adapted to the new data by exchanging the final fully-connected layer of that network for one that suits the new classification task. Finally, the model can be trained on the new dataset. This strategy is known as transfer learning and was introduced by \citet{thrun_is_1996}.
+When creating an image classifier for a new application, it is then possible to make use of a model that has been pre-trained on another dataset, such as ImageNet. This model can be adapted to the new data by exchanging the final fully-connected layer of that network for one that suits the new classification task. Finally, the model can be trained on the new dataset. This strategy is known as transfer learning and was introduced by \citet{thrun_is_1996}.
 
-Since the features learned by early layers are often applicable across many classes and images (e.g. edge or texture features), the network generalises better, as it has been trained on an overall larger dataset. Therefore, transfer learning makes it feasible to train complex models on smaller amounts of data than usual \citep{kwasniewska_deep_2017}.
+Since the weights learned by early layers are often applicable across many classes and images (e.g. edge or texture detection), the network generalises better, as it has been trained on a larger dataset overall. Therefore, transfer learning makes it feasible to train complex models on smaller amounts of data than usual \citep{kwasniewska_deep_2017}.
 
-For multispectral models, this highly effective approach becomes more difficult, as much fewer datasets are available to be used off-the-shelf. Datasets for visible light and thermal data, such as the KAIST Pedestrian Detection Benchmark \citep{hwang_multispectral_2015} are available. However, They usually lack the number of classes and the overall size of traditional computer vision datasets and are, therefore, less suitable for transfer learning tasks.
+For multispectral models, this highly effective approach becomes more difficult, as fewer datasets are available to be used off-the-shelf. Existing datasets for visible light and thermal data, such as the KAIST Pedestrian Detection Benchmark \citep{hwang_multispectral_2015} lack the number of classes and the overall size of traditional computer vision datasets and are, therefore, less suitable for transfer learning tasks.
 
 Pre-training a multispectral classifier on a VIS-only dataset is not directly possible due to the incompatible input tensor shapes ($h \times w \times 3$ compared to $h \times w \times 4$) and the resulting difference in trainable weights. Moreover, the modality gap outlined in Section \ref{modality} makes it likely that this approach would be unfeasible even if the tensor shapes were compatible.
 
-However, there are strategies to mitigate this issue. It is possible to divide the model into two separate branches of layers that process the VIS and LWIR images individually, and perform late feature-level fusion \citep{wagner_multispectral_2016, guo_face_2017} by concatenating the respective feature maps and adding at least one fully connected layer after the concatenation. This approach can make it possible to load pre-trained weights into the VIS-branch of the model without affecting the LWIR branch. During training, the LWIR-branch of the model gets trained from scratch, whereas transfer learning is simultaneously performed on the VIS-branch.
+However, there are strategies to alleviate this issue. It is possible to divide the model into two separate branches of layers that process the VIS and LWIR images individually, and perform late fusion \citep{wagner_multispectral_2016} or score-level fusion \citep{guo_face_2017} on the outputs of the branches. This approach makes it possible to load pre-trained weights into the VIS-branch of the model without affecting the LWIR branch. During training, the LWIR-branch of the model gets trained from scratch, whereas transfer learning is simultaneously performed on the VIS-branch.
 
-Another possible approach to enable the usage of existing off-the-shelf datasets is to perform generative image augmentation. In Section \ref{autoencoder_implementation}, we explore the application of a primitive generative model for predicting the corresponding LWIR image of a known type of object from a given RGB image. Given sufficient quality of predicted images, it would then be possible to turn RGB-only images into multispectral training data.
+Another possible approach to enable the usage of existing off-the-shelf datasets is to perform generative image augmentation. In Section \ref{autoencoder_implementation}, we explore the application of a primitive generative model for predicting the corresponding LWIR image of a known type of object from a given RGB image. Given sufficient quality of predicted images, this strategy would facilitate converting RGB-only images into multispectral training data.
 
 %----------------------------------------------------------------------------------------------------------------------------------
 
 \section{Mobile application}
 \label{analysis_mobile_application}
 
-This project aimed to deploy the final deep learning model to a mobile edge device. This introduced many challenges related to mobile computing. Contrary to most computers, computational power on mobile devices is highly limited. Furthermore, to provide robust and reliable real-time classification, low latency between image capture and classification was necessary. Two major strategies can be used to perform image classification on a mobile device:
+This project aimed to deploy the final deep learning model to a mobile edge device. This introduced many challenges related to mobile computing. Contrary to most desktop computers, computational power on mobile devices is highly limited. Furthermore, to provide robust and reliable real-time classification, low latency between image capture and classification was necessary. Two major strategies can be used to perform image classification on a mobile device:
 
 \begin{enumerate}
   \item Deploy the model to a web service, upload captured frames from the edge device, and retrieve the prediction. This requires minimal computational power on the edge device, as all calculations are performed remotely. However, it might come at the cost of increased latency from transmitting the input images to the server. Furthermore, in situations with poor connectivity, such as remote regions, no classification can be performed.
@@ -401,11 +401,11 @@ Whereas the latter approach appears more robust than the prior one, it introduce
 \subsection{Classes and samples}
 \label{classes_samples}
 
-Initially, a dataset consisting of 13 classes and 1042 samples was captured at Tollcross Children's Farm, Glasgow using the camera functionality of the mobile application. Similarly to a video, the app captures images in quick temporal succession. Thus, many samples are relatively similar, as they were taken within only a few milliseconds difference. To distinguish between different bursts of images, samples were grouped into distinct subsets, each subset representing a batch of similar samples.
+Initially, a dataset consisting of 13 classes and 1042 samples was captured at Tollcross Children's Farm, Glasgow using the camera functionality of the mobile application. Akin to a video, the app captures images in quick temporal succession. Thus, many samples are relatively similar, as they were taken within only a few milliseconds difference. To distinguish between the different bursts of images, all samples were grouped into distinct subsets. Each subset represents a batch of similar samples.
 
 Due to the difficulty of obtaining well-framed and unobstructed images, the data contains significant noise. Some images contain more than one animal. Furthermore, some animals were housed in closed-off shelters and were only visible behind a metal grid. This is problematic, as a classifier is likely to learn the various obstructions as features of specific classes. This can negatively impact generalisability, as the model might not be able to predict unobstructed images of these classes correctly.
 
-Therefore, each subset was labeled as either \textit{single}, \textit{multi} or \textit{obstructed} to allow greater flexibility when selecting data for training and validation. Moreover, no distinction between genders was made. Multiple colour variations of alpacas and chickens are represented in the dataset.
+Therefore, each subset was labelled as either \textit{single}, \textit{multi} or \textit{obstructed} to allow greater flexibility when selecting data for training and validation. Moreover, no distinction between genders was made. Multiple colour variations of alpacas and chickens are represented in the dataset.
 
 \begin{table}[ht]
   \centering
@@ -432,7 +432,7 @@ Therefore, each subset was labeled as either \textit{single}, \textit{multi} or 
 
 Initially, the separation into training and validation data was performed using a stratified random split of all the data. As demonstrated in Section \ref{eval_train_val_split}, nearly perfect validation accuracy was achieved on this split. This is most likely a result of the aforementioned similarity of many images due to them being captured at similar times. Hence, we decided that a second independent dataset was necessary to achieve representative evaluation results. Two more datasets were captured on different days to obtain a wider range of lighting situations and background scenarios. The classes and samples of all three datasets are shown in Table \ref{table:raw_dataset}.
 
-Finally, the subsets from the raw datasets were rearranged into a training dataset and a validation dataset. To avoid the issue of fitting and validating on similar images, each subset was assigned to one of the two datasets. An attempt was made to obtain a balanced mixture of \textit{single}, \textit{multi}, and \textit{obstructed} subsets in both datasets. Furthermore, subsets that were deemed too noisy were omitted. Nonetheless, it can be assumed that achieving a perfect and representative split is difficult due to the noise in the dataset and the limited variety of contexts. The final train-validation-split is shown in Table \ref{table:train_test_dataset}. Overall, 35 subsets were assigned to the training dataset, and 19 were allocated to the validation dataset.
+The subsets from the raw datasets were rearranged into a training dataset and a validation dataset. To avoid the issue of fitting and validating on similar images, each subset was assigned to one of the two datasets. An attempt was made to obtain a balanced mixture of \textit{single}, \textit{multi}, and \textit{obstructed} subsets in both datasets. Furthermore, subsets that were deemed too noisy were omitted. Nonetheless, it can be assumed that achieving a perfect and representative split is difficult due to the noise in the dataset and the limited variety of background contexts. The final train-validation-split is shown in Table \ref{table:train_test_dataset}. Overall, 35 subsets were assigned to the training dataset, and 19 were allocated to the validation dataset.
 
 \begin{table}[ht]
   \centering
@@ -505,7 +505,7 @@ Figure \ref{fig:dataset_classes} shows example VIS and LWIR images from the trai
 
 \subsection{Data augmentation}
 
-Due to the limited amount of time and resources available to the project, generating a dataset with sufficient scope and size proved to be challenging. Since the performance of machine learning models is usually directly tied to the size and quality of the available dataset, an insufficient dataset can make it impossible to train an accurate and robust classifier \citep{fawzi_adaptive_2016}. Therefore, data augmentation was employed to increase the number of usable training samples artificially.
+Due to the limited amount of time and resources available to the project, generating a dataset with sufficient scope and size proved to be challenging. Since the performance of machine learning models is usually directly tied to the quanitity and quality of the available data, an insufficient dataset can make it impossible to train an accurate and robust classifier \citep{fawzi_adaptive_2016}. Therefore, data augmentation was employed to increase the number of usable training samples artificially.
 
 \citet{mikolajczyk_data_2018} made the distinction between white-box and black-box data augmentation methods. While the latter use a form of deep learning known as Generative Adversarial Networks (GAN) to synthesise new training samples, white-box methods involve more traditional techniques, such as affine transformations. An affine transformation or affine map can accurately represent a composition of a translation and a linear map (e.g. scaling, rotation and shearing). A transformation $f(\vec{x})$ can be expressed as follows:
 
@@ -544,7 +544,7 @@ Figure \ref{fig:augmentation_affine} shows different affine transformations that
   \label{fig:augmentation_affine}
 \end{figure}
 
-Another possible way of augmenting the data before classification is artificially drawing obstacles over the images. This approach could possibly help the model generalise better on the dataset, as a significant amount of samples from certain classes is obstructed by metal grids or foliage. However, this would require further investigation into the different properties of visible light and LWIR images and their interaction with different types of obstacles. Hence, this approach was not implemented in this project. Instead, we decided to remove a significant part of obstructed samples from the final dataset and focused on working with less noisy data. 
+Artificially drawing obstacles over the images is another possible way of augmenting the data before classification. This approach could possibly help the model generalise better on the dataset, as a significant amount of samples from certain classes is obstructed by metal grids or foliage. However, this would require further investigation into the different properties of visible-light and LWIR images and their interaction with different types of obstacles. Hence, this approach was not implemented as part of this project. Instead, we decided to remove a significant part of obstructed samples from the final dataset and focused on working with less noisy data. 
 
 A limitation that remains with all non-generative data augmentation techniques is that the augmented images are not fully independent from each other. The classifier only learns a limited amount of new features from augmented samples. White-box data augmentation can, therefore, only slightly mitigate the problem of insufficient independent samples. To achieve better generalisability, obtaining more data is preferable to augmenting existing data.
 
@@ -555,7 +555,7 @@ A limitation that remains with all non-generative data augmentation techniques i
 
 As a result of the misalignment of LWIR and VIS images outlined in Section \ref{sensory_equipment}, an algorithm for aligning the images captured by the conventional camera and LWIR camera had to be developed. The process of transforming data from different sensors into one coordinate system is commonly referred to as image registration.
 
-To obtain workable reference samples, multiple images of three candles on a table were captured. The flames of the candles are small, bright and hot enough to function as reference points. Figure \ref{fig:linear_trans_before} displays a thresholded combined VIS and LWIR image of the three candle lights. Upon cursory inspection, it is apparent that the LWIR sensor appears to have a narrower field of view than the RGB camera. Hence, an attempt was made to manually align the LWIR and RGB images by cropping and rescaling the RGB image, effectively zooming in. This approach yielded moderate results, as can be seen in Figure \ref{fig:linear_trans_zoom}.
+To obtain workable reference samples, multiple images of three candles on a table were captured. The flames of the candles are small, bright and hot enough to function as reference points. Figure \ref{fig:linear_trans_before} displays a thresholded combined VIS and LWIR image of the three candle lights. Upon cursory inspection, it is apparent that the LWIR sensor appears to have a narrower field of view than the visible-light camera. Hence, an attempt was made to manually align the LWIR and VIS images by cropping and rescaling the visible-light image, effectively zooming in. This approach yielded moderate results, as can be seen in Figure \ref{fig:linear_trans_zoom}.
 
 To obtain a more flexible and generalisable representation, we made use of affine transformations. As shown in Equation \ref{eqn:affine}, an affine transformation can be expressed as a linear function with parameters $A$ and $\vec{b}$. These parameters can be easily trained using a linear regression model. Therefore, the coordinates of about a dozen reference points were manually determined on the RGB and LWIR versions of some test images. These respective coordinates were used as features and labels for training the linear regression model. 
 
@@ -585,7 +585,7 @@ This approach yielded acceptable results. As can be seen in Figure \ref{fig:line
 
 This task is difficult due to the modality gap between VIS and LWIR images. A simple intensity-based metric is unlikely to be successful in this scenario, as local intensities will vary across different channels even if the registration is perfect \citep{myronenko_intensity-based_2010}.
 
-\subsection{Intensity-based registration metrics}
+\subsection{Normalised total gradient}
 
 To mitigate the problem of varying intensities across different channels, \citet{chen_normalized_2018} introduce the normalized total gradient (NTG) metric for multispectral imaging systems, which is defined as follows:
 
@@ -593,7 +593,7 @@ To mitigate the problem of varying intensities across different channels, \citet
   NTG(f, f_R) = \frac{\sum_l |\nabla_l \{f - f_R\}|}{\sum_l | \nabla_l f | + \sum_l | \nabla_l f_R|},
 \end{equation}
 
-where $f$ and $f_R$ are the channel images to be compared, $\nabla_l$ represents the gradient computation along the direction $l \in \{x, y\}$, and $| \cdot |$ denotes the L1-norm. In other words, to obtain NTG one computes the sum of the $x$- and $y$-gradients of the difference of the two channels, and normalises the result by dividing over the sum of gradients of the individual channels.
+where $f$ and $f_R$ are the channel images to be compared, $\nabla_l$ represents the gradient computation along the direction $l \in \{x, y\}$, and $| \cdot |$ denotes the L1-norm. In other words, to obtain the NTG one computes the sum of the $x$- and $y$-gradients of the difference of the two channels, and normalises the result by dividing over the sum of gradients of the individual channels.
 
 The metric is based on the assumption that the gradient of the channel difference image becomes sparser as the alignment improves. Figure \ref{fig:gradient_distribution} shows that this is hardly the case for images captured by the LWIR camera, as opposed to the baseline of comparing the red and green channels from the VIS camera.
 
@@ -612,7 +612,7 @@ The metric is based on the assumption that the gradient of the channel differenc
   \caption{Distribution of gradients of the channel difference image before and after alignment using affine transformation. While the gradient distribution of the red and green channel difference gets sparser upon alignment \subref{fig:gradient_distribution_red_green}, it remains mostly unchanged for the VIS and LWIR channels \subref{fig:gradient_distribution}.}
 \end{figure}
 
-An attempt at smoothing both images before calculating the NTG was made by applying the Laplacian of Gaussian (LoG) filter with $\sigma=2$ to both images. As can be seen in Table \ref{table:registration_ntg}, this approach was not successful either. To verify that our implementation of the metric was indeed working correctly, we computed the NTG between the red and green channel of the visible-light image before and after applying a random affine transformation to the green channel. As shown in Table \ref{table:registration_ntg}, the metric is effective for the red-green-channel baseline. 
+An attempt at smoothing both images before calculating the NTG was made by applying the Laplacian of Gaussian (LoG) filter with $\sigma=2$ to both images. As can be seen in Table \ref{table:registration_ntg}, this approach was not successful either. To verify that our implementation of the metric was indeed working correctly, we computed the NTG between the red and green channel of the visible-light image before and after applying a random affine transformation to the green channel. As shown in Table \ref{table:registration_ntg}, the metric changes significantly for the red-green-channel baseline. 
 
 \begin{table}[ht]
   \centering
@@ -631,9 +631,9 @@ Considering these results, we concluded that NTG does not appear to be a suitabl
 
 \subsection{Texture-based registration}
 
-Having demonstrated that state-of-the-art intensity-based metrics appear to be inadequate to quantify the registration of visible-light and LWIR images, an approach based on image texture features, as proposed by \citet{jarc_graz_2007} was tested. 
+Having demonstrated that state-of-the-art intensity-based metrics appear to be inadequate for quantifying the registration of visible-light and LWIR images, an approach based on image texture features, as proposed by \citet{jarc_graz_2007} was tested. 
 
-The method uses pairs of 1-D filter masks as introduced by \citet{laws_rapid_1980} to detect level, edge, spot and ripple features. These filters can be applied horizontally and vertically. In our implementation, all possible filter pairs were evaluated. After convoluting both the LWIR and RGB images with the filters, the results were turned into texture energy images by performing a convolutional sum-operation of absolute values using a $15 \times 15$ kernel and applying a threshold of $\pm 3 \sigma$. Figure \ref{fig:le_filter} shows corresponding VIS and LWIR images after applying the \textit{level} kernel horizontally and the \textit{edge} kernel vertically.
+The method uses pairs of 1-D filter masks as introduced by \citet{laws_rapid_1980} to detect level, edge, spot and ripple features. These filters can be applied horizontally and vertically. In our implementation, all possible filter pairs were evaluated. After convolving both the LWIR and RGB images with the filters, the results were turned into texture energy images by performing a convolutional sum-operation of absolute values using a $15 \times 15$ kernel and applying a threshold of $\pm 3 \sigma$. Figure \ref{fig:le_filter} shows corresponding VIS and LWIR images after applying the \textit{level} kernel horizontally and the \textit{edge} kernel vertically.
 
 \begin{figure}[ht]
   \centering
@@ -657,7 +657,7 @@ Finally, the mutual information (MI) of the resulting LWIR and VIS texture energ
 
 where $H(X) = - \sum_{x \in X} p(x) \cdot \log_2 p(x)$ is the entropy of $X$ and $H(X,Y)$ represents the joint entropy of $X$ and $Y$.
 
-We then averaged the MI scores obtained by all 1-D filter pairs to calculate a single metric. For the test samples, the MI score did not appear to change consistently when aligning the images. Furthermore, none of the individual MI values for the different filter combinations behaved reliably across all samples. Hence, we deemed this approach ineffective for our registration problem.
+We then averaged the MI scores obtained by all pairs of 1-D filters to calculate a single metric. For the test samples, the MI score did not appear to change consistently when aligning the images. Furthermore, none of the individual MI values for the different filter combinations behaved reliably across all samples. Hence, we deemed this approach ineffective for our registration problem.
 
 \subsection{Mean distance}
 \label{mean_distance}
@@ -696,9 +696,9 @@ Prior experiments showed that the required transformation seems to be mostly con
   \caption{Results of manual registration of LWIR and VIS images.}
 \end{figure}
 
-To quantitatively evaluate whether the transformation parameters generalise across all images, the mean euclidean distance between the actual LWIR coordinates and the ones predicted by the regression model was computed for every class in the dataset. The results can be seen in Figure \ref{fig:registration_error}. The highest mean distance is around 2, which we consider small considering the image resolution. These errors are likely due to noise in the manually determined reference points. The mean distance across all reference points in the dataset was determined to be around 1.777 with $\sigma = 0.589$.
+To quantitatively evaluate whether the transformation parameters generalise across all images, the mean euclidean distance between the actual LWIR coordinates and the ones predicted by the regression model was computed for every class in the dataset. The results can be seen in Figure \ref{fig:registration_error}. The largest mean distance is slightly above 2.0, which is small considering the image resolution. These errors are likely due to noise in the manually determined reference points. The mean distance across all reference points in the dataset was determined to be around 1.78 with $\sigma = 0.59$.
 
-When using convolutional kernels with a small size, such as $3 \times 3$, this distance could, however, be problematic, as edges and other features might not be picked up consistently across channels.
+However, when using convolutional kernels with a small size, such as $3 \times 3$, this distance could be problematic. Edges and other features might not be picked up consistently across channels. The appropriate use of pooling layers (explained in Section \ref{custom_cnn}) could help alleviate this issue by improving the model's translation invariance.
 
 %----------------------------------------------------------------------------------------------------------------------------------
 
@@ -756,7 +756,7 @@ A custom CNN architecture, as shown in Figure \ref{fig:customnet}, was implement
   \label{fig:customnet}
 \end{figure}
 
-Pooling operations are an unsupervised non-linear method for downsampling inputs. Max-pooling works by dividing the input map into discrete, non-overlapping regions and outputting the maximum value of each region. The result is a feature map of reduced size. Pooling layers are commonly used in CNNs to achieve positional invariance and extract dominant features from the output of convolutional layers. \citet{scherer_evaluation_2010} state max-pooling as a superior method for capturing invariant features in image data compared to alternative strategies.
+Pooling operations are an unsupervised non-linear method for downsampling inputs. Max-pooling works by dividing the input map into discrete, non-overlapping regions and outputting the maximum value of each region. The result is a feature map of reduced size. Pooling layers are commonly used in CNNs to achieve positional invariance and extract dominant features from the output of convolutional layers. \citet{scherer_evaluation_2010} state max-pooling as a superior method for capturing invariantces in image data, compared to alternative strategies, such as subsampling.
 
 Overall, the model has $117\,592$ trainable weights. This architecture was designed as a low-end model with relatively few parameters that is fast to train and evaluate.
 
@@ -765,9 +765,9 @@ Overall, the model has $117\,592$ trainable weights. This architecture was desig
 
 AlexNet was first introduced by \citet{krizhevsky_imagenet_2012}, winning the ImageNet Large Scale Visual Recognition Challenge (ILSVRC). Significantly outperforming the state-of-the-art traditional image classification models of its time, AlexNet is considered a significant breakthrough in computer vision \citep{alom_history_2018}.
 
-The architecture of AlexNet consists of an initial convolutional layer with a relatively large kernel size of $11 \times 11$, feeding into a max pooling layer. This is followed by a second block of convolutional and pooling layers. The kernel size of the second convolutional layer is $5 \times 5$. Subsequently, three convolutional layers with $3 \times 3$ kernels are applied, followed by another pooling layer. Finally, the output is fed into two subsequent fully connected layers, followed by an output layer with a softmax activation function.
+The architecture of AlexNet consists of an initial convolutional layer with a relatively large kernel size of $11 \times 11$, feeding into a max-pooling layer. This is followed by a second block of convolutional and pooling layers. The kernel size of the second convolutional layer is $5 \times 5$. Subsequently, three convolutional layers with $3 \times 3$ kernels are applied, followed by another pooling layer. Finally, the output is fed into two subsequent fully-connected layers, followed by an output layer with a softmax activation function.
 
-We decided to evaluate an implementation of AlexNet due to various factors. Firstly, the model has delivered good results on many image classification tasks. Simultaneously, its architecture can be considered shallow compared to most modern-day networks. This makes it likely that AlexNet will be able to run with low latency on a mobile edge device. Finally, the first convolutional layer of AlexNet has a large kernel compared to most modern-day networks. This might help mitigate the misalignment problem discussed in Section \ref{mean_distance}.
+We decided to evaluate an implementation of AlexNet due to various factors. Firstly, the model has delivered robust results on many image classification tasks. Additionally, the first convolutional layer of AlexNet has a large kernel compared to most modern-day networks. This might help mitigate the misalignment problem discussed in Section \ref{mean_distance}.
 
 \begin{figure}[ht]
   \centering
@@ -776,12 +776,12 @@ We decided to evaluate an implementation of AlexNet due to various factors. Firs
   \label{fig:alexnet}
 \end{figure}
 
-Our implementation of AlexNet, as shown in Figure \ref{fig:alexnet} diverges slightly from the original. Due to a lower input resolution and a smaller number of resulting parameters, the FC layers at the end of the network only have 1024 instead of 4096 parameters each. Furthermore, we included dropout layers after both FC layers to combat overfitting. In total, our AlexNet implementation has $7\,951\,752$ trainable parameters in the RGB-only configuration.
+Our implementation of AlexNet, as shown in Figure \ref{fig:alexnet} diverges slightly from the original. Due to the lower input resolution, the network has a smaller number of total parameters. The FC layers at the end of the network only encompass 1024 instead of 4096 parameters each. Furthermore, we included dropout layers after both FC layers to combat overfitting. In total, our AlexNet implementation has $7\,951\,752$ trainable parameters in the RGB-only configuration.
 
 \subsection{ResNet}
 \label{resnet}
 
-Since the initial introduction of AlexNet, many more CNN-architectures have been developed. \citet{simonyan_very_2015} proposed VGG, a neural network with a substantially increased number of convolutional layers. VGG demonstrates that deeper networks are more likely to perform well on image classification tasks than shallow architectures \citep{alom_history_2018}.
+Since the initial introduction of AlexNet, many additional CNN architectures have been developed, continuously advancing the capabilities and performance of image classification models. \citet{simonyan_very_2015} proposed VGG, a neural network with a substantially increased number of convolutional layers. VGG demonstrated that deeper networks are more likely to perform well on image classification tasks than shallow architectures \citep{alom_history_2018}.
 
 ResNet was developed by \citet{he_deep_2016}. Winning the 2015 ILSVRC, ResNet is considered a state-of-the-art neural network for image classification. It makes heavy use of a novel design component known as a residual block. 
 
@@ -803,7 +803,7 @@ Figure \ref{fig:res_block} shows an example residual block. The input to the blo
 
 The original paper proposes implementations of ResNet with 50, 101 and 152 layers. Since our dataset is significantly smaller than ImageNet, it is likely that these models would overfit on the training data without adding much benefit over a shallower architecture. Hence, we decided to implement a custom version of ResNet with six residual blocks and a total of 14 convolutional layers. The architecture can be seen in Figure \ref{fig:resnet}.
 
-The residual blocks are arranged in two groups of three. The convolutional kernels of each block have size $5 \times 5$. Each group of residual blocks is preceded by a single convolutional layer with a max pooling layer to reduce the input resolution. Unlike in the original paper, we use two FC layers with dropout in the end, followed by a softmax-activated output layer. Despite the much deeper architecture compared to AlexNet, our ResNet implementation has only $4\,033\,160$ trainable parameters.
+The residual blocks are arranged in two groups of three. The convolutional kernels of each block have size $5 \times 5$. Each group of residual blocks is preceded by a single convolutional layer with a max-pooling layer to reduce the input resolution. Unlike in the original paper, we use two FC layers with dropout in the end, followed by a softmax-activated output layer. Despite the much deeper architecture compared to AlexNet, our ResNet implementation has only $4\,033\,160$ trainable parameters.
 
 %----------------------------------------------------------------------------------------------------------------------------------
 
@@ -811,15 +811,11 @@ The residual blocks are arranged in two groups of three. The convolutional kerne
 \section{Transfer learning using a pre-trained ResNet}
 \label{transfer_learning}
 
-An attempt was made to make use of transfer learning. We decided to evaluate an RGB-only, LWIR-only and late fusion configuration of a pre-trained network. 
+We decided to compare our model against a second baseline that resembles the leading edge of conventional image classification. For this purpose, we made use of transfer learning. Obtaining an RGB-only network with pre-trained weights is straightforward. We used an off-the-shelf implementation of ResNet 152 v2 \citep{he_identity_2016} with weights that had previously been trained on the ImageNet dataset. Since ImageNet has 1000 classes, we had to replace the output layer of the network with a custom layer to match the dimensions of labels and outputs.
 
-Obtaining an RGB-only network with pre-trained weights is easy. We used an implementation of ResNet 152 v2 \citep{he_identity_2016} with weights that were previously trained on the ImageNet dataset. Since ImageNet has 1000 classes, we had to replace the output layer of the network with a custom layer, to make labels and outputs match.
+In addition, we decided to evaluate an LWIR-only and late fusion configuration of a pre-trained network. As discussed in Section \ref{transfer_learning_analysis}, limited resources are available for transfer learning on thermal images. After some review, an annotated thermal dataset provided by FLIR was found\footnote{\url{https://www.flir.com/oem/adas/adas-dataset-form/}}. This dataset was deemed suitable because it had been captured using another FLIR camera, minimising the difference between the sensors used. Nonetheless, at $640 \times 512$, the thermal infrared resolution of the FLIR Tau 2 is significantly higher than that of the FLIR One Pro ($160 \times 120$) used for this project. The dataset contains a total of $10\,228$ frames with bounding box annotations for five classes: \textit{person}, \textit{car}, \textit{bicycle}, \textit{dog} and \textit{other vehicle}.
 
-As discussed in Section \ref{transfer_learning_analysis}, limited resources are available for transfer learning of thermal images. After some review, an annotated thermal dataset provided by FLIR was found \footnote{\url{https://www.flir.com/oem/adas/adas-dataset-form/}}. This dataset was deemed suitable because it was captured by another FLIR camera, minimising the sensor difference. Nonetheless, at $640 \times 512$, the thermal infrared resolution of the FLIR Tau 2 is significantly higher than that of the FLIR One Pro ($160 \times 120$) used for this project. The dataset contains a total of $10\,228$ frames with bounding box annotations for five classes: \textit{person}, \textit{car}, \textit{bicycle}, \textit{dog} and \textit{other vehicle}.
-
-To use the bounding box annotations for our classification problem, we treated each bounding box as an individual sample, cropping the images appropriately. To reduce noise, we removed samples with a resolution below $40 \times 40$. Only thermal images were used. We then trained an off-the-shelf implementation of ResNet 50 v2 on this dataset. We chose this shallower version of ResNet due to the limited amount of available data and time. It was deemed unlikely that using a more complex, such as ResNet 152 v2 model would benefit performance significantly.
-
-The late fusion configuration of our transfer learning model, therefore, uses a ResNet 152 v2 for the RGB path, and a ResNet 52 v2 for the LWIR path.
+To use the bounding box annotations for our classification problem, we treated each bounding box as an individual sample, cropping the images appropriately. To reduce noise, we removed samples with a resolution below $40 \times 40$. Only thermal images were used. We then trained an off-the-shelf implementation of ResNet 50 v2 on this dataset. We chose this shallower version of ResNet due to the limited amount of available data and time. It was deemed unlikely that using a more complex, such as ResNet 152 v2 model would benefit the classification performance significantly. The late fusion configuration of our transfer learning model, therefore, uses a ResNet 152 v2 for the RGB path, and a ResNet 50 v2 for the LWIR path.
 
 %----------------------------------------------------------------------------------------------------------------------------------
 
@@ -828,7 +824,7 @@ The late fusion configuration of our transfer learning model, therefore, uses a 
 The mobile application was designed with two primary user requirements in mind:
 
 \begin{enumerate}
-  \item Giving users the ability to capture combined visible-light and thermal datasets. For this purpose, easy access to the captured raw images shall be provided.
+  \item Giving users the ability to capture combined visible-light and thermal datasets. For this purpose, easy access to the captured raw images is necessary.
   \item Being able to perform real-time multi-class classification using the CNNs designed in Section \ref{design_classifiers}.
 \end{enumerate}
 
@@ -856,7 +852,7 @@ TensorFlow Lite is a set of tools aimed towards running deep learning models on 
 
 To perform the various image processing tasks required for this project, we made use of scikit-image \citep{van_der_walt_scikit-image_2014} and the Python implementation of OpenCV \citep{bradski_opencv_2000}. Furthermore, the Java implementation of OpenCV was used for the Android application, making it possible to perform affine transformations on captured images on the edge device.
 
-We computed the Grad-CAM visualisations of our networks using Keras-vis \citep{kotikalapudi_keras-vis_2017}.
+We computed the Grad-CAM visualisations of our final neural network using Keras-vis \citep{kotikalapudi_keras-vis_2017}.
 
 \subsection{Hardware and environment}
 
@@ -903,7 +899,7 @@ A deep convolutional autoencoder was created to predict the LWIR signature of ob
   \label{fig:autoencoder_architecture}
 \end{figure}
 
-Each encoder block has a convolutional layer, followed by a ReLU activation function and a subsequent max pooling layer for downsampling. The input images are processed and downsampled to a $20 \times 15 \times 32$ tensor containing a compact, latent representation of the features in the original image. The output of the decoder is then fed into four blocks of deconvolutional layers followed by ReLU activation to attempt a reconstruction of the LWIR image. Each deconvolutional layer tries to upsample the input by predicting appropriate pixel values.
+Each encoder block has a convolutional layer, followed by a ReLU activation function and a subsequent max-pooling layer for downsampling. The input images are processed and downsampled to a $20 \times 15 \times 32$ tensor containing a compact, latent representation of the features in the original image. The output of the decoder is then fed into four blocks of deconvolutional layers followed by ReLU activation to attempt a reconstruction of the LWIR image. Each deconvolutional layer tries to upsample the input by predicting appropriate pixel values.
 
 Due to the lack of a discriminator, our autoencoder design does not satisfy the requirements of a generative adversarial network. However, autoencoders are commonly used for image processing tasks such as denoising and colourisation. As LWIR images have fewer high-frequency components than visible-light images (Section \ref{modality}) and both images share rough features such as edges, we deemed an autoencoder architecture to be appropriate for this generative task.
 
@@ -931,13 +927,13 @@ Due to the lack of a discriminator, our autoencoder design does not satisfy the 
   \label{fig:autoencoder_pony_train}
 \end{figure}
 
-A subset of the animals training dataset containing 415 images of Shetland ponies was chosen. Mean squared error was selected as the loss function. The network was trained for 100 epochs with a batch size of 16.
+We selected a subset of the animals training dataset containing 415 images of Shetland ponies. The network was trained for 100 epochs with a batch size of 16, using mean squared error as loss function.
 
 As can be seen in Figure \ref{fig:autoencoder_pony_train_autoencoder}, the model correctly identifies the pony from the training dataset and determines that it should have a higher local intensity in the LWIR waveband. However, when comparing the predicted to the actual LWIR image, it is apparent that the autoencoder lacks the ability to generate the fine textural details of the animal. This is likely a result of the denoising property caused by the encoder's bottleneck.
 
 \subsubsection{U-Net}
 
-First introduced by \citet{ronneberger_u-net_2015}, U-Net aims to improve the performance of biomedical image segmentation systems. Similarly to a conventional autoencoder, it features a contracting path that downsamples or encodes the input and a symmetric expanding path that upsamples or decodes the input. Additionally, for each deconvolutional layer, the output of the corresponding opposite convolutional layer is concatenated to the layer's input map. These connections can be seen in Figure \ref{fig:unet_architecture}, which visualises our custom U-Net implementation. 
+First introduced by \citet{ronneberger_u-net_2015}, U-Net aims to improve the performance of biomedical image segmentation systems. Similarly to a conventional autoencoder, it features a contracting path that downsamples/encodes the input and a symmetric expanding path that upsamples/decodes the input. Additionally, for each deconvolutional layer, the output of the corresponding opposite convolutional layer is concatenated to the layer's input map. These connections can be seen in Figure \ref{fig:unet_architecture}, which visualises our custom U-Net implementation. 
 
 \begin{figure}[ht]
   \centering
@@ -946,13 +942,13 @@ First introduced by \citet{ronneberger_u-net_2015}, U-Net aims to improve the pe
   \label{fig:unet_architecture}
 \end{figure}
 
-We chose to evaluate this architecture because it combines the denoising features of a traditional autoencoder with the ability to generate finer textures due to its skip connections. \citet{osin_fast_2018} utilise a modified U-Net to perform semantic segmentation on thermal multispectral images. The U-Net was trained for 100 epochs on the same dataset as the traditional autoencoder. 
+\citet{osin_fast_2018} implemented a modified U-Net to perform semantic segmentation on thermal multispectral images. Hence, we chose to evaluate this architecture because it combines the denoising features of a traditional autoencoder with the ability to generate finer textures due to its skip connections. The U-Net was trained for 100 epochs on the same dataset as the traditional autoencoder. 
 
 Figure \ref{fig:autoencoder_pony_train_unet} displays the predicted LWIR image for the pony from the training dataset. Unlike the autoencoder, the U-Net is able to accurately represent the texture of the animal in the LWIR waveband.
 
 \subsubsection{Results on unknown data}
 
-After training the networks, two images of ponies were retrieved from Wikimedia Commons. They were then fed into the network in an attempt to generate the corresponding LWIR images. The respective outputs can be seen in Figure \ref{fig:autoencoder_pony}.
+After training the networks, two images of ponies were retrieved from Wikimedia Commons. They were then fed into the network to generate the corresponding LWIR images. The respective outputs can be seen in Figure \ref{fig:autoencoder_pony}.
 
 \begin{figure}[ht]
   \centering
@@ -1009,7 +1005,7 @@ Finally, the \lstinline{ClassifierActivity} initialises an instance of \lstinlin
 \chapter{Evaluation}
 \label{evaluation}
 
-To evaluate whether the addition of LWIR data can improve the performance of image classifiers on our dataset, we resorted to an evaluation comprising of three stages. Firstly, in Section \ref{eval_strategies}, we assessed the effectiveness of the model-invariant regularisation strategies we developed. Secondly, in Section \ref{eval_arch}, the relative accuracy of the proposed models and configurations was evaluated. Finally, we performed an in-depth analysis of the model with the highest performance in Section \ref{eval_final} and compared it to the pre-defined baselines.
+To evaluate whether the addition of LWIR data can improve the performance of image classifiers on our dataset, we resorted to an evaluation comprising of three stages. Firstly, in Section \ref{eval_strategies}, we assess the effectiveness of the model-invariant regularisation strategies we developed. Secondly, in Section \ref{eval_arch}, we evaluate the relative accuracy of the proposed models and configurations. Finally, we perform an in-depth analysis of the model with the highest performance in Section \ref{eval_final} and compare it to the pre-defined baselines.
 
 \section{Training strategies}
 \label{eval_strategies}
@@ -1026,7 +1022,7 @@ At first, the whole animals dataset was divided into training and validation dat
   \label{fig:acc_stratified}
 \end{figure}
 
-This result is most likely due to the similarity of many images within individual subsets, as explained in Section \ref{classes_samples}. Since training and validation samples are drawn from the same raw dataset, it is likely that each subset is represented in both groups. Therefore, we conclude that it is likely that the model is significantly overfitted on the captured data and that the validation accuracy is not representative of the classifier's performance on chaotic new data. 
+This result is most likely a result of the similarity of many images within individual subsets, as explained in Section \ref{classes_samples}. Since training and validation samples are drawn from the same raw dataset, it is likely that each subset is represented in both groups. Therefore, we conclude that it is likely that the model is significantly overfitted on the captured data and that the validation accuracy is not representative of the classifier's performance on chaotic new data. 
 
 Fitting the model on the training dataset as defined in Section \ref{classes_samples}, validation scores dropped significantly. This was in accordance with our expectations, as the samples from the training and validation datasets are mostly independent. Therefore, the model is not able to overfit on the whole dataset anymore, and the validation score is more representative of the potential performance on new data.
 
@@ -1034,15 +1030,13 @@ Fitting the model on the training dataset as defined in Section \ref{classes_sam
 
 \subsubsection{Affine transformation}
 
-The data augmentation strategy, as described in Section \ref{augmentation_impl} was evaluated by applying the augmentation script to the training dataset twice, with a multiplication factor of 2 and 5 respectively. The augmented datasets, thus, contain around 2 and 5 times as many samples than the original dataset. Furthermore, the class imbalances were equalised by the script by creating more samples of the underrepresented classes.
+The data augmentation strategy from Section \ref{augmentation_impl} was evaluated by applying the augmentation script to the training dataset twice, with a multiplication factor of 2 and 5 respectively. The augmented datasets, thus, contain around 2 and 5 times as many samples than the original dataset. Furthermore, the script equalised the class imbalances in the dataset by oversampling the underrepresented classes.
 
-The custom ResNet in fusion mode was trained on the original and the two augmented datasets for 80 epochs. The complete classification reports can be inspected in Appendix \ref{appendix_augmentation}. The overall f1-score increased from $0.73$ without any augmentation to $0.78$ with augmentation with a factor of 2. For the factor-5-dataset, a slight increase of the f1-score to $0.79$ was determined. 
-
-As creating even more augmented samples (factor 10) did not seem to significantly change the achieved accuracy, we decided to perform further evaluations with the factor-5-dataset.
+The custom ResNet in fusion mode was trained on the original and the two augmented datasets for 80 epochs. The complete classification reports can be inspected in Appendix \ref{appendix_augmentation}. The overall f1-score increased from $0.73$ without any augmentation to $0.78$ with augmentation with a factor of 2. For the factor-5-dataset, a slight increase of the f1-score to $0.79$ was determined. As creating even more augmented samples (factor 10) did not seem to significantly change the achieved accuracy, we decided to perform further evaluations with the factor-5-dataset.
 
 \subsubsection{Generation of artificial data}
 
-We used the autoencoder from Section \ref{autoencoder_implementation} to predict the LWIR signatures of ten images retrieved from Wikimedia Commons (sources in List \ref{list:image_sources}). We then selected a subset of our training dataset, containing images of the \textit{pony}, \textit{alpaca} and \textit{chicken} classes. A second copy of this dataset was created, and the ten predicted images were appended to the \textit{pony} class.
+We used the autoencoder from Section \ref{autoencoder_implementation} to predict the LWIR signatures of ten images of ponies retrieved from Wikimedia Commons (sources in List \ref{list:image_sources}). We then selected a subset of our training dataset, containing images of the \textit{pony}, \textit{alpaca} and \textit{chicken} classes. A second copy of this dataset was created, and the ten predicted images were appended to the \textit{pony} class.
 
 The custom ResNet in late fusion configuration was trained on both datasets. The full classification scores can be inspected in Appendices \ref{table:auto_scores_normal} and \ref{table:auto_scores_auto}. 
 
@@ -1073,19 +1067,19 @@ This behaviour can possibly be explained by the altered class balance of the dat
 
 \subsection{Experimental setup}
 
-To determine the multispectral configuration with the best performance out of all proposed models, we ran a grid search, as described in Section \ref{gridsearch_impl}. All models were trained for 80 epochs with a batch size of 32 samples, using the Adam optimiser with a learning rate of $10^{-6}$. 
+To determine the multispectral configuration with the best performance out of all proposed models, we ran and evaluated the grid search from Section \ref{gridsearch_impl}. All models were trained for 80 epochs with a batch size of 32 samples, using the Adam optimiser with a learning rate of $10^{-6}$ and cross-entropy loss. 
 
 The combination of batch size and learning rate was previously determined as an appropriate compromise between fast convergence and stability of the loss function. Generally, smaller batch sizes result in the training loss converging in fewer epochs, while larger batch sizes offer better computational efficiency due to parallelisability \citep{devarakonda_adabatch_2018}. 
 
 Furthermore, smaller batch sizes make the training process more stochastic. More steps are taken during training. However, the smaller amount of samples per batch means that steps are less likely to be in the direction of the global minimum. On the other hand, it is more likely that the model can avoid getting stuck in local minima.
 
-The effect of varying batch sizes is highly dependent on the specific properties of the dataset, optimiser and model. Whereas \citet{masters_revisiting_2018} achieved better generalisability on the CIFAR-10 dataset \citep{krizhevsky_learning_2009} using ResNet with smaller batch sizes, \citet{radiuk_impact_2017} reported higher testing accuracies on the same data using LeNet \citep{lecun_gradient-based_1998} with larger batch sizes. Our evaluation yielded an optimal batch size of 32 for the custom ResNet. The detailed results are shown in Figure \ref{fig:batch_size}.
+The effect of varying batch sizes is highly dependent on the specific properties of the dataset, optimiser and model. Whereas \citet{radiuk_impact_2017} reported higher testing accuracies on the CIFAR-10 dataset \citep{krizhevsky_learning_2009} using LeNet \citep{lecun_gradient-based_1998} with larger batch sizes, \citet{masters_revisiting_2018} achieved better generalisability on the same data using ResNet with smaller batch sizes. Our evaluation returned an optimal batch size of 32 for the custom ResNet. The detailed results are shown in Figure \ref{fig:batch_size}.
 
-Adam was published by \citet{kingma_adam_2014} and is generally considered to yield robust performance for deep learning algorithms \citep{alom_history_2018}.
+Adam was published by \citet{kingma_adam_2014} and is generally considered to yield robust performance for training deep learning algorithms \citep{alom_history_2018}. We considered the use of alternative optimisers, such as stochastic gradient descent (SGD). However, hyperparameter optimisation proved to be easier for Adam. The ideal learning rate was determined through manual experimentation.
 
 \subsection{Grid search results}
 
-The complete loss and accuracy history of all models and configurations are shown in Appendix \ref{appendix_grid_search}. Overall, the custom CNN achieved the lowest performance out of the three models. This is unsurprising, given the small number of trainable parameters compared to the other two models.
+The complete loss and accuracy histories of all models and configurations are shown in Appendix \ref{appendix_grid_search}. Overall, the custom CNN achieved the lowest performance out of the three models. This is unsurprising, given the small number of trainable parameters compared to the other two models.
 
 The custom ResNet implementation achieved the highest accuracy among the three models. The results for the ResNet can be seen in Figure \ref{fig:resnet_configs}. For all configurations, some overfitting can be observed, as the training losses and accuracies converge at near-perfect values. Moreover, we observe that, for most configurations, the validation loss initially drops faster than training loss. This is likely a result of the dropout layers, which are applied only when training.
 
@@ -1100,7 +1094,7 @@ The LWIR-only configuration appears to be the least effective overall. It is pos
 
 The early fusion (\textit{stacked}) and score-level fusion (\textit{voting}) models achieve a validation accuracy similar to the RGB-only model. However, the validation loss of the early fusion classifier is converging towards that of the LWIR-only one.
 
-Among all configurations, the late fusion (\textit{fusion}) model achieved the highest accuracy. Furthermore, the cross-entropy loss is comparatively low. This result confirms our theory that late-fusion-based approach proposed by \citet{wagner_multispectral_2016} can be applied to our multi-class classification problem. We selected this configuration as our final classifier due to its superior validation accuracy. 
+Among all configurations, the late fusion (\textit{fusion}) model achieved the highest accuracy. Furthermore, the cross-entropy loss is comparatively low. This result confirms our theory that the late-fusion-based approach proposed by \citet{wagner_multispectral_2016} can be applied to our multi-class classification problem. We selected this configuration as our final classifier due to its superior validation accuracy. 
 
 %----------------------------------------------------------------------------------------------------------------------------------
 
@@ -1109,7 +1103,7 @@ Among all configurations, the late fusion (\textit{fusion}) model achieved the h
 
 To obtain reliable scores for the selected model, we ran a 10-fold cross-validation on the late fusion ResNet and averaged the results. Since the validation dataset had to be kept entirely separate from the training dataset, as discussed in Section \ref{eval_train_val_split}, the k-fold split was performed only on the training dataset. During each fold, the non-selected samples were discarded instead of being used for validation.
 
-Table \ref{table:final_classifier_scores} shows the precision, recall and f1-score of each class. The classes with the highest f1-score are \textit{goose}, \textit{cat} and \textit{hamburg chicken}. The classes with the lowest f1-score are and \textit{pony} and \textit{muscovy duck}. The pony class stands out with particularly low recall. Only half of all pony samples were classified as such.
+Table \ref{table:final_classifier_scores} shows the precision, recall and f1-score of each class. The classes with the highest f1-score are \textit{goose}, \textit{cat} and \textit{Hamburg chicken}. The classes with the lowest f1-score are and \textit{pony} and \textit{Muscovy duck}. The pony class stands out with particularly low recall. Only half of all pony samples were classified as such.
 
 \begin{table}[ht]
   \centering
@@ -1131,9 +1125,9 @@ Table \ref{table:final_classifier_scores} shows the precision, recall and f1-sco
   \label{table:final_classifier_scores}
 \end{table}
 
-The chicken and muscovy duck classes suffer especially from low precision. This means that many samples are wrongly classified as those classes. A possible explanation for this is the wide variety of environments within the chicken and muscovy duck datasets. As outlined in Table \ref{table:train_test_dataset}, the amount of subsets used for the training dataset is the highest for both classes. It is likely that the model is biased in favour of these classes due to the great variety of backgrounds. 
+The chicken and muscovy duck classes suffer especially from low precision. This means that many samples are wrongly classified as those classes. A possible explanation for this is the wide variety of environments within the chicken and muscovy duck datasets. As described in Table \ref{table:train_test_dataset}, the amount of subsets used for the training dataset is the highest for both classes. It is likely that the model is biased in favour of these classes due to the great variety of backgrounds. 
 
-From the confusion matrix in Figure \ref{fig:confusion}, it can be seen that there is some degree of confusion between similar classes, such as \textit{alpaca} and \textit{pony}, or \textit{silkie chicken} and \textit{muscovy duck}. The \textit{chicken} class is an exception to this rule, reinforcing the theory that the model is biased towards this class.
+From the confusion matrix in Figure \ref{fig:confusion}, it can be seen that there is some degree of confusion between similar classes, such as \textit{alpaca} and \textit{pony}, or \textit{Silkie chicken} and \textit{Muscovy duck}. The \textit{chicken} class is an exception to this rule, reinforcing the theory that the model is biased towards this class.
 
 \subsection{t-SNE}
 \label{tsne}
@@ -1171,9 +1165,7 @@ Figure \ref{fig:test_tsne} shows the result of applying t-SNE to the validation 
   \label{fig:test_tsne}
 \end{figure}
 
-As can be seen in Figure \ref{fig:test_tsne_input}, the cat images clearly stand out from the other classes even before being fed into the model. This is most likely a result of the fact that the cat images are the only ones that were captured in an indoor setting, resulting in a significantly lower illumination level.
-
-This interpretation is further supported by the observation that the strict separation of the cat cluster persists throughout the VIS branch of the network, as shown in \ref{fig:test_tsne_vis}. The LWIR band, however, is not sensitive to illumination. Therefore, the LWIR branch of the network is unable to use the overall brightness of the image to make inferences about the classes. This explains why the distinctive cat cluster is not visible in Figure \ref{fig:test_tsne_lwir}.
+As can be seen in Figure \ref{fig:test_tsne_input}, the cat images clearly stand out from the other classes even before being fed into the model. This is most likely a result of the fact that the cat images are the only samples that were captured in an indoor setting, resulting in a significantly lower illumination level. This interpretation is further supported by the observation that the strict separation of the cat cluster persists throughout the VIS branch of the network, as shown in \ref{fig:test_tsne_vis}. The LWIR band, however, is not sensitive to illumination. Therefore, the LWIR branch of the network is unable to use the overall brightness of the image to make inferences about the classes. This explains why the distinctive cat cluster is not visible in Figure \ref{fig:test_tsne_lwir}.
 
 A similar effect can be observed for the \textit{Hamburg chicken} class. A large Hamburg chicken cluster stands out in the t-SNE of the input image as well as the final convolutional layers of the VIS and LWIR branches. A likely explanation for this phenomenon is that many images of Hamburg chicken are partly occluded by a grid. Since this is unique to this class, it can be assumed that the model uses the grid as a feature to identify Hamburg chicken, resulting in undesirable background-related bias.
 
@@ -1181,9 +1173,9 @@ The \textit{alpaca} class demonstrates the effectiveness of the late fusion appr
 
 \subsection{Saliency analysis}
 
-Saliency maps were first introduced by \citet{itti_model_1998} as a means of representing the conspicuity of every spatial location in an image. \citet{simonyan_deep_2014} developed this concept into class-specific saliency maps by using back-propagation of a classification.
+Saliency maps were first introduced by \citet{itti_model_1998} as a means of representing the conspicuity of every spatial location in an image. \citet{simonyan_deep_2014} developed this concept into class-specific topologies that visualise the amount that each pixel in an image contributes towards the prediction of that class. This is achieved by calculating the gradients of the class scores with respect to the input image. By using this method, we can analyse whether a neural network draws the information for its inferences from the right parts of an image.
 
-Gradient-weighted Class Activation Mapping (Grad-CAM) is a novel visualisation technique developed by \citet{selvaraju_grad-cam_2020}. It uses the gradients of a target class at the last convolutional layer of a network to generate a heatmap showing the most important regions for the classification of that class.
+Gradient-weighted class activation mapping (Grad-CAM) is a novel visualisation technique developed by \citet{selvaraju_grad-cam_2020}. It uses the gradients of a target class at the last convolutional layer of a network to generate a heatmap showing the most important regions for the classification of that class. Grad-CAM, while conceptually similar to previous saliency visualisations, offers increased interpretability, making it easier to identify classification biases.
 
 Since the late fusion configuration of our ResNet has two parallel final convolutional layers, the gradient has to be computed for both layers. Figure \ref{fig:grad_cam} displays the Grad-CAM visualisation of four example images.
 
@@ -1220,14 +1212,12 @@ Figure \ref{fig:grad_cam_pos} shows a desirable example. Both final convolutiona
 
 However, the network does not always focus on the desired relevant parts of the images. In the example shown in Figure \ref{fig:grad_cam_neg}, both the VIS and LWIR branches of the network do not focus on the muscovy duck. Instead, attention is directed towards the environment, such as the grass texture. It is unlikely that the network will be able to predict similar images with a different background.
 
-The remaining two subfigures display examples where only either the VIS or LWIR branches of the network focus on the animals. These cases demonstrate an advantage of the multi-branch approach. The network performs better overall, as it can rely on the features of two semi-redundant branches.
+The remaining two subfigures display examples where only either the VIS or LWIR branches of the network focus on the animals. These cases demonstrate an advantage of the late fusion approach. The network performs better overall, as it can rely on the features of two redundant and semi-independent branches. If one branch fails to focus on the correct parts of an image due to bias, there is a chance that the second branch might pick up a sufficient number of significant features, leading to a correct prediction overall. 
 
 
 \subsection{Accuracy at different lighting conditions}
 
-As discussed in Section \ref{modality}, the modality difference between VIS and LWIR images suggests that thermal imaging systems should perform better in low-light conditions compared to visible-light-only systems.
-
-To evaluate the relationship between classification performance and illumination, we calculated the mean and standard deviation of all pixel values of each image in the validation dataset. We then determined the cross-entropy loss of each prediction by the VIS-only, LWIR-only and late fusion ResNets and plotted it as a function of mean and standard deviation. The results are shown in Figure \ref{fig:illumination}.
+As discussed in Section \ref{modality}, the modality difference between VIS and LWIR images suggests that thermal imaging systems should perform better in low-light conditions compared to visible-light-only systems. To evaluate the relationship between classification performance and illumination, we calculated the mean and standard deviation of all pixel values of each image in the validation dataset. We then determined the cross-entropy loss of each prediction by the VIS-only, LWIR-only and late fusion ResNets and plotted it as a function of mean and standard deviation. The results are shown in Figure \ref{fig:illumination}.
 
 \begin{figure}[ht]
   \centering
@@ -1236,17 +1226,17 @@ To evaluate the relationship between classification performance and illumination
   \label{fig:illumination}
 \end{figure}
 
-The overall result defies the expected behaviour of the models. It can be seen that the LWIR-only network performs significantly worse than its VIS-only and late fusion counterparts on low-light images. This further supports the theory we formulated in Section \ref{tsne}. The LWIR-only network likely uses the darkness of the cat images as a biased feature of the cat class, giving it near-perfect performance.
+The overall result defies the expected behaviour of the models. It can be seen that the LWIR-only network performs significantly worse than its VIS-only and late fusion counterparts on low-light images. This further supports the theory we formulated in Section \ref{tsne}. The LWIR-only network likely uses the darkness of the cat images as a biased feature of the cat class, resulting in near-perfect performance.
 
-Since the LWIR band is not sensitive to illumination, the cat pictures do not generally stand out compared to in the VIS images. To obtain more robust results, a dataset with more well-balanced illumination levels would have to be acquired. Furthermore, the LWIR-only network has a high loss on samples with low LWIR mean intensity. A possible explanation for this is the lack of visible features in these images. 
+Since the LWIR waveband is not sensitive to illumination, the LWIR images of the cats do not stand out compared to the other classes, unlike in the visible-light images. To obtain more robust results, a dataset with more well-balanced illumination levels would have to be acquired. Furthermore, the LWIR-only network has a high loss on samples with low LWIR mean intensity. A possible explanation for this is the lack of visible infrared features in these images. This can occur if the heat signature of the animals is too weak. 
 
 \subsection{Comparison against the baseline}
 
 As shown in Figure \ref{fig:resnet_configs}, the final late fusion model outperforms the visible-light-only baseline. Validation accuracy converges after around 50 epochs and remains stable. The final f1-score of $80\%$ is a significant improvement over the $74\%$ achieved by the VIS-only network. We, therefore, conclude that the use of a late fusion multispectral architecture can be beneficial for the performance of an image classifier.
 
-To put these results into a relevant context, we compared the final classifier to a second, state-of-the-art VIS-only baseline. This model is an instance of ResNet152 v2 that has been pre-trained on the ImageNet dataset and transfer-trained on our dataset, as described in Section \ref{transfer_learning}.
+To put these results into a relevant context, we compared the final classifier to the second, state-of-the-art VIS-only baseline. This model had been pre-trained on the ImageNet dataset and transfer-trained on our dataset, as described in Section \ref{transfer_learning}.
 
-The full training history is shown in Figure \ref{fig:baseline_configs}. The transfer-learned VIS-only classifier achieved a final f1-score of $92\%$, significantly outperforming our best model. Our attempts to create a late fusion model that has been pre-trained using the ImageNet data for the VIS branch and the FLIR dataset for the LWIR branch did not improve this baseline. The final f1-score of the transfer learned late fusion model remains unchanged compared to the VIS-only model at $0.92$.
+The full training history of the second baseline is shown in Figure \ref{fig:baseline_configs}. The transfer-learned VIS-only classifier achieved a final f1-score of $92\%$, significantly outperforming our best model. Our attempts to pre-train a late fusion model using the ImageNet data for the VIS branch and the FLIR dataset for the LWIR branch did not improve this baseline. The final f1-score of the transfer learned late fusion model remains unchanged compared to the VIS-only model at $0.92$.
 
 Since larger training datasets usually result in more generalisable models and ImageNet contains over a million annotated samples, this result is unsurprising. As our late fusion model significantly outperformed the VIS-only variant when trained from scratch on the same data, we deem it likely that the pre-trained VIS-only baseline could be beaten given a large enough dataset.
 
@@ -1257,11 +1247,9 @@ Since larger training datasets usually result in more generalisable models and I
 
 \subsection{Functionality validation}
 
-To verify whether the deployment of the model to the mobile application is functional, a live evaluation on the actual animals was planned. The intention was to point the phone with the FLIR camera at the objects to evaluate the quality of the predictions. Since unforeseen circumstances emerged as a result of the SARS-CoV-2 epidemic, this evaluation could not be performed.
+To verify whether the deployment of the model to the mobile application is functional, a live evaluation on the actual animals was planned. The intention was to point the phone with the FLIR camera at the animals to evaluate the quality of the predictions. We planned to evaluate the predictions at different distances, camera rotations and angles to assess the spatial invariance of the classifier. 
 
-Instead, we qualitatively evaluated the deployment of the final model by pointing the phone and sensor at pictures from the existing validation dataset. Figure \ref{fig:app_screenshots} shows screenshots of the mobile application during this evaluation. A sample image was drawn from each class. Out of all eight images, the app gave six correct predictions.
-
-It can, therefore, be concluded that the model is working correctly in the mobile application. Due to the physical limitations of the evaluation, the thermal channel could not be taken into consideration by the model, making the predictions less accurate. Furthermore, we observed a strong fluctuation of the predicted probabilities over time.
+Since unforeseen circumstances emerged as a result of the SARS-CoV-2 epidemic, this evaluation could not be performed. Instead, we qualitatively evaluated the deployment of the final model by pointing the phone and sensor at pictures from the existing validation dataset, at a distance of $20 cm$. Figure \ref{fig:app_screenshots} shows screenshots of the mobile application during this evaluation. A sample image was drawn from each class. Out of all eight images, the app gave six correct predictions. It can, therefore, be concluded that the model is working correctly as part of the mobile application. Due to the physical limitations of the evaluation, the thermal channel could not be taken into consideration by the model, making the predictions less accurate.
 
 \begin{figure}[ht]
   \centering
@@ -1278,14 +1266,16 @@ It can, therefore, be concluded that the model is working correctly in the mobil
   \label{fig:app_screenshots}
 \end{figure}
 
+Furthermore, we observed a strong fluctuation of the predicted probabilities when moving the camera laterally or towards and away from the images. This suggests that the spatial invariance of the model is limited and the predictions are highly dependent on the specific angle and distance towards the animal. Nonetheless, the overall performance of the model appears to be adequate. The application can be used with reasonable confidence for the classification of the eight classes of animals.
+
 \subsection{Performance, latency and battery usage}
 
-The application was installed on a OnePlus 7 Android device to evaluate the latency of real-time classification. TensorFlow Lite was configured to use the device's GPU for predictions. The RGB-only and feature-level fusion configurations of the custom ResNet were evaluated by running the application in classification mode and performing 1000 predictions. As visible in Figure \ref{fig:app_screenshots}, the application displays the mean and standard deviation of classification times since launch. The following values are readings from this output.
+The application was installed on a OnePlus 7 Android device to evaluate the latency of real-time classification. TensorFlow Lite was configured to use the device's GPU for predictions. The VIS-only and feature-level fusion configurations of the custom ResNet were evaluated by running the application in classification mode and performing 1000 predictions. As visible in Figure \ref{fig:app_screenshots}, the application displays the mean and standard deviation of classification times since launch. The following values are readings from this output.
 
-Whereas the RGB-only model took an average of $40.99 ms$, $\sigma = 4.55 ms$ for a single prediction, the late fusion model performed a prediction every $70.24 ms$, $\sigma = 6.79 ms$. This equates to $14.24$ predictions per second, which is significantly higher than the sensor frame rate of $8.7 Hz$. 
+Whereas the VIS-only model took an average of $40.99 ms$, $\sigma = 4.55 ms$ for a single prediction, the late fusion model performed a prediction every $70.24 ms$, $\sigma = 6.79 ms$. This equates to $14.24$ predictions per second, which is significantly higher than the sensor frame rate of $8.7 Hz$. 
 Infrequent stuttering of the image feed in both the camera and classifier activities are a result of the sensor occasionally closing the shutter and automatically recalibrating, as outlined in the user guide\footnote{\url{http://www.flirmedia.com/flir-one/flir-one-pro/user-guides/flir-one-pro-user-guide.html}}.
 
-Finally, the battery impact of running the application was evaluated by running the classifier activity for 20 minutes. No other applications were active on the device simultaneously. According to Android's battery usage statistics (Figure \ref{fig:app_battery}), our application used around $8\%$ of the device's $3700 mAh$ battery capacity over the course of the $20 min$. This implies a theoretical maximum usage time of $4.17 h$, assuming the usage statistics are accurate. Based on the results of this evaluation, we conclude that the multispectral model is suitable for real-time classification tasks on edge devices.
+Finally, the battery impact of running the application was evaluated by running the classifier activity for 20 minutes. No other applications were simultaneously active on the device. According to Android's battery usage statistics (Figure \ref{fig:app_battery}), our application used around $8\%$ of the device's $3700 mAh$ battery capacity over the course of the $20 min$. This implies a theoretical maximum runtime of $4.17 h$, assuming the usage statistics are accurate. Based on the results of this evaluation, we conclude that the multispectral model is suitable for real-time classification tasks on edge devices.
 
 %==================================================================================================================================
 \chapter{Conclusion}
@@ -1294,15 +1284,15 @@ Finally, the battery impact of running the application was evaluated by running 
 
 This dissertation explored the benefits and drawbacks of multispectral image classification with a thermal and visible-light camera. A classifier based on the ResNet deep learning architecture was developed, achieving a validation f1-score of $80\%$.
 
-Our evaluation demonstrates that a model based on late fusion of the thermal and visible-light features, similar to \citet{wagner_multispectral_2016}, clearly outperforms the VIS-only baseline. This is the case even in settings with sufficient illumination.
+Our evaluation demonstrates that a model based on the late fusion of thermal and visible-light features, similar to \citet{wagner_multispectral_2016}, clearly outperforms the VIS-only baseline. This is the case even in settings with sufficient illumination.
 
 The classifier has been successfully deployed to a mobile edge device and can be run in real-time with tolerable latency. This demonstrates the suitability of the system for mobile environments with low computational power, such as phones and self-driving cars.
 
-However, our model was not able to beat the second proposed baseline of a state-of-the-art VIS-only classifier that was pre-trained on the ImageNet dataset. Attempts to perform transfer learning on an LWIR classifier did not manage to improve our model's performance. We conclude that the lack of available thermal datasets remains a significant problem for the development of LWIR-based computer vision systems.
+However, our model was not able to beat the second proposed baseline of a state-of-the-art VIS-only classifier that had been pre-trained on the ImageNet dataset. Attempts to perform transfer learning on a late fusion classifier using a smaller LWIR dataset did not manage to improve our model's performance. We conclude that the lack of available thermal datasets remains a significant problem for the development of LWIR-based computer vision systems.
 
-Furthermore, our t-SNE and saliency analysis of the final model reveals problems with background-related bias. These issues are likely a result of a noisy and insufficiently diverse dataset. 
+Furthermore, our t-SNE visualisation and saliency analysis of the final model revealed problems with background-related bias. These issues are likely a result of a noisy and insufficiently diverse dataset. To obtain a more robust model, acquiring a larger and more well-balanced dataset will be necessary.
 
-Nonetheless, our evaluation suggests that our multi-branch network architecture increases the system's robustness by providing more redundant features (XXX rephrase). We conclude that thermal multispectral imaging can significantly improve the performance of deep learning models for the recognition of animals.
+Nonetheless, our evaluation suggests that the late fusion architecture increases the robustness of the model by providing more redundant features to base inferences on. We conclude that thermal multispectral imaging can significantly improve the performance of deep learning models for the recognition of animals.
 
 %----------------------------------------------------------------------------------------------------------------------------------
 
@@ -1310,7 +1300,7 @@ Nonetheless, our evaluation suggests that our multi-branch network architecture 
 
 We attempted to increase the generalisability of our classifier by generating artificial LWIR data using a convolutional autoencoder. Since the scale of this experiment was limited, no reliable conclusion about the effectiveness of this strategy could be drawn. To further evaluate the feasibility of incorporating artificially generated data into the training process, a generative adversarial network could be designed and applied to a sufficiently large visible-light dataset.
 
-Moreover, many generalisation problems of our model are likely a result of poorly framed input images. Furthermore, the framing of objects is likely to be noisy when using the mobile application. A more robust approach for this usage scenario could involve the development of an object detection model. Such a model would support the detection of multiple objects in a single image at varying distances and positions. State-of-the-art architectures such as YOLO \citep{redmon_you_2016, redmon_yolov3_2018} promise low inference times and might be suitable for this task. 
+Moreover, many generalisation problems of our model are likely a result of poorly framed input images. Furthermore, the framing of objects is likely to be inconsistent when using the mobile application. A more robust approach for this usage scenario could involve the development of an object detection model. Such a model would support the detection of multiple objects in a single image at varying distances and positions. State-of-the-art architectures such as YOLO \citep{redmon_you_2016, redmon_yolov3_2018} promise low inference times and might be suitable for this task. 
 
 Our review of existing image registration metrics concluded that the problem of quantifying the alignment of VIS and LWIR images has not yet been conclusively solved. Further investigation into robust registration metrics for thermal and visible-light images might be necessary to accelerate future research into the benefits and drawbacks of thermal multispectral imaging.
 

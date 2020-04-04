@@ -752,7 +752,7 @@ A custom CNN architecture, as shown in Figure \ref{fig:customnet}, was implement
 \begin{figure}[ht]
   \centering
   \includegraphics[width=0.65\textwidth]{images/models/customnet}
-  \caption{Architecture of the custom CNN.}
+  \caption{Architecture of the custom CNN. Created using PlotNeuralNet \citep{iqbal_harisiqbal88plotneuralnet_2018}.}
   \label{fig:customnet}
 \end{figure}
 
@@ -772,7 +772,7 @@ We decided to evaluate an implementation of AlexNet due to various factors. Firs
 \begin{figure}[ht]
   \centering
   \includegraphics[width=0.9\textwidth]{images/models/alexnet}
-  \caption{Neural network architecture of AlexNet.}
+  \caption{Neural network architecture of AlexNet. Created using PlotNeuralNet \citep{iqbal_harisiqbal88plotneuralnet_2018}.}
   \label{fig:alexnet}
 \end{figure}
 
@@ -797,7 +797,7 @@ Figure \ref{fig:res_block} shows an example residual block. The input to the blo
 \begin{figure}[ht]
   \centering
   \includegraphics[width=0.9\textwidth]{images/models/resnet}
-  \caption{Neural network architecture of the residual network.}
+  \caption{Neural network architecture of the residual network. Created using PlotNeuralNet \citep{iqbal_harisiqbal88plotneuralnet_2018}.}
   \label{fig:resnet}
 \end{figure}
 
@@ -907,7 +907,7 @@ A deep convolutional autoencoder was created to predict the LWIR signature of ob
 \begin{figure}[ht]
   \centering
   \includegraphics[width=0.9\textwidth]{images/models/autoencoder}
-  \caption{Neural network architecture of the autoencoder.}
+  \caption{Neural network architecture of the autoencoder. Created using PlotNeuralNet \citep{iqbal_harisiqbal88plotneuralnet_2018}.}
   \label{fig:autoencoder_architecture}
 \end{figure}
 
@@ -952,7 +952,7 @@ U-Net was first introduced by \citet{ronneberger_u-net_2015} to improve performa
 \begin{figure}[ht]
   \centering
   \includegraphics[width=0.9\textwidth]{images/models/unet}
-  \caption{Neural network architecture of the U-Net.}
+  \caption{Neural network architecture of the U-Net. Created using PlotNeuralNet \citep{iqbal_harisiqbal88plotneuralnet_2018}.}
   \label{fig:unet_architecture}
 \end{figure}
 
@@ -1043,7 +1043,7 @@ Fitting the model on the training dataset as defined in Section \ref{classes_sam
 
 The data augmentation strategy, as described in Section \ref{augmentation_impl} was evaluated by applying the augmentation script to the training dataset twice, with a multiplication factor of 2 and 5 respectively. The augmented datasets, thus, contain around 2 and 5 times as many samples than the original dataset. Furthermore, the class imbalances were equalised by the script by creating more samples of the underrepresented classes.
 
-The custom ResNet in fusion mode was trained on the original and the two augmented datasets for 80 epochs. The complete classification reports can be inspected in Appendix \ref{appendix_augmentation_affine}. The overall f1-score increased from $0.73$ without any augmentation to $0.78$ with augmentation with a factor of 2. For the factor-5-dataset, a slight increase of the f1-score to $0.79$ was determined. 
+The custom ResNet in fusion mode was trained on the original and the two augmented datasets for 80 epochs. The complete classification reports can be inspected in Appendix \ref{appendix_augmentation}. The overall f1-score increased from $0.73$ without any augmentation to $0.78$ with augmentation with a factor of 2. For the factor-5-dataset, a slight increase of the f1-score to $0.79$ was determined. 
 
 As creating even more augmented samples (factor 10) did not seem to significantly change the achieved accuracy, we decided to perform further evaluations with the factor-5-dataset.
 
@@ -1359,9 +1359,6 @@ Finally, for applications involving a continuous video feed, such as the mobile 
 \chapter{Data augmentation evaluation}
 \label{appendix_augmentation}
 
-\section{Affine transformation}
-\label{appendix_augmentation_affine}
-
 \begin{table}[H]
   \centering
   \begin{tabular}{@{}lllll@{}}
@@ -1422,10 +1419,6 @@ Finally, for applications involving a continuous video feed, such as the mobile 
   \label{table:appendix_affine_3}
 \end{table}
 
-%----------------------------------------------------------------------------------------------------------------------------------
-
-\section{Artificial data}
-
 \begin{captionedList}
   \begin{enumerate}
     \item{\url{https://commons.wikimedia.org/wiki/File:Shetland_pony_in_the_snow,_Baltasound_-_geograph.org.uk_-_1691743.jpg}}
@@ -1439,7 +1432,7 @@ Finally, for applications involving a continuous video feed, such as the mobile 
     \item{\url{https://commons.wikimedia.org/wiki/File:Fell_ponies,_West_Fell.jpg}}
     \item{\url{https://commons.wikimedia.org/w/index.php?title=Special:Search&limit=20&offset=420&profile=default&search=shetland+pony&advancedSearch-current=%7B%7D&ns0=1&ns6=1&ns12=1&ns14=1&ns100=1&ns106=1#/media/File:Jielbeaumadier_cheval_5_scva_paris_2012.jpeg}}
   \end{enumerate}
-  \caption{Image sources for the autoencoder. All images retrieved under the Creative Commons licence (CC BY-SA 2.0).}
+  \caption{Image sources for the autoencoder. All images retrieved under CC BY-SA 2.0.}
   \label{list:image_sources}
 \end{captionedList}
 

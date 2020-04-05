@@ -3,7 +3,7 @@
 * Deep neural networks for classification of hyperspectral images
 * Niklas Lindorfer
 * 2265846l
-* SUPERVISOR NAME
+* Professor Roderick Murray-Smith
 
 ## Guidance
 
@@ -252,6 +252,8 @@
 
 * *2.0 hours* Worked on implementing the NTG (normalised total gradient) metric to quantify image alignment/registration
 
+## Week 15
+
 ### 28 Jan 2020
 
 * *3.0 hours* Attempted other metrics for image alignment. Neither NTG nor any other metrics attempted yield good results.
@@ -274,6 +276,8 @@
 * *4.0 hours* Tried improving autoencoder by adding more convolutional layers. This was not successful.
 * *1.5 hours* Worked on visualization of autoencoder architecture
 
+## Week 16
+
 ### 04 Feb 2020
 
 * *5.0 hours* Implemented a texture-based image registration metric
@@ -288,6 +292,8 @@
 * *3.0 hours* Dissertation section on texture-based registration
 * *2.0 hours* Dissertation section on spectral imaging
 
+## Week 17
+
 ### 11 Feb 2020
 
 * *5.0 hours* Added more background sections to dissertation
@@ -296,7 +302,6 @@
 
 * *3.0 hours* Captured animal dataset with 12 classes and over 700 samples.
 * *3.0 hours* Pre-processed dataset (downsampling and label generation)
-
 
 ### 14 Feb 2020
 
@@ -310,6 +315,8 @@
 ### 16 Feb 2020
 
 * *1.0 hour* Captured images of geese and cats to be added to dataset
+
+## Week 18
 
 ### 18 Feb 2020
 
@@ -345,6 +352,8 @@
 
 * *2.0 hours* Implemented a variation of AlexNet
 * *3.0 hours* Familiarised myself with running jobs on the GPU cluster. Managed to run a simple classification job.
+
+## Week 19
 
 ### 25 Feb 2020
 
@@ -382,6 +391,8 @@
 * *1.5 hours* Refactored code for models.
 * *1.5 hour* Created a grid-search script for running 5 different configurations of models.
 
+## Week 20
+
 ### 04 Mar 2020
 
 * *1.0 hours* Added custom implementation of a residual network to models file.
@@ -409,6 +420,8 @@
 * *1.5 hours* Added script for transfer learning from saved weights
 * *2.0 hours* Determined 95 reference points from the train dataset. Determined a new transformation matrix for registration based on these points.
 * *1.5 hours* Added registration results and evalution to dissertation
+
+## Week 21
 
 ### 11 Mar 2020
 
@@ -444,6 +457,8 @@
 * *1.5 hours* Plotted loss and accuracy of grid search results. All metrics are very unstable and hardly interpretable. 
 * *3.5 hours* Experimented with different batch sizes and learning rates to fix the problem mentioned above. Reducing learning rates and increasing batch sizes seems to help a lot.
 
+## Week 22
+
 ### 18 Mar 2020
 
 * *2.0 hours* Dissertation section on overfitting and regularisation
@@ -469,6 +484,8 @@
 
 * *4.5 hours* Dissertation: Started evaluation section
 
+## Week 23
+
 ### 25 Mar 2020
 
 * *4.0 hours* t-SNE and dissertation section
@@ -490,6 +507,8 @@
 ### 31 Mar 2020
 
 * *5.5 hours* Dissertation: Abstract, introduction, various additions
+
+## Week 24
 
 ### 01 Apr 2020
 

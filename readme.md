@@ -21,4 +21,6 @@ The goal of the project was to explore the benefits and drawbacks of adding LWIR
 
 * [Final dissertation PDF](https://1drv.ms/b/s!Aqti0IlhBpFWjocLSKY5smKcBremig)
 
-* [Thermal multispectral dataset download link](https://onedrive.live.com/download?cid=5691066189D062AB&resid=5691066189D062AB%21230121&authkey=ABspHHm_7-RsA8g)
+* [Thermal multispectral dataset (train)](https://onedrive.live.com/download?cid=5691066189D062AB&resid=5691066189D062AB%21228411&authkey=AJU0tToSBvEZhoE)
+
+* [Thermal multispectral dataset (test)](https://onedrive.live.com/download?cid=5691066189D062AB&resid=5691066189D062AB%21228406&authkey=AGp0d2eYzTqKt1s)

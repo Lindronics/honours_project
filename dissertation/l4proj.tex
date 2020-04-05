@@ -33,9 +33,17 @@
     Many conventional image recognition systems are constrained by the limitations of wavelengths visible to the human eye.
     This project explores the benefits and drawbacks of incorporating thermal images into deep convolutional neural networks for image classification. A multispectral dataset consisting of eight classes of animals and 2317 total samples was captured using a FLIR One Pro thermal camera.
     Early fusion and late fusion multispectral neural network architectures based on popular image classifiers, such as ResNet, were evaluated on the dataset.
-    The final model significantly outperforms a comparable visible-light-only system, increasing the classification f1-score from 74\% to 80\%. The proposed network is unable to beat a state-of-the-art model that was pre-trained on ImageNet and transfer-learned on the custom animals dataset.
+    The final late fusion model significantly outperforms a comparable visible-light-only system, increasing the validation f1-score from 74\% to 80\%. The proposed network is unable to beat a state-of-the-art baseline that has been pre-trained on ImageNet and transfer-learned on the custom animals dataset.
     The final classifier was successfully deployed to an Android mobile application, enabling real-time classification of animals for devices equipped with a FLIR thermal camera.
 \end{abstract}
+
+\chapter*{Acknowledgements}
+\thispagestyle{empty}
+
+I would like to thank my project supervisor, Professor Roderick Murray-Smith for his invaluable support and guidance throughout the year. His suggestions inspired me to work harder and always explore new ideas.
+
+Furthermore, I am sincerely grateful to my parents, who supported me throughout my whole time at Glasgow University and made all of this possible. Your encouragement and support helped me to push myself without losing focus on the things that make me happy. I could never thank you enough!
+
 
 %==============================================================================
 
@@ -1297,7 +1305,7 @@ The classifier has been successfully deployed to a mobile edge device and can be
 
 However, our model was not able to beat the second proposed baseline of a state-of-the-art VIS-only classifier that had been pre-trained on the ImageNet dataset. Attempts to perform transfer learning on a late fusion classifier using a smaller LWIR dataset did not manage to improve our model's performance. We conclude that the lack of available thermal datasets remains a significant problem for the development of LWIR-based computer vision systems.
 
-Furthermore, our t-SNE visualisation and saliency analysis of the final model revealed problems with background-related bias. These issues are likely a result of a noisy and insufficiently diverse dataset. To obtain a more robust model, acquiring a larger and more well-balanced dataset will be necessary.
+Furthermore, our t-SNE visualisation and saliency analysis of the final model revealed problems with background-related bias. These issues are likely a result of a noisy and insufficiently diverse dataset. To obtain a more robust model, acquiring a larger and more well-balanced dataset is necessary.
 
 Nonetheless, our evaluation suggests that the late fusion architecture increases the robustness of the model by providing more redundant features to base inferences on. We conclude that thermal multispectral imaging can significantly improve the performance of deep learning models for the recognition of animals.
 
@@ -1480,7 +1488,7 @@ Finally, for applications involving a continuous video feed, such as the mobile 
 
 %==================================================================================================================================
 
-\chapter{Grid search results}
+\chapter{Grid search evaluation}
 \label{appendix_grid_search}
 
 \begin{figure}[ht]
@@ -1511,7 +1519,9 @@ Finally, for applications involving a continuous video feed, such as the mobile 
   \label{fig:resnet_configs_app}
 \end{figure}
 
-\chapter{Baseline}
+%==================================================================================================================================
+
+\chapter{Baseline evaluation}
 \label{appendix_baseline}
 
 \begin{figure}[ht]
@@ -1523,7 +1533,7 @@ Finally, for applications involving a continuous video feed, such as the mobile 
 
 %==================================================================================================================================
 
-\chapter{Confusion matrix}
+\chapter{Final confusion matrix}
 
 \begin{figure}[ht]
   \centering
@@ -1534,7 +1544,7 @@ Finally, for applications involving a continuous video feed, such as the mobile 
 
 %==================================================================================================================================
 
-\chapter{Mobile application}
+\chapter{Mobile application screenshots}
 
 \begin{figure}[ht]
   \centering

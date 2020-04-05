@@ -423,8 +423,10 @@ Therefore, each subset was labelled as either \textit{single}, \textit{multi} or
     Rabbit          & 32               & 16                   & 0                   \\
     Goose           & 144              & 0                    & 0                   \\ \bottomrule
   \end{tabular}
+  \vspace*{3mm}
   \caption{Classes and sample size of raw animals datasets.}
   \label{table:raw_dataset}
+  \vspace*{-3mm}
 \end{table}
 
 Initially, the separation into training and validation data was performed using a stratified random split of all the data. As demonstrated in Section \ref{eval_train_val_split}, nearly perfect validation accuracy was achieved on this split. This is most likely a result of the aforementioned similarity of many images due to them being captured at similar times. Hence, we decided that a second independent dataset was necessary to achieve representative evaluation results. Two more datasets were captured on different days to obtain a wider range of lighting situations and background scenarios. The classes and samples of all three datasets are shown in Table \ref{table:raw_dataset}.
@@ -445,8 +447,10 @@ The subsets from the raw datasets were rearranged into a training dataset and a 
     Chicken         & 277 (10)                 & 119 (2)        \\
     Goose           & 125 (1)                  & 19  (1)        \\ \bottomrule
   \end{tabular}
+  \vspace*{3mm}
   \caption{Sample size and subset composition of train and validation datasets.}
   \label{table:train_test_dataset}
+  \vspace*{-3mm}
 \end{table}
 
 The classes with low support (Pig, Sheep, Ferret, Rabbit) were dropped from the datasets, as it was deemed unlikely that a model would be able to generalise well on such small numbers of samples. Moreover, it was not possible to capture pictures of peacocks in a sufficient variety of contexts. Instead of training and validating on similar images of peacocks, the class was removed from the datasets. A problem that remained is the class imbalance in both datasets. Alpacas and ponies are over-represented, and Hamburg chickens are significantly under-represented.
@@ -620,8 +624,10 @@ An attempt at smoothing both images before calculating the NTG was made by apply
     LAB intensity of VIS (after LoG with $\sigma=2$) vs LWIR  & 0.9970              & 0.9973           \\
     (Baseline) Red vs green channels of VIS                   & 0.6245              & 0.0303           \\ \bottomrule
   \end{tabular}
+  \vspace*{3mm}
   \caption{Normalized Total Gradient before and after manual registration of the channels.}
   \label{table:registration_ntg}
+  \vspace*{-3mm}
 \end{table}
 
 Considering these results, we concluded that NTG does not appear to be a suitable metric for this particular registration problem. Since the algorithm is effective on the baseline, it is likely that the modality gap between the LWIR and RGB channels is too significant for an intensity-based approach.
@@ -1118,8 +1124,10 @@ To obtain reliable scores for the selected model, we ran a 10-fold cross-validat
   \midrule
   \textbf{Weighted avg} & \textbf{0.83}      & \textbf{0.80}   & \textbf{0.80}     &  \\ \bottomrule
   \end{tabular}
+  \vspace*{3mm}
   \caption{Precision, recall and f1-score of the final late fusion ResNet model.}
   \label{table:final_classifier_scores}
+  \vspace*{-3mm}
 \end{table}
 
 Table \ref{table:final_classifier_scores} shows the precision, recall and f1-score of each class. The classes with the highest f1-score are \textit{goose}, \textit{cat} and \textit{Hamburg chicken}. The classes with the lowest f1-score are and \textit{pony} and \textit{Muscovy duck}. The pony class stands out with particularly low recall. Only half of all pony samples were classified as such.
@@ -1357,8 +1365,10 @@ Finally, for applications involving a continuous video feed, such as the mobile 
   \midrule
   \textbf{Weighted avg} & \textbf{0.78}      & \textbf{0.73}   & \textbf{0.73}     &  \\ \bottomrule
   \end{tabular}
+  \vspace*{3mm}
   \caption{Precision, recall and f1-score of the late fusion ResNet model without affine data augmentation.}
   \label{table:appendix_affine_1}
+  \vspace*{-3mm}
 \end{table}
 
 \begin{table}[H]
@@ -1377,8 +1387,10 @@ Finally, for applications involving a continuous video feed, such as the mobile 
   \midrule
   \textbf{Weighted avg} & \textbf{0.84}      & \textbf{0.78}   & \textbf{0.78}     &  \\ \bottomrule
   \end{tabular}
+  \vspace*{3mm}
   \caption{Precision, recall and f1-score of the late fusion ResNet model with affine data augmentation (factor 2).}
   \label{table:appendix_affine_2}
+  \vspace*{-3mm}
 \end{table}
 
 \begin{table}[H]
@@ -1397,8 +1409,10 @@ Finally, for applications involving a continuous video feed, such as the mobile 
   \midrule
   \textbf{Weighted avg} & \textbf{0.85}      & \textbf{0.79}   & \textbf{0.79}     &  \\ \bottomrule
   \end{tabular}
+  \vspace*{3mm}
   \caption{Precision, recall and f1-score of the late fusion ResNet model with affine data augmentation (factor 5).}
   \label{table:appendix_affine_3}
+  \vspace*{-3mm}
 \end{table}
 
 \begin{captionedList}
@@ -1429,8 +1443,10 @@ Finally, for applications involving a continuous video feed, such as the mobile 
   \midrule
   \textbf{Weighted avg} & \textbf{0.85}      & \textbf{0.82}   & \textbf{0.82}     &  \\ \bottomrule
   \end{tabular}
+  \vspace*{3mm}
   \caption{Precision, recall and f1-score of the custom ResNet in late fusion configuration on the simplified dataset including artificially generated samples.}
   \label{table:auto_scores_normal}
+  \vspace*{-3mm}
 \end{table}
 
 \begin{table}[H]
@@ -1444,8 +1460,10 @@ Finally, for applications involving a continuous video feed, such as the mobile 
   \midrule
   \textbf{Weighted avg} & \textbf{0.86}      & \textbf{0.83}   & \textbf{0.82}     &  \\ \bottomrule
   \end{tabular}
+  \vspace*{3mm}
   \caption{Precision, recall and f1-score of the custom ResNet in late fusion configuration on the simplified dataset including artificially generated samples.}
   \label{table:auto_scores_auto}
+  \vspace*{-3mm}
 \end{table}
 
 %==================================================================================================================================

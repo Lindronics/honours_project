@@ -1,9 +1,9 @@
 # Plan
 
-* Deep neural networks for classification of hyperspectral images
+* Deep neural networks for classification of multispectral images
 * Niklas Lindorfer
 * 2265846l
-* SUPERVISOR NAME
+* Professor Roderick Murray-Smith
 
 Week-by-week plan for the whole project.
 
@@ -26,9 +26,10 @@ Week-by-week plan for the whole project.
   * find off-the-shelf dataset for initial development
 * **Week 8**
 * **Week 9**
+  * Image registration problem
 * **Week 10**
 * **Week 11 [PROJECT WEEK]**
-  * first deep learning model
+  * Develop mobile application
 * **Week 12 [PROJECT WEEK]** 
   * Status report submitted.
 
@@ -37,15 +38,17 @@ Week-by-week plan for the whole project.
 ## Spring Semester
 
 * **Week 13**
-  * explore tf tools for mobile devices
+  * Select application
 * **Week 14**
+  * Capture dataset
 * **Week 15**
 * **Week 16**
 * **Week 17**
-  * Android app prototype
+  * Evaluate different models
 * **Week 19**
 * **Week 20**
 * **Week 21**
+  * Dissertation writing time
 * **Week 22**
 * **Week 23 [TERM ENDS]**
 * **Week 24** 

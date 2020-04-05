@@ -448,3 +448,68 @@
 
 * *2.0 hours* Dissertation section on overfitting and regularisation
 * *2.0 hours* Batch size evaluation (including dissertation)
+
+### 19 Mar 2020
+
+* *4.0 hours* Dissertation: Mobile app eval and train-test-split eval
+
+### 21 Mar 2020
+
+* *6.0 hours* Dissertation: Literature review
+
+### 22 Mar 2020
+
+* *3.0 hours* Ran final grid search on IDA cluster
+
+### 23 Mar 2020
+
+* *5.0 hours* Dissertation: Modality analysis
+
+### 24 Mar 2020
+
+* *4.5 hours* Dissertation: Started evaluation section
+
+### 25 Mar 2020
+
+* *4.0 hours* t-SNE and dissertation section
+
+### 28 Mar 2020
+
+* *3.0 hours* Grad-CAM and dissertation section
+* *2.5 hours* K-fold cross-validation
+
+### 29 Mar 2020
+
+* *6.0 hours* Dissertation: Various additions
+
+### 30 Mar 2020
+
+* *1.0 hours* Fixed affine transformations (higher res to minimise interpolation errors)
+* *3.0 hours* Dissertation: Autoencoder evaluation
+
+### 31 Mar 2020
+
+* *5.5 hours* Dissertation: Abstract, introduction, various additions
+
+### 01 Apr 2020
+
+* *4.5 hours* Dissertation: Various additions
+
+### 02 Apr 2020
+
+* *6.0 hours* Dissertation: Various additions
+
+### 03 Apr 2020
+
+* *6.0 hours* Dissertation review and quality improvements
+
+### 04 Apr 2020
+
+* *5.5 hours* Dissertation review and quality improvements
+* *1.5 hours* Started presentation
+
+### 05 Apr 2020
+
+* *4.0 hours* Dissertation review and quality improvements
+* *3.0 hours* Additions to presentation
+* *1.0 hour* Tidied up repo

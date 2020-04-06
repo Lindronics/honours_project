@@ -1,6 +1,6 @@
 # Timelog
 
-* Deep neural networks for classification of hyperspectral images
+* Deep neural networks for classification of multispectral images
 * Niklas Lindorfer
 * 2265846l
 * Professor Roderick Murray-Smith
@@ -468,6 +468,10 @@
 
 * *4.0 hours* Dissertation: Mobile app eval and train-test-split eval
 
+### 20 Mar 2020
+
+* *0.5 hours* 15th supervisor meeting
+
 ### 21 Mar 2020
 
 * *6.0 hours* Dissertation: Literature review
@@ -490,6 +494,10 @@
 
 * *4.0 hours* t-SNE and dissertation section
 
+### 27 Mar 2020
+
+* *0.5 hours* 16th supervisor meeting
+
 ### 28 Mar 2020
 
 * *3.0 hours* Grad-CAM and dissertation section
@@ -499,6 +507,8 @@
 
 * *6.0 hours* Dissertation: Various additions
 
+## Week 24
+
 ### 30 Mar 2020
 
 * *1.0 hours* Fixed affine transformations (higher res to minimise interpolation errors)
@@ -507,8 +517,6 @@
 ### 31 Mar 2020
 
 * *5.5 hours* Dissertation: Abstract, introduction, various additions
-
-## Week 24
 
 ### 01 Apr 2020
 
@@ -520,6 +528,7 @@
 
 ### 03 Apr 2020
 
+* *0.5 hours* 17th supervisor meeting
 * *6.0 hours* Dissertation review and quality improvements
 
 ### 04 Apr 2020
@@ -532,3 +541,9 @@
 * *4.0 hours* Dissertation review and quality improvements
 * *3.0 hours* Additions to presentation
 * *1.0 hour* Tidied up repo
+
+## Week 25
+
+### 06 Apr 2020
+
+* *3.0 hours* Recorded presentation

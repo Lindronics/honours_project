@@ -1,28 +1,25 @@
 name: latex_build
 
-on: 
-  push:
-    branches:
-      - master
-      - dissertation
-
+on: [push]
 jobs:  
   build_latex:
-  
     runs-on: ubuntu-latest
-    
+    defaults:
+      run: 
+        working-directory: dissertation
     steps:
     - name: Pull changes
       uses: actions/checkout@v1
     - name: Install LaTeX dependencies
       run: |
-        cd dissertation
-        cat latex_dependencies.txt | xargs sudo apt-get install
+        sudo apt update -y
+        cat latex_dependencies.txt | xargs sudo apt install -y
         which pdflatex
     - name: Compile dissertation LaTeX file
       run: |
-        cd dissertation
         pdflatex l4proj.tex
+        bibtex l4proj.aux
+        pdflatex l4proj.tex && pdflatex l4proj.tex
     - name: Upload dissertation artifact
       uses: actions/upload-artifact@master
       with:

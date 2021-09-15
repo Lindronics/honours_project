@@ -41,6 +41,7 @@
 \fi
 
 \usepackage[libertine,bigdelims,vvarbb]{newtxmath} % bb from STIX
+\let\Bbbk\relax
 \usepackage[cal=boondoxo]{mathalfa} % mathcal
 
 \usepackage{microtype} % improve typography

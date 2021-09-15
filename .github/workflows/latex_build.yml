@@ -1,11 +1,6 @@
 name: latex_build
 
-on: 
-  push:
-    branches:
-      - master
-      - dissertation
-
+on: [push]
 jobs:  
   build_latex:
     runs-on: ubuntu-latest

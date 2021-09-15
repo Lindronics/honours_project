@@ -18,6 +18,8 @@ jobs:
     - name: Compile dissertation LaTeX file
       run: |
         pdflatex l4proj.tex
+        bibtex l4proj.aux
+        pdflatex l4proj.tex && pdflatex l4proj.tex
     - name: Upload dissertation artifact
       uses: actions/upload-artifact@master
       with:

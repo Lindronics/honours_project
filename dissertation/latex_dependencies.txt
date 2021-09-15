@@ -4,7 +4,7 @@ texlive-binaries
 texlive-fonts-extra
 texlive-fonts-extra-links
 texlive-fonts-recommended
-texlive-generic-extra
+texlive-plain-generic
 texlive-lang-greek
 texlive-latex-base
 texlive-latex-extra

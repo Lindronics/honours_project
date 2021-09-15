@@ -22,5 +22,5 @@ jobs:
       uses: actions/upload-artifact@master
       with:
         name: latest dissertation pdf
-        path: l4proj.pdf
+        path: dissertation/l4proj.pdf
 
